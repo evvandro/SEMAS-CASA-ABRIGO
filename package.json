@@ -1,0 +1,13 @@
+{
+  "name": "sistema-semas-sbs",
+  "version": "1.0.0",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && php artisan serve",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "install:all": "cd frontend && npm install && cd ../backend && composer install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
