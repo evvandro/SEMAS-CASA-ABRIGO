@@ -1,6 +1,6 @@
 # SEMAS-CASA-ABRIGO
-# TESTE-JULIO-COMMIT
-
+# TESTE-COMMIT
+# commit
 ## Getting Started
 
 To install all project dependencies after cloning the repository, run:
