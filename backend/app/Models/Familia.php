@@ -25,7 +25,7 @@ class Familia extends Model
     {
         return [
             'data_entrada' => 'date',
-            'data_saida'   => 'date',
+            'data_saida' => 'date',
         ];
     }
 
@@ -41,7 +41,7 @@ class Familia extends Model
         return DB::transaction(function () {
             $ultimo = static::lockForUpdate()->max('id') ?? 0;
 
-            return 'FAM-' . str_pad($ultimo + 1, 4, '0', STR_PAD_LEFT);
+            return 'FAM-'.str_pad($ultimo + 1, 4, '0', STR_PAD_LEFT);
         });
     }
 }

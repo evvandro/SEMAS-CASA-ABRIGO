@@ -34,10 +34,10 @@ class AdminUserTest extends TestCase
         Sanctum::actingAs($this->admin());
 
         $this->postJson('/api/admin/users', [
-            'name'     => 'Nova Técnica',
-            'email'    => 'tecnica2@semas.gov.br',
+            'name' => 'Nova Técnica',
+            'email' => 'tecnica2@semas.gov.br',
             'password' => 'Senha123!',
-            'role'     => 'tecnico',
+            'role' => 'tecnico',
         ])
             ->assertCreated()
             ->assertJsonPath('data.email', 'tecnica2@semas.gov.br')
@@ -52,10 +52,10 @@ class AdminUserTest extends TestCase
         User::factory()->create(['email' => 'existente@semas.gov.br']);
 
         $this->postJson('/api/admin/users', [
-            'name'     => 'Outro',
-            'email'    => 'existente@semas.gov.br',
+            'name' => 'Outro',
+            'email' => 'existente@semas.gov.br',
             'password' => 'Senha123!',
-            'role'     => 'tecnico',
+            'role' => 'tecnico',
         ])->assertUnprocessable();
     }
 
@@ -64,10 +64,10 @@ class AdminUserTest extends TestCase
         Sanctum::actingAs($this->admin());
 
         $this->postJson('/api/admin/users', [
-            'name'     => 'Teste',
-            'email'    => 'teste@semas.gov.br',
+            'name' => 'Teste',
+            'email' => 'teste@semas.gov.br',
             'password' => 'Senha123!',
-            'role'     => 'superuser',
+            'role' => 'superuser',
         ])->assertUnprocessable();
     }
 

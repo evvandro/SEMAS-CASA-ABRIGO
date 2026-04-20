@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HealthController;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 RateLimiter::for('login', function (Request $request): Limit {
     return Limit::perMinute(8)->by((string) $request->ip());
 });
+
+Route::get('/health', HealthController::class);
 
 Route::middleware('throttle:login')->post('/login', [AuthController::class, 'login']);
 
