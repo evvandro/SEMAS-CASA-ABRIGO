@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RestrictedUsersSeeder::class,
             SetoresSeeder::class,
-            // MateriaisSeeder::class — será adicionado pelo Dev 2
+            MateriaisSeeder::class,
         ]);
     }
 }

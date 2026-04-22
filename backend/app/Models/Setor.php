@@ -23,5 +23,8 @@ class Setor extends Model
         return $this->hasMany(Familia::class);
     }
 
-    // Dev 2 adicionará: public function acolhidos(): HasMany
+    public function acolhidos(): HasMany
+    {
+        return $this->hasMany(Acolhido::class);
+    }
 }
