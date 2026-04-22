@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\AcolhidoController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\MaterialController;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -19,6 +22,10 @@ Route::middleware('throttle:login')->post('/login', [AuthController::class, 'log
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::apiResource('acolhidos', AcolhidoController::class);
+    Route::apiResource('materiais', MaterialController::class)->parameters(['materiais' => 'material']);
+    Route::apiResource('entregas', EntregaController::class);
 
     // Rotas exclusivas do administrador
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function (): void {
