@@ -26,6 +26,8 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import PersonIcon from '@mui/icons-material/Person'
 import SearchIcon from '@mui/icons-material/Search'
 import VisibilityIcon from '@mui/icons-material/Visibility'
+import { Link as RouterLink } from 'react-router-dom'
+import { SectionNavigation } from '../components/SectionNavigation'
 
 interface Pessoa {
   id: number
@@ -132,6 +134,8 @@ export function ManagementPage() {
 
   return (
     <Stack spacing={3}>
+      <SectionNavigation sticky />
+
       <Paper
         elevation={0}
         sx={{
@@ -163,7 +167,7 @@ export function ManagementPage() {
             </Stack>
           </Stack>
 
-          <Button variant="contained" startIcon={<PersonAddIcon />}>
+          <Button component={RouterLink} to="/cadastros" variant="contained" startIcon={<PersonAddIcon />}>
             Novo cadastro
           </Button>
         </Stack>
