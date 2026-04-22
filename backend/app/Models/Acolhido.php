@@ -7,14 +7,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
-class Familia extends Model
+class Acolhido extends Model
 {
-    protected $table = 'familias';
+    protected $table = 'acolhidos';
 
     protected $fillable = [
-        'codigo',
-        'responsavel_nome',
+        'codigo_pulseira',
+        'familia_id',
         'setor_id',
+        'nome',
+        'data_nascimento',
+        'cpf',
+        'telefone',
+        'genero',
+        'leito',
         'observacoes',
         'data_entrada',
         'data_saida',
@@ -24,9 +30,15 @@ class Familia extends Model
     protected function casts(): array
     {
         return [
+            'data_nascimento' => 'date',
             'data_entrada' => 'date',
             'data_saida' => 'date',
         ];
+    }
+
+    public function familia(): BelongsTo
+    {
+        return $this->belongsTo(Familia::class);
     }
 
     public function setor(): BelongsTo
@@ -34,17 +46,17 @@ class Familia extends Model
         return $this->belongsTo(Setor::class);
     }
 
-    public function acolhidos(): HasMany
+    public function entregas(): HasMany
     {
-        return $this->hasMany(Acolhido::class);
+        return $this->hasMany(Entrega::class);
     }
 
-    public static function gerarCodigo(): string
+    public static function gerarCodigoPulseira(): string
     {
         return DB::transaction(function () {
             $ultimo = static::lockForUpdate()->max('id') ?? 0;
 
-            return 'FAM-'.str_pad($ultimo + 1, 4, '0', STR_PAD_LEFT);
+            return str_pad($ultimo + 1, 4, '0', STR_PAD_LEFT);
         });
     }
 }
