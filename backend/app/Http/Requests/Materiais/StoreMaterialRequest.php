@@ -18,10 +18,9 @@ class StoreMaterialRequest extends FormRequest
     {
         return [
             'nome' => ['required', 'string', 'max:255'],
-            'unidade' => ['sometimes', 'string', 'max:30'],
-            'categoria' => ['nullable', 'string', 'max:80'],
-            'estoque_atual' => ['sometimes', 'integer'],
-            'ativo' => ['sometimes', 'boolean'],
+            'unidade' => ['required', 'string', 'max:30'],
+            'categoria' => ['required', 'string', 'max:80'],
+            'estoque_atual' => ['required', 'integer', 'min:0'],
         ];
     }
 }

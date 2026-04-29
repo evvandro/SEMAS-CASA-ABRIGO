@@ -19,8 +19,8 @@ class UpdateMaterialRequest extends FormRequest
         return [
             'nome' => ['sometimes', 'string', 'max:255'],
             'unidade' => ['sometimes', 'string', 'max:30'],
-            'categoria' => ['sometimes', 'nullable', 'string', 'max:80'],
-            'estoque_atual' => ['sometimes', 'integer'],
+            'categoria' => ['sometimes', 'string', 'max:80'],
+            'estoque_atual' => ['sometimes', 'integer', 'min:0'],
             'ativo' => ['sometimes', 'boolean'],
         ];
     }

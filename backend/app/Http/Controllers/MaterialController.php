@@ -13,6 +13,7 @@ class MaterialController extends Controller
     public function index(): JsonResponse
     {
         $materiais = Material::query()
+            ->where('ativo', true)
             ->orderBy('nome')
             ->get();
 
@@ -32,7 +33,10 @@ class MaterialController extends Controller
 
     public function store(StoreMaterialRequest $request): JsonResponse
     {
-        $material = Material::create($request->validated());
+        $material = Material::create([
+            ...$request->validated(),
+            'ativo' => true,
+        ]);
 
         return response()->json([
             'message' => 'Material criado com sucesso.',

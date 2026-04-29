@@ -40,6 +40,12 @@ class AcolhidosApiTest extends TestCase
             'familia_id' => $familia->id,
             'setor_id' => $setor->id,
             'nome' => 'João da Silva',
+            'data_nascimento' => '1990-01-01',
+            'cpf' => '12345678901',
+            'telefone' => '47999999999',
+            'genero' => 'masculino',
+            'leito' => 'A1',
+            'observacoes' => 'Obs',
             'data_entrada' => now()->toDateString(),
         ]);
 
@@ -62,10 +68,14 @@ class AcolhidosApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.telefone', '47999999999');
 
-        $this->deleteJson("/api/acolhidos/{$acolhidoId}")
-            ->assertOk();
+        $this->postJson("/api/acolhidos/{$acolhidoId}/saida", [
+            'data_saida' => now()->toDateString(),
+            'tipo_saida' => 'alta',
+        ])
+            ->assertOk()
+            ->assertJsonPath('data.ativo', false);
 
-        $this->assertDatabaseMissing('acolhidos', ['id' => $acolhidoId]);
+        $this->assertDatabaseHas('acolhidos', ['id' => $acolhidoId]);
     }
 
     public function test_create_requires_nome_and_data_entrada(): void

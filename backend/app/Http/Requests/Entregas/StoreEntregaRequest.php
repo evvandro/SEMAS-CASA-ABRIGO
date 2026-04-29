@@ -25,4 +25,15 @@ class StoreEntregaRequest extends FormRequest
             'observacoes' => ['nullable', 'string'],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'familia_id.required_without' => 'Informe uma família ou um acolhido para registrar a entrega.',
+            'acolhido_id.required_without' => 'Informe uma família ou um acolhido para registrar a entrega.',
+        ];
+    }
 }
