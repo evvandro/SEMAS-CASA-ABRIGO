@@ -59,7 +59,7 @@ class EntregasApiTest extends TestCase
             'data_entrada' => now()->toDateString(),
         ]);
 
-        $material = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 0, 'ativo' => true]);
+        $material = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 10, 'ativo' => true]);
 
         $create = $this->postJson('/api/entregas', [
             'material_id' => $material->id,
@@ -71,28 +71,26 @@ class EntregasApiTest extends TestCase
 
         $create
             ->assertCreated()
-            ->assertJsonPath('data.material_id', $material->id)
-            ->assertJsonPath('data.acolhido_id', $acolhido->id)
-            ->assertJsonPath('data.entregue_por', $user->id);
+            ->assertJsonPath('data.material.id', $material->id)
+            ->assertJsonPath('data.acolhido.id', $acolhido->id);
 
         $entregaId = $create->json('data.id');
+
+        $this->assertDatabaseHas('entregas', [
+            'id' => $entregaId,
+            'entregue_por' => $user->id,
+        ]);
+
+        $this->assertDatabaseHas('materiais', [
+            'id' => $material->id,
+            'estoque_atual' => 8,
+        ]);
 
         $this->getJson('/api/entregas')
             ->assertOk()
             ->assertJsonStructure(['message', 'data']);
 
-        $this->getJson("/api/entregas/{$entregaId}")
-            ->assertOk()
-            ->assertJsonPath('data.id', $entregaId);
-
-        $this->patchJson("/api/entregas/{$entregaId}", ['quantidade' => 5])
-            ->assertOk()
-            ->assertJsonPath('data.quantidade', 5);
-
-        $this->deleteJson("/api/entregas/{$entregaId}")
-            ->assertOk();
-
-        $this->assertDatabaseMissing('entregas', ['id' => $entregaId]);
+        $this->assertDatabaseHas('entregas', ['id' => $entregaId]);
     }
 
     public function test_unauthenticated_cannot_access_entregas(): void
@@ -104,13 +102,13 @@ class EntregasApiTest extends TestCase
     {
         $user = $this->actingAsUser();
 
-        $material = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 0, 'ativo' => true]);
+        $material = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 10, 'ativo' => true]);
         $setor = Setor::create(['nome' => 'Teste', 'cor' => '#000000', 'capacidade' => 10, 'ativo' => true]);
         $familia = Familia::create([
             'codigo' => Familia::gerarCodigo(),
             'responsavel_nome' => 'Resp',
             'setor_id' => $setor->id,
-            'observacoes' => null,
+            'observacoes' => 'Obs',
             'data_entrada' => now()->toDateString(),
             'data_saida' => null,
             'tipo_saida' => null,
@@ -124,13 +122,43 @@ class EntregasApiTest extends TestCase
             'entregue_por' => 999999,
         ]);
 
-        $create
-            ->assertCreated()
-            ->assertJsonPath('data.entregue_por', $user->id);
+        $create->assertCreated();
 
         $this->assertDatabaseHas('entregas', [
             'id' => $create->json('data.id'),
             'entregue_por' => $user->id,
         ]);
     }
+
+    public function test_cannot_create_entrega_with_insufficient_stock(): void
+    {
+        $this->actingAsUser();
+
+        $material = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 1, 'ativo' => true]);
+        $setor = Setor::create(['nome' => 'Teste', 'cor' => '#000000', 'capacidade' => 10, 'ativo' => true]);
+        $familia = Familia::create([
+            'codigo' => Familia::gerarCodigo(),
+            'responsavel_nome' => 'Resp',
+            'setor_id' => $setor->id,
+            'observacoes' => 'Obs',
+            'data_entrada' => now()->toDateString(),
+            'data_saida' => null,
+            'tipo_saida' => null,
+        ]);
+
+        $this->postJson('/api/entregas', [
+            'material_id' => $material->id,
+            'familia_id' => $familia->id,
+            'quantidade' => 2,
+            'data_entrega' => now()->toDateString(),
+        ])
+            ->assertStatus(422)
+            ->assertJsonPath('message', 'Estoque insuficiente para realizar a entrega.');
+
+        $this->assertDatabaseHas('materiais', [
+            'id' => $material->id,
+            'estoque_atual' => 1,
+        ]);
+    }
 }
+

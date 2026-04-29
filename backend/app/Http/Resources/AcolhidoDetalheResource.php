@@ -8,11 +8,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property int $id
  */
-class AcolhidoResource extends JsonResource
+class AcolhidoDetalheResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
-     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -21,7 +19,6 @@ class AcolhidoResource extends JsonResource
             'id' => $this->id,
             'codigo_pulseira' => $this->codigo_pulseira,
             'nome' => $this->nome,
-            'leito' => $this->leito,
             'familia' => $this->whenLoaded('familia', function () {
                 return [
                     'id' => $this->familia?->id,
@@ -30,10 +27,15 @@ class AcolhidoResource extends JsonResource
                 ];
             }),
             'setor' => $this->whenLoaded('setor', fn () => new SetorResource($this->setor)),
+            'leito' => $this->leito,
             'data_entrada' => $this->data_entrada?->toDateString(),
             'data_saida' => $this->data_saida?->toDateString(),
             'ativo' => $this->data_saida === null,
+            'cpf' => $this->cpf,
+            'telefone' => $this->telefone,
+            'genero' => $this->genero,
+            'data_nascimento' => $this->data_nascimento?->toDateString(),
+            'observacoes' => $this->observacoes,
         ];
     }
 }
-

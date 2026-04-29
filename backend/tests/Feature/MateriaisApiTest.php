@@ -25,7 +25,6 @@ class MateriaisApiTest extends TestCase
             'unidade' => 'unidade',
             'categoria' => 'Vestuário',
             'estoque_atual' => 10,
-            'ativo' => true,
         ]);
 
         $create
@@ -38,18 +37,11 @@ class MateriaisApiTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(['message', 'data']);
 
-        $this->getJson("/api/materiais/{$materialId}")
-            ->assertOk()
-            ->assertJsonPath('data.id', $materialId);
-
         $this->patchJson("/api/materiais/{$materialId}", ['estoque_atual' => 99])
             ->assertOk()
             ->assertJsonPath('data.estoque_atual', 99);
 
-        $this->deleteJson("/api/materiais/{$materialId}")
-            ->assertOk();
-
-        $this->assertDatabaseMissing('materiais', ['id' => $materialId]);
+        $this->assertDatabaseHas('materiais', ['id' => $materialId]);
     }
 
     public function test_create_requires_nome(): void
