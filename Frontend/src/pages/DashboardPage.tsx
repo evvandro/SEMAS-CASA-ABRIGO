@@ -1,5 +1,6 @@
 import { Card, CardContent, Chip, Grid, Stack, Typography } from '@mui/material'
 import { useAuth } from '../auth/useAuth'
+import { SectionNavigation } from '../components/SectionNavigation'
 
 const cards = [
   {
@@ -21,6 +22,8 @@ export function DashboardPage() {
 
   return (
     <Stack spacing={3}>
+      <SectionNavigation />
+
       <Stack spacing={1}>
         <Typography variant="h4">Painel Inicial</Typography>
         <Typography color="text.secondary">
