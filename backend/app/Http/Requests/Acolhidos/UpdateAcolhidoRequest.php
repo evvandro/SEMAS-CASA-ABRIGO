@@ -18,11 +18,11 @@ class UpdateAcolhidoRequest extends FormRequest
      */
     public function rules(): array
     {
-        /** @var Acolhido $acolhido */
         $acolhido = $this->route('acolhido');
+        $acolhidoId = $acolhido instanceof Acolhido ? $acolhido->id : null;
 
         return [
-            'codigo_pulseira' => ['sometimes', 'string', 'max:8', Rule::unique('acolhidos', 'codigo_pulseira')->ignore($acolhido->id)],
+            'codigo_pulseira' => ['sometimes', 'string', 'max:8', Rule::unique('acolhidos', 'codigo_pulseira')->ignore($acolhidoId)],
             'familia_id' => ['sometimes', 'integer', 'exists:familias,id'],
             'setor_id' => ['sometimes', 'integer', 'exists:setores,id'],
             'nome' => ['sometimes', 'string', 'max:255'],
