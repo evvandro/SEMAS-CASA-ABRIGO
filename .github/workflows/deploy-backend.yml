@@ -13,4 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Render deploy
-        run: curl -s "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+        run: |
+          response=$(curl -s --fail-with-body \
+            -w "\n%{http_code}" \
+            "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          echo "HTTP $http_code"
+          echo "$body"
+          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
+            echo "Deploy hook returned HTTP $http_code"
+            exit 1
+          fi
+          echo "Deploy triggered successfully"
