@@ -1,11 +1,11 @@
 import { Paper, Box, Typography, Tooltip } from '@mui/material'
 import GridViewIcon from '@mui/icons-material/GridView'
 import { useMemo } from 'react'
-import { SECTORS } from '../data/sectors'
-import type { Acolhido } from '../types'
+import type { Acolhido, Sector } from '../types'
 
 interface Props {
   rows: Acolhido[]
+  sectors: Sector[]
   activeSectorId: string
   onSelectSector: (id: string) => void
 }
@@ -17,8 +17,8 @@ const cellBg = (pct: number) => {
   return '#FFFFFF'
 }
 
-export function SectorHeatmap({ rows, activeSectorId, onSelectSector }: Props) {
-  const data = useMemo(() => SECTORS.map(s => {
+export function SectorHeatmap({ rows, sectors, activeSectorId, onSelectSector }: Props) {
+  const data = useMemo(() => sectors.map(s => {
     const occupants = rows.filter(r => r.sectorId === s.id)
     const priority = occupants.filter(r => r.alerts.length > 0).length
     const occupied = occupants.length

@@ -1,8 +1,8 @@
 import { Box } from '@mui/material'
-import { SECTOR_MAP } from '../data/sectors'
+import type { Sector } from '../types'
 
-export function SectorPill({ sectorId }: { sectorId: string }) {
-  const s = SECTOR_MAP[sectorId]
+export function SectorPill({ sectorId, sectorMap }: { sectorId: string; sectorMap: Record<string, Sector> }) {
+  const s = sectorMap[sectorId]
   if (!s) return null
   return (
     <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, fontSize: 13 }}>

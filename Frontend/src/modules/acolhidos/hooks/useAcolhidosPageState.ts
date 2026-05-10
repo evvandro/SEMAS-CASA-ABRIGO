@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { MOCK_ACOLHIDOS } from '../data/mockAcolhidos'
-import type { Acolhido, AcolhidoAction, AcolhidosFilters, AlertCategory, CadastroPayload } from '../types'
-import { createAcolhidoFromCadastro } from '../utils/acolhidoFactory'
+import { createAcolhido, fetchAcolhidos, fetchSetores, toSector } from '../../../services/acolhidosService'
+import type { Acolhido, AcolhidoAction, AcolhidosFilters, AlertCategory, CadastroPayload, Sector } from '../types'
 
 const emptyFilters: AcolhidosFilters = {
   gestante: false,
@@ -11,14 +10,41 @@ const emptyFilters: AcolhidosFilters = {
 }
 
 export function useAcolhidosPageState() {
-  // TODO: substituir por api.get('/acolhidos') quando a integracao estiver pronta.
-  const [rows, setRows] = useState<Acolhido[]>(MOCK_ACOLHIDOS)
+  const [rows, setRows] = useState<Acolhido[]>([])
+  const [sectors, setSectors] = useState<Sector[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [filters, setFilters] = useState<AcolhidosFilters>(emptyFilters)
   const [sectorId, setSectorId] = useState('')
   const [fichaRow, setFichaRow] = useState<Acolhido | null>(null)
   const [cadastroOpen, setCadastroOpen] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+
+    const load = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const [acolhidos, rawSetores] = await Promise.all([fetchAcolhidos(), fetchSetores()])
+        if (!active) return
+        const built = rawSetores.map(s =>
+          toSector(s, acolhidos.filter(a => a.sectorId === String(s.id)).length),
+        )
+        setRows(acolhidos)
+        setSectors(built)
+      } catch {
+        if (active) setError('Não foi possível carregar os dados. Verifique a conexão.')
+      } finally {
+        if (active) setLoading(false)
+      }
+    }
+
+    void load()
+    return () => { active = false }
+  }, [])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -38,6 +64,11 @@ export function useAcolhidosPageState() {
     return () => document.removeEventListener('keydown', onKey)
   }, [cadastroOpen, fichaRow])
 
+  const sectorMap = useMemo(
+    () => Object.fromEntries(sectors.map(s => [s.id, s])),
+    [sectors],
+  )
+
   const filteredRows = useMemo(() => {
     const query = search.trim().toLowerCase()
     const activeAlerts = (Object.keys(filters) as AlertCategory[]).filter(key => filters[key])
@@ -51,10 +82,12 @@ export function useAcolhidosPageState() {
   }, [rows, search, filters, sectorId])
 
   const handleSave = async (payload: CadastroPayload) => {
-    // TODO: substituir por api.post('/acolhidos', payload) quando a integracao estiver pronta.
-    const newRow = createAcolhidoFromCadastro(payload)
+    const newRow = await createAcolhido(payload)
 
-    setRows(previousRows => [newRow, ...previousRows])
+    setRows(prev => [newRow, ...prev])
+    setSectors(prev =>
+      prev.map(s => s.id === newRow.sectorId ? { ...s, occupied: s.occupied + 1 } : s),
+    )
     setCadastroOpen(false)
     setToast(`${newRow.name.split(' ')[0]} acolhido(a) com sucesso`)
   }
@@ -65,12 +98,16 @@ export function useAcolhidosPageState() {
       return
     }
 
-    setToast(`Acao: ${action} - ${row.name.split(' ')[0]}`)
+    setToast(`Ação: ${action} — ${row.name.split(' ')[0]}`)
   }
 
   return {
     rows,
+    sectors,
+    sectorMap,
     filteredRows,
+    loading,
+    error,
     search,
     setSearch,
     filters,

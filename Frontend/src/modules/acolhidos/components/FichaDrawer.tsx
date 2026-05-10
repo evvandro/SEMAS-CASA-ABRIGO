@@ -14,23 +14,23 @@ import Inventory2Icon from '@mui/icons-material/Inventory2'
 import NotesIcon from '@mui/icons-material/Notes'
 import AddIcon from '@mui/icons-material/Add'
 import { ALERT_META } from './AlertBadges'
-import { SECTOR_MAP } from '../data/sectors'
-import type { Acolhido, CadastroAction } from '../types'
+import type { Acolhido, CadastroAction, Sector } from '../types'
 import { formatDateTime } from '../utils/date'
 
 const initials = (n: string) => n.split(' ').filter(Boolean).slice(0, 2).map(s => s[0]).join('').toUpperCase()
 
-export function FichaDrawer({ row, onClose, onAction }: {
+export function FichaDrawer({ row, onClose, onAction, sectorMap = {} }: {
   row: Acolhido | null
   onClose: () => void
   onAction: (action: CadastroAction, row: Acolhido) => void
+  sectorMap?: Record<string, Sector>
 }) {
   const [tab, setTab] = useState(0)
   const open = !!row
   if (!row) {
     return <Drawer anchor="right" open={false} onClose={onClose} />
   }
-  const sector = SECTOR_MAP[row.sectorId]
+  const sector = sectorMap[row.sectorId]
 
   const history = [
     { date: row.entry, title: 'Entrada na unidade', desc: `Triagem realizada · alocado em ${sector?.name}` },
@@ -45,7 +45,7 @@ export function FichaDrawer({ row, onClose, onAction }: {
     { name: 'Cobertor térmico',    sub: 'Tamanho casal',                    qty: '2 un.', date: row.entry },
     { name: 'Refeição completa',   sub: 'Almoço + jantar',                  qty: '4 un.', date: '2026-04-21T12:00' },
     ...(row.alerts.includes('cronica') ? [{ name: 'Medicação prescrita', sub: 'Hipertensão · 2x ao dia', qty: '7 dias', date: row.entry }] : []),
-    ...(row.family > 1 ? [{ name: 'Kit familiar', sub: `${row.family} pessoas`, qty: '1 un.', date: row.entry }] : []),
+    ...((row.family ?? 0) > 1 ? [{ name: 'Kit familiar', sub: `${row.family} pessoas`, qty: '1 un.', date: row.entry }] : []),
   ]
 
   return (
@@ -129,7 +129,7 @@ export function FichaDrawer({ row, onClose, onAction }: {
             <Grid2>
               <Detail label="Data de entrada" value={formatDateTime(row.entry)} />
               <Detail label="Setor" value={`${sector?.name} — ${sector?.sub}`} />
-              <Detail label="Família" value={`${row.family} ${row.family > 1 ? 'pessoas' : 'pessoa'}`} />
+              {row.family != null && <Detail label="Família" value={`${row.family} ${row.family > 1 ? 'pessoas' : 'pessoa'}`} />}
               <Detail label="Responsável" value="Luana Martins" />
             </Grid2>
 

@@ -9,8 +9,7 @@ import AccessibleIcon from '@mui/icons-material/Accessible'
 import PregnantWomanIcon from '@mui/icons-material/PregnantWoman'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import ElderlyIcon from '@mui/icons-material/Elderly'
-import { SECTORS } from '../data/sectors'
-import type { AcolhidosFilters } from '../types'
+import type { AcolhidosFilters, Sector } from '../types'
 
 export type Filters = AcolhidosFilters
 
@@ -21,11 +20,12 @@ interface Props {
   onFilters: (f: Filters) => void
   sectorId: string
   onSector: (id: string) => void
+  sectors: Sector[]
   count: number
   onNew: () => void
 }
 
-export function AcolhidosToolbar({ search, onSearch, filters, onFilters, sectorId, onSector, count, onNew }: Props) {
+export function AcolhidosToolbar({ search, onSearch, filters, onFilters, sectorId, onSector, sectors, count, onNew }: Props) {
   const toggle = (k: keyof Filters) => onFilters({ ...filters, [k]: !filters[k] })
   const hasFilters = Object.values(filters).some(Boolean) || !!sectorId || !!search
   const clear = () => { onSearch(''); onFilters({ gestante: false, pcd: false, cronica: false, idoso: false }); onSector('') }
@@ -97,8 +97,8 @@ export function AcolhidosToolbar({ search, onSearch, filters, onFilters, sectorI
         sx={{ minWidth: 200, borderRadius: 999, '& .MuiSelect-select': { py: 0.6 } }}
       >
         <MenuItem value="">Todos os setores</MenuItem>
-        {SECTORS.map(s => (
-          <MenuItem key={s.id} value={s.id}>{s.name} — {s.sub}</MenuItem>
+        {sectors.map(s => (
+          <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>
         ))}
       </Select>
 

@@ -7,14 +7,14 @@ export type CadastroAction = Exclude<AcolhidoAction, 'view'>
 export type AcolhidosFilters = Record<AlertCategory, boolean>
 
 export interface Acolhido {
-  id: string             // ex. 'AC-0234'
+  id: string             // codigo_pulseira ou String(id)
   name: string
   cpf: string            // formatado: '000.000.000-00'
   age: number
-  sectorId: string       // FK para Sector.id
+  sectorId: string       // String(setor.id) da API
   alerts: AlertCategory[]
-  entry: string          // ISO datetime
-  family: number
+  entry: string          // ISO date
+  family?: number
 }
 
 export interface Sector {

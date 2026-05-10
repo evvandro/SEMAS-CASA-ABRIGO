@@ -10,8 +10,7 @@ import PrintIcon from '@mui/icons-material/Print'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { AlertBadges } from './AlertBadges'
 import { SectorPill } from './SectorPill'
-import { SECTOR_MAP } from '../data/sectors'
-import type { Acolhido, AcolhidoAction } from '../types'
+import type { Acolhido, AcolhidoAction, Sector } from '../types'
 import { formatDateTime } from '../utils/date'
 
 type SortKey = 'id' | 'name' | 'age' | 'sectorId' | 'entry'
@@ -19,11 +18,12 @@ type Sort = { by: SortKey; dir: 'asc' | 'desc' }
 
 interface Props {
   rows: Acolhido[]
+  sectorMap: Record<string, Sector>
   onRowClick: (row: Acolhido) => void
   onAction: (action: AcolhidoAction, row: Acolhido) => void
 }
 
-export function AcolhidosTable({ rows, onRowClick, onAction }: Props) {
+export function AcolhidosTable({ rows, sectorMap, onRowClick, onAction }: Props) {
   const [sort, setSort] = useState<Sort>({ by: 'entry', dir: 'desc' })
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
@@ -34,8 +34,8 @@ export function AcolhidosTable({ rows, onRowClick, onAction }: Props) {
       let av: string | number = a[sort.by]
       let bv: string | number = b[sort.by]
       if (sort.by === 'sectorId') {
-        av = SECTOR_MAP[a.sectorId]?.name ?? ''
-        bv = SECTOR_MAP[b.sectorId]?.name ?? ''
+        av = sectorMap[a.sectorId]?.name ?? ''
+        bv = sectorMap[b.sectorId]?.name ?? ''
       }
       if (typeof av === 'string') av = av.toLowerCase()
       if (typeof bv === 'string') bv = bv.toLowerCase()
@@ -78,11 +78,11 @@ export function AcolhidosTable({ rows, onRowClick, onAction }: Props) {
               <TableCell>
                 <Box sx={{ fontWeight: 500 }}>{r.name}</Box>
                 <Box sx={{ fontSize: 11.5, color: 'text.secondary' }}>
-                  CPF {r.cpf} · Família de {r.family}
+                  CPF {r.cpf}
                 </Box>
               </TableCell>
               <TableCell>{r.age} anos</TableCell>
-              <TableCell><SectorPill sectorId={r.sectorId} /></TableCell>
+              <TableCell><SectorPill sectorId={r.sectorId} sectorMap={sectorMap} /></TableCell>
               <TableCell><AlertBadges alerts={r.alerts} /></TableCell>
               <TableCell sx={{ fontFamily: 'ui-monospace, monospace', fontSize: 12.5, color: 'text.secondary' }}>
                 {formatDateTime(r.entry)}

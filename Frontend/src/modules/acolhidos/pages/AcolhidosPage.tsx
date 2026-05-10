@@ -1,4 +1,4 @@
-import { Box, Typography, Snackbar, Alert } from '@mui/material'
+import { Alert, Box, CircularProgress, Snackbar, Typography } from '@mui/material'
 import { AcolhidosTable } from '../components/AcolhidosTable'
 import { AcolhidosToolbar } from '../components/AcolhidosToolbar'
 import { CadastroDrawer } from '../components/CadastroDrawer'
@@ -8,6 +8,22 @@ import { useAcolhidosPageState } from '../hooks/useAcolhidosPageState'
 
 export function AcolhidosPage() {
   const state = useAcolhidosPageState()
+
+  if (state.loading) {
+    return (
+      <Box sx={{ display: 'grid', placeItems: 'center', height: 300 }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
+
+  if (state.error) {
+    return (
+      <Box sx={{ mt: 2 }}>
+        <Alert severity="error">{state.error}</Alert>
+      </Box>
+    )
+  }
 
   return (
     <Box>
@@ -22,20 +38,28 @@ export function AcolhidosPage() {
         search={state.search} onSearch={state.setSearch}
         filters={state.filters} onFilters={state.setFilters}
         sectorId={state.sectorId} onSector={state.setSectorId}
+        sectors={state.sectors}
         count={state.filteredRows.length}
         onNew={() => state.setCadastroOpen(true)}
       />
 
       <AcolhidosTable
         rows={state.filteredRows}
+        sectorMap={state.sectorMap}
         onRowClick={state.setFichaRow}
         onAction={(action, row) => action === 'view' ? state.setFichaRow(row) : state.handleAction(action, row)}
       />
 
-      <SectorHeatmap rows={state.rows} activeSectorId={state.sectorId} onSelectSector={state.setSectorId} />
+      <SectorHeatmap
+        rows={state.rows}
+        sectors={state.sectors}
+        activeSectorId={state.sectorId}
+        onSelectSector={state.setSectorId}
+      />
 
       <FichaDrawer
         row={state.fichaRow}
+        sectorMap={state.sectorMap}
         onClose={() => state.setFichaRow(null)}
         onAction={(action, row) => { state.setFichaRow(null); state.handleAction(action, row) }}
       />
@@ -44,6 +68,7 @@ export function AcolhidosPage() {
         open={state.cadastroOpen}
         onClose={() => state.setCadastroOpen(false)}
         onSave={state.handleSave}
+        sectors={state.sectors}
       />
 
       <Snackbar open={!!state.toast} autoHideDuration={2800} onClose={() => state.setToast(null)}

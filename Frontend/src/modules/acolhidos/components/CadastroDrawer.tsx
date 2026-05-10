@@ -4,9 +4,8 @@ import {
   FormControlLabel, Checkbox,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { SECTORS } from '../data/sectors'
 import { cadastroSchema } from '../schemas/cadastroSchema'
-import type { CadastroPayload } from '../types'
+import type { CadastroPayload, Sector } from '../types'
 import { formatCpf, formatDateInput } from '../utils/formFormatters'
 
 const empty: CadastroPayload = {
@@ -15,10 +14,11 @@ const empty: CadastroPayload = {
   sectorId: '', notes: '',
 }
 
-export function CadastroDrawer({ open, onClose, onSave }: {
+export function CadastroDrawer({ open, onClose, onSave, sectors }: {
   open: boolean
   onClose: () => void
   onSave: (payload: CadastroPayload) => void | Promise<void>
+  sectors: Sector[]
 }) {
   const [form, setForm] = useState<CadastroPayload>(empty)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -143,7 +143,7 @@ export function CadastroDrawer({ open, onClose, onSave }: {
 
           <SectionLabel n={3} title="Alocação de setor" />
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, mb: 1 }}>
-            {SECTORS.map(s => {
+            {sectors.map(s => {
               const full = s.occupied >= s.capacity
               const active = form.sectorId === s.id
               return (
