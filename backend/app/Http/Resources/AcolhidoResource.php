@@ -21,7 +21,13 @@ class AcolhidoResource extends JsonResource
             'id' => $this->id,
             'codigo_pulseira' => $this->codigo_pulseira,
             'nome' => $this->nome,
+            'cpf' => $this->cpf,
+            'data_nascimento' => $this->data_nascimento?->toDateString(),
             'leito' => $this->leito,
+            'pcd' => (bool) $this->pcd,
+            'gestante' => (bool) $this->gestante,
+            'cronica' => (bool) $this->cronica,
+            'idoso' => (bool) $this->idoso,
             'familia' => $this->whenLoaded('familia', function () {
                 return [
                     'id' => $this->familia?->id,

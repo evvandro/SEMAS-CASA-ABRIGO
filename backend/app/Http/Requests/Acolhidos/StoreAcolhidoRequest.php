@@ -19,17 +19,21 @@ class StoreAcolhidoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codigo_pulseira' => ['sometimes', 'string', 'max:8', Rule::unique('acolhidos', 'codigo_pulseira')],
-            'familia_id' => ['required', 'integer', 'exists:familias,id'],
-            'setor_id' => ['required', 'integer', 'exists:setores,id'],
-            'nome' => ['required', 'string', 'max:255'],
+            'codigo_pulseira' => ['sometimes', 'nullable', 'string', 'max:8', Rule::unique('acolhidos', 'codigo_pulseira')],
+            'familia_id'      => ['nullable', 'integer', 'exists:familias,id'],
+            'setor_id'        => ['required', 'integer', 'exists:setores,id'],
+            'nome'            => ['required', 'string', 'max:255'],
             'data_nascimento' => ['required', 'date'],
-            'cpf' => ['required', 'string', 'max:20'],
-            'telefone' => ['required', 'string', 'max:20'],
-            'genero' => ['required', 'string', 'max:30'],
-            'leito' => ['required', 'string', 'max:30'],
-            'observacoes' => ['required', 'string'],
-            'data_entrada' => ['required', 'date'],
+            'cpf'             => ['required', 'string', 'max:20'],
+            'telefone'        => ['nullable', 'string', 'max:20'],
+            'genero'          => ['nullable', 'string', 'max:30'],
+            'leito'           => ['nullable', 'string', 'max:30'],
+            'observacoes'     => ['nullable', 'string'],
+            'data_entrada'    => ['nullable', 'date'],
+            'pcd'             => ['nullable', 'boolean'],
+            'gestante'        => ['nullable', 'boolean'],
+            'cronica'         => ['nullable', 'boolean'],
+            'idoso'           => ['nullable', 'boolean'],
         ];
     }
 
@@ -40,8 +44,12 @@ class StoreAcolhidoRequest extends FormRequest
     {
         $data = parent::validated($key, $default);
 
-        if (! array_key_exists('codigo_pulseira', $data) || $data['codigo_pulseira'] === null || $data['codigo_pulseira'] === '') {
+        if (empty($data['codigo_pulseira'])) {
             $data['codigo_pulseira'] = Acolhido::gerarCodigoPulseira();
+        }
+
+        if (empty($data['data_entrada'])) {
+            $data['data_entrada'] = now()->toDateString();
         }
 
         $data['data_saida'] = null;
