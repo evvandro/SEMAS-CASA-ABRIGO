@@ -42,4 +42,3 @@ class AcolhidoResource extends JsonResource
         ];
     }
 }
-

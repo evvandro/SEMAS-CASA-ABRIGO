@@ -20,20 +20,20 @@ class StoreAcolhidoRequest extends FormRequest
     {
         return [
             'codigo_pulseira' => ['sometimes', 'nullable', 'string', 'max:8', Rule::unique('acolhidos', 'codigo_pulseira')],
-            'familia_id'      => ['nullable', 'integer', 'exists:familias,id'],
-            'setor_id'        => ['required', 'integer', 'exists:setores,id'],
-            'nome'            => ['required', 'string', 'max:255'],
+            'familia_id' => ['nullable', 'integer', 'exists:familias,id'],
+            'setor_id' => ['required', 'integer', 'exists:setores,id'],
+            'nome' => ['required', 'string', 'max:255'],
             'data_nascimento' => ['required', 'date'],
-            'cpf'             => ['required', 'string', 'max:20'],
-            'telefone'        => ['nullable', 'string', 'max:20'],
-            'genero'          => ['nullable', 'string', 'max:30'],
-            'leito'           => ['nullable', 'string', 'max:30'],
-            'observacoes'     => ['nullable', 'string'],
-            'data_entrada'    => ['nullable', 'date'],
-            'pcd'             => ['nullable', 'boolean'],
-            'gestante'        => ['nullable', 'boolean'],
-            'cronica'         => ['nullable', 'boolean'],
-            'idoso'           => ['nullable', 'boolean'],
+            'cpf' => ['required', 'string', 'max:20'],
+            'telefone' => ['nullable', 'string', 'max:20'],
+            'genero' => ['nullable', 'string', 'max:30'],
+            'leito' => ['nullable', 'string', 'max:30'],
+            'observacoes' => ['nullable', 'string'],
+            'data_entrada' => ['nullable', 'date'],
+            'pcd' => ['nullable', 'boolean'],
+            'gestante' => ['nullable', 'boolean'],
+            'cronica' => ['nullable', 'boolean'],
+            'idoso' => ['nullable', 'boolean'],
         ];
     }
 
