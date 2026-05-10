@@ -24,7 +24,7 @@ export function SectorHeatmap({ rows, sectors, activeSectorId, onSelectSector }:
     const occupied = occupants.length
     const pct = Math.round((occupied / s.capacity) * 100)
     return { ...s, occupied, priority, pct }
-  }), [rows])
+  }), [rows, sectors])
 
   const totalOccupied = data.reduce((a, s) => a + s.occupied, 0)
   const totalCapacity = data.reduce((a, s) => a + s.capacity, 0)

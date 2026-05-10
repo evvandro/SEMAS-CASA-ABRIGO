@@ -44,7 +44,7 @@ export function AcolhidosTable({ rows, sectorMap, onRowClick, onAction }: Props)
       return 0
     })
     return out
-  }, [rows, sort])
+  }, [rows, sort, sectorMap])
 
   const pageRows = sorted.slice(page * pageSize, page * pageSize + pageSize)
 
