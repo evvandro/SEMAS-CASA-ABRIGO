@@ -9,23 +9,32 @@ import GridViewIcon from '@mui/icons-material/GridView'
 import Inventory2Icon from '@mui/icons-material/Inventory2'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import { useEffect, useState } from 'react'
 import { useAuth } from '../auth/useAuth'
+import { api } from '../services/api'
 
 const SIDEBAR_W = 220
 const HEADER_H = { xs: 72, sm: 80 }
 
 const NAV = [
-  { id: 'dashboard', label: 'Início',    icon: HomeIcon,        path: '/dashboard' },
-  { id: 'acolhidos', label: 'Acolhidos', icon: GroupIcon,       path: '/acolhidos', count: 92 },
-  { id: 'setores',   label: 'Setores',   icon: GridViewIcon,    path: '/setores' },
-  { id: 'estoque',   label: 'Estoque',   icon: Inventory2Icon,  path: '/estoque' },
-  { id: 'saidas',    label: 'Saídas',    icon: ExitToAppIcon,   path: '/saidas' },
+  { id: 'dashboard', label: 'Início',    icon: HomeIcon,       path: '/dashboard' },
+  { id: 'acolhidos', label: 'Acolhidos', icon: GroupIcon,      path: '/acolhidos' },
+  { id: 'setores',   label: 'Setores',   icon: GridViewIcon,   path: '/setores' },
+  { id: 'estoque',   label: 'Estoque',   icon: Inventory2Icon, path: '/estoque' },
+  { id: 'saidas',    label: 'Saídas',    icon: ExitToAppIcon,  path: '/saidas' },
 ]
 
 export function AppLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const [acolhidosAtivos, setAcolhidosAtivos] = useState<number | null>(null)
+
+  useEffect(() => {
+    api.get<{ data: { acolhidos_ativos: number } }>('/dashboard')
+      .then(res => setAcolhidosAtivos(res.data.data.acolhidos_ativos))
+      .catch(() => null)
+  }, [])
 
   const handleLogout = async () => {
     await logout()
@@ -100,9 +109,9 @@ export function AppLayout() {
                     primary={item.label}
                     slotProps={{ primary: { sx: { fontSize: 13.5, fontWeight: 500 } } }}
                   />
-                  {item.count != null && (
+                  {item.id === 'acolhidos' && acolhidosAtivos != null && (
                     <Typography variant="caption" sx={{ color: active ? 'primary.main' : 'text.disabled' }}>
-                      {item.count}
+                      {acolhidosAtivos}
                     </Typography>
                   )}
                 </ListItemButton>
