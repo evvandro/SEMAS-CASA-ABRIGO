@@ -20,6 +20,7 @@ class SetorResource extends JsonResource
             'nome' => $this->nome,
             'cor' => $this->cor,
             'capacidade' => $this->capacidade,
+            'ativo' => $this->ativo,
         ];
     }
 }
