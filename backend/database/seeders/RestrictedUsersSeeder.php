@@ -12,17 +12,17 @@ class RestrictedUsersSeeder extends Seeder
     {
         $users = [
             [
-                'name'      => env('ADMIN_SEMAS_NAME', 'Administrador SEMAS'),
-                'email'     => env('ADMIN_SEMAS_EMAIL', 'adm@semas.gov'),
-                'password'  => env('ADMIN_SEMAS_PASSWORD', ''),
-                'role'      => User::ROLE_ADMIN,
+                'name' => env('ADMIN_SEMAS_NAME', 'Administrador SEMAS'),
+                'email' => env('ADMIN_SEMAS_EMAIL', 'adm@semas.gov'),
+                'password' => env('ADMIN_SEMAS_PASSWORD', ''),
+                'role' => User::ROLE_ADMIN,
                 'is_active' => true,
             ],
             [
-                'name'      => env('ADMIN_DEV_NAME', 'Evandro Cieslinsky'),
-                'email'     => env('ADMIN_DEV_EMAIL', 'evandro.cieslinsky@univille.br'),
-                'password'  => env('ADMIN_DEV_PASSWORD', ''),
-                'role'      => User::ROLE_ADMIN,
+                'name' => env('ADMIN_DEV_NAME', 'Evandro Cieslinsky'),
+                'email' => env('ADMIN_DEV_EMAIL', 'evandro.cieslinsky@univille.br'),
+                'password' => env('ADMIN_DEV_PASSWORD', ''),
+                'role' => User::ROLE_ADMIN,
                 'is_active' => true,
             ],
         ];
@@ -35,11 +35,11 @@ class RestrictedUsersSeeder extends Seeder
             User::updateOrCreate(
                 ['email' => $userData['email']],
                 [
-                    'name'      => $userData['name'],
-                    'password'  => Hash::make($userData['password']),
-                    'role'      => $userData['role'],
+                    'name' => $userData['name'],
+                    'password' => Hash::make($userData['password']),
+                    'role' => $userData['role'],
                     'is_active' => $userData['is_active'],
-                    'phone'     => null,
+                    'phone' => null,
                     'documento' => null,
                 ]
             );
