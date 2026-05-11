@@ -8,53 +8,30 @@ use Illuminate\Support\Facades\Hash;
 
 class RestrictedUsersSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        $basePassword = env('DEFAULT_RESTRICTED_PASSWORD', 'Univille@');
-
         $users = [
             [
-                'name' => env('ADMIN_NAME', 'Administrador SEMAS'),
-                'email' => env('ADMIN_EMAIL', 'admin@semas.sbs.gov.br'),
-                'password' => env('ADMIN_PASSWORD', $basePassword),
+                'name' => env('ADMIN_SEMAS_NAME', 'Administrador SEMAS'),
+                'email' => env('ADMIN_SEMAS_EMAIL', 'adm@semas.gov'),
+                'password' => env('ADMIN_SEMAS_PASSWORD', ''),
                 'role' => User::ROLE_ADMIN,
                 'is_active' => true,
-                'phone' => null,
-                'documento' => null,
             ],
             [
-                'name' => 'Equipe Técnica',
-                'email' => 'tecnico@semas.sbs.gov.br',
-                'password' => $basePassword,
-                'role' => User::ROLE_TECNICO,
+                'name' => env('ADMIN_DEV_NAME', 'Evandro Cieslinsky'),
+                'email' => env('ADMIN_DEV_EMAIL', 'evandro.cieslinsky@univille.br'),
+                'password' => env('ADMIN_DEV_PASSWORD', ''),
+                'role' => User::ROLE_ADMIN,
                 'is_active' => true,
-                'phone' => null,
-                'documento' => null,
-            ],
-            [
-                'name' => 'Equipe Logística',
-                'email' => 'logistica@semas.sbs.gov.br',
-                'password' => $basePassword,
-                'role' => User::ROLE_LOGISTICA,
-                'is_active' => true,
-                'phone' => null,
-                'documento' => null,
-            ],
-            [
-                'name' => 'Equipe Saúde',
-                'email' => 'saude@semas.sbs.gov.br',
-                'password' => $basePassword,
-                'role' => User::ROLE_SAUDE,
-                'is_active' => true,
-                'phone' => null,
-                'documento' => null,
             ],
         ];
 
         foreach ($users as $userData) {
+            if ($userData['password'] === '') {
+                continue;
+            }
+
             User::updateOrCreate(
                 ['email' => $userData['email']],
                 [
@@ -62,8 +39,8 @@ class RestrictedUsersSeeder extends Seeder
                     'password' => Hash::make($userData['password']),
                     'role' => $userData['role'],
                     'is_active' => $userData['is_active'],
-                    'phone' => $userData['phone'],
-                    'documento' => $userData['documento'],
+                    'phone' => null,
+                    'documento' => null,
                 ]
             );
         }
