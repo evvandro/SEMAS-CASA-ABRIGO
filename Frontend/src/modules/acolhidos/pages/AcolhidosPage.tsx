@@ -1,4 +1,5 @@
 import { Alert, Box, CircularProgress, Snackbar, Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import { AcolhidosTable } from '../components/AcolhidosTable'
 import { AcolhidosToolbar } from '../components/AcolhidosToolbar'
 import { CadastroDrawer } from '../components/CadastroDrawer'
@@ -8,6 +9,7 @@ import { useAcolhidosPageState } from '../hooks/useAcolhidosPageState'
 
 export function AcolhidosPage() {
   const state = useAcolhidosPageState()
+  const navigate = useNavigate()
 
   if (state.loading) {
     return (
@@ -41,6 +43,7 @@ export function AcolhidosPage() {
         sectors={state.sectors}
         count={state.filteredRows.length}
         onNew={() => state.setCadastroOpen(true)}
+        onFullRegistration={() => navigate('/acolhidos/cadastros')}
       />
 
       <AcolhidosTable

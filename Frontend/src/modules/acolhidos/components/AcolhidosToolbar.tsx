@@ -1,10 +1,13 @@
 import {
   Paper, Box, TextField, InputAdornment, Chip, Select, MenuItem,
-  Button, Typography,
+  Button, Typography, Menu, ListItemIcon, ListItemText,
 } from '@mui/material'
+import { useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import AssignmentIcon from '@mui/icons-material/Assignment'
 import AccessibleIcon from '@mui/icons-material/Accessible'
 import PregnantWomanIcon from '@mui/icons-material/PregnantWoman'
 import FavoriteIcon from '@mui/icons-material/Favorite'
@@ -23,12 +26,36 @@ interface Props {
   sectors: Sector[]
   count: number
   onNew: () => void
+  onFullRegistration: () => void
 }
 
-export function AcolhidosToolbar({ search, onSearch, filters, onFilters, sectorId, onSector, sectors, count, onNew }: Props) {
+export function AcolhidosToolbar({
+  search,
+  onSearch,
+  filters,
+  onFilters,
+  sectorId,
+  onSector,
+  sectors,
+  count,
+  onNew,
+  onFullRegistration,
+}: Props) {
+  const [newMenuAnchor, setNewMenuAnchor] = useState<null | HTMLElement>(null)
   const toggle = (k: keyof Filters) => onFilters({ ...filters, [k]: !filters[k] })
   const hasFilters = Object.values(filters).some(Boolean) || !!sectorId || !!search
   const clear = () => { onSearch(''); onFilters({ gestante: false, pcd: false, cronica: false, idoso: false }); onSector('') }
+  const closeNewMenu = () => setNewMenuAnchor(null)
+
+  const handleQuickRegistration = () => {
+    closeNewMenu()
+    onNew()
+  }
+
+  const handleFullRegistration = () => {
+    closeNewMenu()
+    onFullRegistration()
+  }
 
   return (
     <Paper variant="outlined" sx={{ p: 1.5, mb: 2, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', borderRadius: 2 }}>
@@ -112,9 +139,36 @@ export function AcolhidosToolbar({ search, onSearch, filters, onFilters, sectorI
         <Typography variant="caption">
           {count} {count === 1 ? 'pessoa' : 'pessoas'}
         </Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={onNew}>
-          Cadastro rápido
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          endIcon={<KeyboardArrowDownIcon />}
+          onClick={event => setNewMenuAnchor(event.currentTarget)}
+          aria-haspopup="menu"
+          aria-expanded={newMenuAnchor ? 'true' : undefined}
+        >
+          Novo cadastro
         </Button>
+        <Menu
+          anchorEl={newMenuAnchor}
+          open={Boolean(newMenuAnchor)}
+          onClose={closeNewMenu}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <MenuItem onClick={handleQuickRegistration}>
+            <ListItemIcon>
+              <AddIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary="Cadastro rapido" secondary="Ficha essencial em drawer" />
+          </MenuItem>
+          <MenuItem onClick={handleFullRegistration}>
+            <ListItemIcon>
+              <AssignmentIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary="Cadastro completo" secondary="Abrir aba de cadastros" />
+          </MenuItem>
+        </Menu>
       </Box>
     </Paper>
   )

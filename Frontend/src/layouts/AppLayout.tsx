@@ -32,7 +32,6 @@ const NAV = [
     submodules: [
       { label: 'Acolhidos', path: '/acolhidos' },
       { label: 'Gestão', path: '/acolhidos/gestao' },
-      { label: 'Cadastros', path: '/acolhidos/cadastros' },
     ],
   },
   {

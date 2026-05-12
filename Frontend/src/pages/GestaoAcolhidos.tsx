@@ -1,4 +1,4 @@
-import { AlertTitle, Button, Card, CardContent, Chip, Grid, Stack, Typography } from '@mui/material'
+import { Button, Card, CardContent, Grid, Stack, Typography } from '@mui/material'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 
 const indicadores = [
