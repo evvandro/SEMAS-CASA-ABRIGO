@@ -43,6 +43,12 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/entregas', [EntregaController::class, 'store']);
     });
 
+    Route::middleware('admin')->group(function (): void {
+        Route::post('/setores', [SetorController::class, 'store']);
+        Route::patch('/setores/{setor}', [SetorController::class, 'update']);
+        Route::delete('/setores/{setor}', [SetorController::class, 'destroy']);
+    });
+
     // Rotas exclusivas do administrador
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');

@@ -16,8 +16,16 @@ class AcolhidoController extends Controller
     public function index(Request $request): JsonResponse
     {
         $acolhidos = Acolhido::query()
+            ->select([
+                'id', 'codigo_pulseira', 'nome', 'cpf', 'data_nascimento',
+                'leito', 'pcd', 'gestante', 'cronica', 'idoso',
+                'familia_id', 'setor_id', 'data_entrada', 'data_saida',
+            ])
             ->whereNull('data_saida')
-            ->with(['familia', 'setor'])
+            ->with([
+                'familia:id,codigo,responsavel_nome',
+                'setor:id,nome,cor,capacidade,ativo',
+            ])
             ->when($request->filled('setor_id'), fn ($q) => $q->where('setor_id', (int) $request->get('setor_id')))
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = (string) $request->get('search');

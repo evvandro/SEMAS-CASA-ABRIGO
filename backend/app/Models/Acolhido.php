@@ -54,7 +54,7 @@ class Acolhido extends Model
     public static function gerarCodigoPulseira(): string
     {
         return DB::transaction(function () {
-            $ultimo = static::lockForUpdate()->max('id') ?? 0;
+            $ultimo = static::orderByDesc('id')->lockForUpdate()->value('id') ?? 0;
 
             return str_pad($ultimo + 1, 4, '0', STR_PAD_LEFT);
         });

@@ -77,8 +77,8 @@ export function CadastroDrawer({ open, onClose, onSave, sectors }: {
       <Box onKeyDown={onKeyDown} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ p: 2.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid', borderColor: 'divider' }}>
           <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Novo Cadastro</Typography>
-            <Typography variant="caption">Ficha de Entrada · preencha o essencial, complemente depois</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Cadastro rápido</Typography>
+            <Typography variant="caption">Entrada com dados essenciais</Typography>
           </Box>
           <IconButton onClick={handleClose}><CloseIcon /></IconButton>
         </Box>
@@ -191,7 +191,7 @@ export function CadastroDrawer({ open, onClose, onSave, sectors }: {
 
         <Divider />
         <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
-          <Typography variant="caption">Esc para cancelar · ⌘ Enter para salvar</Typography>
+          <Typography variant="caption" color="text.secondary">Ficha de entrada simplificada</Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button onClick={handleClose} disabled={submitting}>Cancelar</Button>
             <Button variant="contained" onClick={submit} disabled={submitting}>
