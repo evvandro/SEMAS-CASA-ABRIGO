@@ -21,9 +21,11 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/acolhidos" element={<AcolhidosPage />} />
+          <Route path="/acolhidos/gestao" element={<ManagementPage />} />
+          <Route path="/acolhidos/cadastros" element={<CadastrosPage />} />
           <Route path="/setores" element={<SetoresPage />} />
-          <Route path="/gestao" element={<ManagementPage />} />
-          <Route path="/cadastros" element={<CadastrosPage />} />
+          <Route path="/gestao" element={<Navigate to="/acolhidos/gestao" replace />} />
+          <Route path="/cadastros" element={<Navigate to="/acolhidos/cadastros" replace />} />
         </Route>
       </Route>
 

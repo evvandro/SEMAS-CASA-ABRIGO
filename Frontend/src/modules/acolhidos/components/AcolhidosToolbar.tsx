@@ -113,7 +113,7 @@ export function AcolhidosToolbar({ search, onSearch, filters, onFilters, sectorI
           {count} {count === 1 ? 'pessoa' : 'pessoas'}
         </Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={onNew}>
-          Novo Cadastro
+          Cadastro rápido
         </Button>
       </Box>
     </Paper>
