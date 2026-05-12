@@ -19,17 +19,17 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        /** @var User $user */
         $user = $this->route('user');
+        $userId = $user instanceof User ? $user->id : null;
 
         return [
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'email', Rule::unique('users')->ignore($user->id)],
+            'email' => ['sometimes', 'email', Rule::unique('users')->ignore($userId)],
             'password' => ['sometimes', Password::min(6)->mixedCase()->symbols()],
             'role' => ['sometimes', 'in:'.implode(',', User::roles())],
             'is_active' => ['sometimes', 'boolean'],
             'phone' => ['sometimes', 'nullable', 'string', 'max:30'],
-            'documento' => ['sometimes', 'nullable', 'string', 'size:11', Rule::unique('users')->ignore($user->id)],
+            'documento' => ['sometimes', 'nullable', 'string', 'size:11', Rule::unique('users')->ignore($userId)],
         ];
     }
 }

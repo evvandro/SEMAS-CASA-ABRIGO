@@ -1,6 +1,14 @@
 import { AppBar, Button, Toolbar, Typography } from '@mui/material'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 
+const NAV_LINKS = [
+  { label: 'Dashboard', path: '/dashboard' },
+  { label: 'Acolhidos', path: '/acolhidos' },
+  { label: 'Setores', path: '/setores' },
+  { label: 'Gestão', path: '/gestao' },
+  { label: 'Cadastros', path: '/cadastros' },
+]
+
 interface SectionNavigationProps {
   sticky?: boolean
 }
@@ -25,17 +33,19 @@ export function SectionNavigation({ sticky = false }: SectionNavigationProps) {
     >
       <Toolbar sx={{ gap: 1, flexWrap: 'wrap', px: { xs: 2, sm: 3 } }}>
         <Typography variant="subtitle1" sx={{ flexGrow: 1, fontWeight: 600 }}>
-          Navegacao rapida
+          Navegação rápida
         </Typography>
-        <Button component={RouterLink} to="/dashboard" variant={location.pathname === '/dashboard' ? 'contained' : 'text'}>
-          Dashboard
-        </Button>
-        <Button component={RouterLink} to="/gestao" variant={location.pathname === '/gestao' ? 'contained' : 'text'}>
-          Gestao
-        </Button>
-        <Button component={RouterLink} to="/cadastros" variant={location.pathname === '/cadastros' ? 'contained' : 'text'}>
-          Cadastros
-        </Button>
+        {NAV_LINKS.map(link => (
+          <Button
+            key={link.path}
+            component={RouterLink}
+            to={link.path}
+            variant={location.pathname === link.path ? 'contained' : 'text'}
+            size="small"
+          >
+            {link.label}
+          </Button>
+        ))}
       </Toolbar>
     </AppBar>
   )

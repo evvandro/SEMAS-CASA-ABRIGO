@@ -1,22 +1,15 @@
 <?php
 
 use App\Http\Controllers\AcolhidoController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\FamiliaController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntregaController;
+use App\Http\Controllers\FamiliaController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\SetorController;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
-
-RateLimiter::for('login', function (Request $request): Limit {
-    return Limit::perMinute(8)->by((string) $request->ip());
-});
 
 Route::get('/health', HealthController::class);
 

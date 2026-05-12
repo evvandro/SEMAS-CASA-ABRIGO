@@ -1,0 +1,5 @@
+* text=auto eol=lf
+
+backend/resources/views/scribe/** linguist-generated=true
+backend/resources/views/welcome.blade.php linguist-generated=true
+backend/public/** linguist-generated=true
