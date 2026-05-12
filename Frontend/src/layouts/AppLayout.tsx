@@ -1,6 +1,6 @@
 import {
   Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
-  Toolbar, Typography, Avatar, Divider, IconButton, Breadcrumbs, Link,
+  Toolbar, Typography, Avatar, Divider, IconButton, Button,
 } from '@mui/material'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import HomeIcon from '@mui/icons-material/Home'
@@ -17,12 +17,48 @@ const SIDEBAR_W = 220
 const HEADER_H = { xs: 72, sm: 80 }
 
 const NAV = [
-  { id: 'dashboard', label: 'Início',    icon: HomeIcon,       path: '/dashboard' },
-  { id: 'acolhidos', label: 'Acolhidos', icon: GroupIcon,      path: '/acolhidos' },
-  { id: 'setores',   label: 'Setores',   icon: GridViewIcon,   path: '/setores' },
-  { id: 'estoque',   label: 'Estoque',   icon: Inventory2Icon, path: '/estoque' },
-  { id: 'saidas',    label: 'Saídas',    icon: ExitToAppIcon,  path: '/saidas' },
+  {
+    id: 'dashboard',
+    label: 'Início',
+    icon: HomeIcon,
+    path: '/dashboard',
+    submodules: [{ label: 'Painel', path: '/dashboard' }],
+  },
+  {
+    id: 'acolhidos',
+    label: 'Acolhidos',
+    icon: GroupIcon,
+    path: '/acolhidos',
+    submodules: [
+      { label: 'Acolhidos', path: '/acolhidos' },
+      { label: 'Gestão', path: '/acolhidos/gestao' },
+      { label: 'Cadastros', path: '/acolhidos/cadastros' },
+    ],
+  },
+  {
+    id: 'setores',
+    label: 'Setores',
+    icon: GridViewIcon,
+    path: '/setores',
+    submodules: [{ label: 'Setores', path: '/setores' }],
+  },
+  {
+    id: 'estoque',
+    label: 'Estoque',
+    icon: Inventory2Icon,
+    path: '/estoque',
+    submodules: [{ label: 'Materiais', path: '/estoque' }],
+  },
+  {
+    id: 'saidas',
+    label: 'Saídas',
+    icon: ExitToAppIcon,
+    path: '/saidas',
+    submodules: [{ label: 'Saídas', path: '/saidas' }],
+  },
 ]
+
+const isActivePath = (pathname: string, path: string) => pathname === path || pathname.startsWith(`${path}/`)
 
 export function AppLayout() {
   const { user, logout } = useAuth()
@@ -42,6 +78,10 @@ export function AppLayout() {
   }
 
   const initials = (user?.name || 'U').split(' ').filter(Boolean).slice(0, 2).map(s => s[0]).join('').toUpperCase()
+  const activeModule = NAV.find(item => isActivePath(location.pathname, item.path))
+  const activeSubmodule = activeModule?.submodules.find(item =>
+    location.pathname === item.path || (item.path !== activeModule.path && isActivePath(location.pathname, item.path)),
+  )
 
   return (
     <Box
@@ -90,7 +130,7 @@ export function AppLayout() {
         <List sx={{ px: 1, flex: 1 }}>
           {NAV.map(item => {
             const Icon = item.icon
-            const active = location.pathname.startsWith(item.path)
+            const active = isActivePath(location.pathname, item.path)
             return (
               <ListItem key={item.id} disablePadding sx={{ mb: 0.25 }}>
                 <ListItemButton
@@ -149,14 +189,43 @@ export function AppLayout() {
           px: 3,
           flexShrink: 0,
         }}>
-          <Breadcrumbs separator="/" sx={{ fontSize: 13 }}>
-            <Link underline="hover" color="text.secondary" onClick={() => navigate('/dashboard')} sx={{ cursor: 'pointer' }}>
-              Operação
-            </Link>
-            <Typography sx={{ fontSize: 13, color: 'text.primary', fontWeight: 500 }}>
-              {NAV.find(n => location.pathname.startsWith(n.path))?.label ?? 'Página'}
-            </Typography>
-          </Breadcrumbs>
+          <Box
+            component="nav"
+            aria-label="Submódulos"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              overflowX: 'auto',
+              minWidth: 0,
+              maxWidth: '100%',
+              pb: 0.25,
+            }}
+          >
+            {(activeModule?.submodules ?? []).map(item => {
+              const active = activeSubmodule?.path === item.path
+
+              return (
+                <Button
+                  key={item.path}
+                  variant={active ? 'contained' : 'text'}
+                  color={active ? 'primary' : 'inherit'}
+                  onClick={() => navigate(item.path)}
+                  size="small"
+                  sx={{
+                    flexShrink: 0,
+                    px: 1.5,
+                    color: active ? 'primary.contrastText' : 'text.secondary',
+                    '&:hover': {
+                      color: active ? 'primary.contrastText' : 'text.primary',
+                    },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              )
+            })}
+          </Box>
           <Box sx={{ flex: 1 }} />
           <Typography variant="caption">
             {new Date().toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}

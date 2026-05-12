@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import {
-  Alert,
   Box,
   Button,
   Checkbox,
@@ -24,7 +23,6 @@ import {
 import { alpha } from '@mui/material/styles'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import SaveIcon from '@mui/icons-material/Save'
-import { SectionNavigation } from '../components/SectionNavigation'
 
 interface FamilyMember {
   nome: string
@@ -235,8 +233,6 @@ export function CadastrosPage() {
 
   return (
     <Stack spacing={3}>
-      <SectionNavigation sticky />
-
       <Paper
         elevation={0}
         sx={{
@@ -253,18 +249,13 @@ export function CadastrosPage() {
         <Stack spacing={2}>
           <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={2}>
             <Box>
-              <Typography variant="h4">Cadastros - Ficha de entrada</Typography>
+              <Typography variant="h4">Ficha detalhada de entrada</Typography>
               <Typography color="text.secondary" sx={{ mt: 1 }}>
-                Formulario inspirado no documento de entrada do abrigo temporario para situacoes de
-                emergencia e calamidade publica.
+                Registro completo para acolhimento temporário em situações de emergência e calamidade pública.
               </Typography>
             </Box>
-            <Chip icon={<AssignmentIcon />} label="SUAS | Acolhimento provisiorio" color="primary" />
+            <Chip icon={<AssignmentIcon />} label="SUAS | Acolhimento provisório" color="primary" />
           </Stack>
-
-          <Alert severity="info" sx={{ alignItems: 'center' }}>
-            Estruturei os formularios com base no documento enviado e mantive o padrao visual das demais paginas.
-          </Alert>
         </Stack>
       </Paper>
 
@@ -683,9 +674,9 @@ export function CadastrosPage() {
           <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider' }}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }}>
               <Box>
-                <Typography variant="subtitle1">Cadastro pronto para evoluir</Typography>
+                <Typography variant="subtitle1">Ficha detalhada</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  A estrutura visual ja esta pronta para depois conectar com validacao, API e persistencia real.
+                  Revise os dados antes de finalizar o registro.
                 </Typography>
               </Box>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -693,7 +684,7 @@ export function CadastrosPage() {
                   Limpar formulario
                 </Button>
                 <Button variant="contained" startIcon={<SaveIcon />}>
-                  Salvar cadastro
+                  Salvar ficha
                 </Button>
               </Stack>
             </Stack>

@@ -26,7 +26,6 @@ import EditIcon from '@mui/icons-material/Edit'
 import GridViewIcon from '@mui/icons-material/GridView'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../auth/useAuth'
-import { SectionNavigation } from '../components/SectionNavigation'
 import {
   createSetor,
   deleteSetor,
@@ -152,8 +151,6 @@ export function SetoresPage() {
 
   return (
     <Stack spacing={3}>
-      <SectionNavigation sticky />
-
       <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} gap={2}>
         <Box>
           <Typography variant="h4" gutterBottom>Setores</Typography>
