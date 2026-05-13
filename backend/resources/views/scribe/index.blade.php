@@ -134,6 +134,15 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-entregas">
                                 <a href="#endpoints-POSTapi-entregas">POST api/entregas</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-setores">
+                                <a href="#endpoints-POSTapi-setores">POST api/setores</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PATCHapi-setores--setor_id-">
+                                <a href="#endpoints-PATCHapi-setores--setor_id-">PATCH api/setores/{setor_id}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-setores--setor_id-">
+                                <a href="#endpoints-DELETEapi-setores--setor_id-">DELETE api/setores/{setor_id}</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-admin-users">
                                 <a href="#endpoints-GETapi-admin-users">List all system users.</a>
                             </li>
@@ -157,7 +166,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: May 7, 2026</li>
+        <li>Last updated: May 13, 2026</li>
     </ul>
 </div>
 
@@ -1109,7 +1118,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"responsavel_nome\": \"b\",
     \"setor_id\": 16,
     \"observacoes\": \"architecto\",
-    \"data_entrada\": \"2026-05-07T00:13:24\"
+    \"data_entrada\": \"2026-05-13T19:23:16\"
 }"
 </code></pre></div>
 
@@ -1128,7 +1137,7 @@ let body = {
     "responsavel_nome": "b",
     "setor_id": 16,
     "observacoes": "architecto",
-    "data_entrada": "2026-05-07T00:13:24"
+    "data_entrada": "2026-05-13T19:23:16"
 };
 
 fetch(url, {
@@ -1256,10 +1265,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrada"                data-endpoint="POSTapi-familias"
-               value="2026-05-07T00:13:24"
+               value="2026-05-13T19:23:16"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-07T00:13:24</code></p>
+<p>validation.date. Example: <code>2026-05-13T19:23:16</code></p>
         </div>
         </form>
 
@@ -1423,7 +1432,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"responsavel_nome\": \"b\",
     \"setor_id\": 16,
     \"observacoes\": \"architecto\",
-    \"data_entrada\": \"2026-05-07T00:13:24\"
+    \"data_entrada\": \"2026-05-13T19:23:16\"
 }"
 </code></pre></div>
 
@@ -1442,7 +1451,7 @@ let body = {
     "responsavel_nome": "b",
     "setor_id": 16,
     "observacoes": "architecto",
-    "data_entrada": "2026-05-07T00:13:24"
+    "data_entrada": "2026-05-13T19:23:16"
 };
 
 fetch(url, {
@@ -1583,10 +1592,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrada"                data-endpoint="PATCHapi-familias--familia_id-"
-               value="2026-05-07T00:13:24"
+               value="2026-05-13T19:23:16"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-07T00:13:24</code></p>
+<p>validation.date. Example: <code>2026-05-13T19:23:16</code></p>
         </div>
         </form>
 
@@ -1607,7 +1616,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"data_saida\": \"2026-05-07T00:13:24\",
+    \"data_saida\": \"2026-05-13T19:23:16\",
     \"tipo_saida\": \"b\"
 }"
 </code></pre></div>
@@ -1624,7 +1633,7 @@ const headers = {
 };
 
 let body = {
-    "data_saida": "2026-05-07T00:13:24",
+    "data_saida": "2026-05-13T19:23:16",
     "tipo_saida": "b"
 };
 
@@ -1730,10 +1739,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_saida"                data-endpoint="POSTapi-familias--familia_id--saida"
-               value="2026-05-07T00:13:24"
+               value="2026-05-13T19:23:16"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-07T00:13:24</code></p>
+<p>validation.date. Example: <code>2026-05-13T19:23:16</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>tipo_saida</code></b>&nbsp;&nbsp;
@@ -1897,13 +1906,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"familia_id\": 16,
     \"setor_id\": 16,
     \"nome\": \"n\",
-    \"data_nascimento\": \"2026-05-07T00:13:24\",
+    \"data_nascimento\": \"2026-05-13T19:23:16\",
     \"cpf\": \"gzmiyvdljnikhway\",
     \"telefone\": \"kcmyuwpwlvqwrsit\",
     \"genero\": \"c\",
     \"leito\": \"p\",
     \"observacoes\": \"architecto\",
-    \"data_entrada\": \"2026-05-07T00:13:24\"
+    \"data_entrada\": \"2026-05-13T19:23:16\",
+    \"pcd\": false,
+    \"gestante\": false,
+    \"cronica\": false,
+    \"idoso\": true
 }"
 </code></pre></div>
 
@@ -1923,13 +1936,17 @@ let body = {
     "familia_id": 16,
     "setor_id": 16,
     "nome": "n",
-    "data_nascimento": "2026-05-07T00:13:24",
+    "data_nascimento": "2026-05-13T19:23:16",
     "cpf": "gzmiyvdljnikhway",
     "telefone": "kcmyuwpwlvqwrsit",
     "genero": "c",
     "leito": "p",
     "observacoes": "architecto",
-    "data_entrada": "2026-05-07T00:13:24"
+    "data_entrada": "2026-05-13T19:23:16",
+    "pcd": false,
+    "gestante": false,
+    "cronica": false,
+    "idoso": true
 };
 
 fetch(url, {
@@ -2029,7 +2046,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>familia_id</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="familia_id"                data-endpoint="POSTapi-acolhidos"
@@ -2069,10 +2086,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_nascimento"                data-endpoint="POSTapi-acolhidos"
-               value="2026-05-07T00:13:24"
+               value="2026-05-13T19:23:16"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-07T00:13:24</code></p>
+<p>validation.date. Example: <code>2026-05-13T19:23:16</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>cpf</code></b>&nbsp;&nbsp;
@@ -2089,7 +2106,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>telefone</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="telefone"                data-endpoint="POSTapi-acolhidos"
@@ -2101,7 +2118,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>genero</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="genero"                data-endpoint="POSTapi-acolhidos"
@@ -2113,7 +2130,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>leito</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="leito"                data-endpoint="POSTapi-acolhidos"
@@ -2125,7 +2142,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>observacoes</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="observacoes"                data-endpoint="POSTapi-acolhidos"
@@ -2137,14 +2154,102 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>data_entrada</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrada"                data-endpoint="POSTapi-acolhidos"
-               value="2026-05-07T00:13:24"
+               value="2026-05-13T19:23:16"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-07T00:13:24</code></p>
+<p>validation.date. Example: <code>2026-05-13T19:23:16</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>pcd</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-acolhidos" style="display: none">
+            <input type="radio" name="pcd"
+                   value="true"
+                   data-endpoint="POSTapi-acolhidos"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-acolhidos" style="display: none">
+            <input type="radio" name="pcd"
+                   value="false"
+                   data-endpoint="POSTapi-acolhidos"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>false</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>gestante</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-acolhidos" style="display: none">
+            <input type="radio" name="gestante"
+                   value="true"
+                   data-endpoint="POSTapi-acolhidos"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-acolhidos" style="display: none">
+            <input type="radio" name="gestante"
+                   value="false"
+                   data-endpoint="POSTapi-acolhidos"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>false</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>cronica</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-acolhidos" style="display: none">
+            <input type="radio" name="cronica"
+                   value="true"
+                   data-endpoint="POSTapi-acolhidos"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-acolhidos" style="display: none">
+            <input type="radio" name="cronica"
+                   value="false"
+                   data-endpoint="POSTapi-acolhidos"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>false</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>idoso</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-acolhidos" style="display: none">
+            <input type="radio" name="idoso"
+                   value="true"
+                   data-endpoint="POSTapi-acolhidos"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-acolhidos" style="display: none">
+            <input type="radio" name="idoso"
+                   value="false"
+                   data-endpoint="POSTapi-acolhidos"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>true</code></p>
         </div>
         </form>
 
@@ -2309,13 +2414,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"familia_id\": 16,
     \"setor_id\": 16,
     \"nome\": \"n\",
-    \"data_nascimento\": \"2026-05-07T00:13:24\",
+    \"data_nascimento\": \"2026-05-13T19:23:16\",
     \"cpf\": \"gzmiyvdljnikhway\",
     \"telefone\": \"kcmyuwpwlvqwrsit\",
     \"genero\": \"c\",
     \"leito\": \"p\",
     \"observacoes\": \"architecto\",
-    \"data_entrada\": \"2026-05-07T00:13:24\"
+    \"data_entrada\": \"2026-05-13T19:23:16\"
 }"
 </code></pre></div>
 
@@ -2335,13 +2440,13 @@ let body = {
     "familia_id": 16,
     "setor_id": 16,
     "nome": "n",
-    "data_nascimento": "2026-05-07T00:13:24",
+    "data_nascimento": "2026-05-13T19:23:16",
     "cpf": "gzmiyvdljnikhway",
     "telefone": "kcmyuwpwlvqwrsit",
     "genero": "c",
     "leito": "p",
     "observacoes": "architecto",
-    "data_entrada": "2026-05-07T00:13:24"
+    "data_entrada": "2026-05-13T19:23:16"
 };
 
 fetch(url, {
@@ -2494,10 +2599,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_nascimento"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="2026-05-07T00:13:24"
+               value="2026-05-13T19:23:16"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-07T00:13:24</code></p>
+<p>validation.date. Example: <code>2026-05-13T19:23:16</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>cpf</code></b>&nbsp;&nbsp;
@@ -2566,10 +2671,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrada"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="2026-05-07T00:13:24"
+               value="2026-05-13T19:23:16"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-07T00:13:24</code></p>
+<p>validation.date. Example: <code>2026-05-13T19:23:16</code></p>
         </div>
         </form>
 
@@ -2590,7 +2695,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"data_saida\": \"2026-05-07T00:13:24\",
+    \"data_saida\": \"2026-05-13T19:23:17\",
     \"tipo_saida\": \"b\"
 }"
 </code></pre></div>
@@ -2607,7 +2712,7 @@ const headers = {
 };
 
 let body = {
-    "data_saida": "2026-05-07T00:13:24",
+    "data_saida": "2026-05-13T19:23:17",
     "tipo_saida": "b"
 };
 
@@ -2713,10 +2818,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_saida"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
-               value="2026-05-07T00:13:24"
+               value="2026-05-13T19:23:17"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-07T00:13:24</code></p>
+<p>validation.date. Example: <code>2026-05-13T19:23:17</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>tipo_saida</code></b>&nbsp;&nbsp;
@@ -3054,7 +3159,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"unidade\": \"n\",
     \"categoria\": \"g\",
     \"estoque_atual\": 12,
-    \"ativo\": true
+    \"ativo\": false
 }"
 </code></pre></div>
 
@@ -3074,7 +3179,7 @@ let body = {
     "unidade": "n",
     "categoria": "g",
     "estoque_atual": 12,
-    "ativo": true
+    "ativo": false
 };
 
 fetch(url, {
@@ -3240,7 +3345,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
         </form>
 
@@ -3392,7 +3497,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"familia_id\": 16,
     \"acolhido_id\": 16,
     \"quantidade\": 22,
-    \"data_entrega\": \"2026-05-07T00:13:24\",
+    \"data_entrega\": \"2026-05-13T19:23:17\",
     \"observacoes\": \"architecto\"
 }"
 </code></pre></div>
@@ -3413,7 +3518,7 @@ let body = {
     "familia_id": 16,
     "acolhido_id": 16,
     "quantidade": 22,
-    "data_entrega": "2026-05-07T00:13:24",
+    "data_entrega": "2026-05-13T19:23:17",
     "observacoes": "architecto"
 };
 
@@ -3554,10 +3659,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrega"                data-endpoint="POSTapi-entregas"
-               value="2026-05-07T00:13:24"
+               value="2026-05-13T19:23:17"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-07T00:13:24</code></p>
+<p>validation.date. Example: <code>2026-05-13T19:23:17</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>observacoes</code></b>&nbsp;&nbsp;
@@ -3572,6 +3677,487 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Example: <code>architecto</code></p>
         </div>
         </form>
+
+                    <h2 id="endpoints-POSTapi-setores">POST api/setores</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-setores">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost/api/setores" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"nome\": \"b\",
+    \"cor\": \"n\",
+    \"capacidade\": 7
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/setores"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "nome": "b",
+    "cor": "n",
+    "capacidade": 7
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-setores">
+</span>
+<span id="execution-results-POSTapi-setores" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-setores"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-setores"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-setores" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-setores">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-setores" data-method="POST"
+      data-path="api/setores"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-setores', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-setores"
+                    onclick="tryItOut('POSTapi-setores');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-setores"
+                    onclick="cancelTryOut('POSTapi-setores');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-setores"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/setores</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-setores"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-setores"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>nome</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="nome"                data-endpoint="POSTapi-setores"
+               value="b"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>b</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>cor</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="cor"                data-endpoint="POSTapi-setores"
+               value="n"
+               data-component="body">
+    <br>
+<p>Must match the regex /^#[0-9a-fA-F]{6}$/. validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>capacidade</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="capacidade"                data-endpoint="POSTapi-setores"
+               value="7"
+               data-component="body">
+    <br>
+<p>validation.min validation.max. Example: <code>7</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-PATCHapi-setores--setor_id-">PATCH api/setores/{setor_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PATCHapi-setores--setor_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PATCH \
+    "http://localhost/api/setores/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"nome\": \"b\",
+    \"cor\": \"n\",
+    \"capacidade\": 7,
+    \"ativo\": false
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/setores/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "nome": "b",
+    "cor": "n",
+    "capacidade": 7,
+    "ativo": false
+};
+
+fetch(url, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PATCHapi-setores--setor_id-">
+</span>
+<span id="execution-results-PATCHapi-setores--setor_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PATCHapi-setores--setor_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PATCHapi-setores--setor_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PATCHapi-setores--setor_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PATCHapi-setores--setor_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PATCHapi-setores--setor_id-" data-method="PATCH"
+      data-path="api/setores/{setor_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PATCHapi-setores--setor_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PATCHapi-setores--setor_id-"
+                    onclick="tryItOut('PATCHapi-setores--setor_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PATCHapi-setores--setor_id-"
+                    onclick="cancelTryOut('PATCHapi-setores--setor_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PATCHapi-setores--setor_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-purple">PATCH</small>
+            <b><code>api/setores/{setor_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PATCHapi-setores--setor_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PATCHapi-setores--setor_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>setor_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="setor_id"                data-endpoint="PATCHapi-setores--setor_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the setor. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>nome</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="nome"                data-endpoint="PATCHapi-setores--setor_id-"
+               value="b"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>b</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>cor</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="cor"                data-endpoint="PATCHapi-setores--setor_id-"
+               value="n"
+               data-component="body">
+    <br>
+<p>Must match the regex /^#[0-9a-fA-F]{6}$/. validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>capacidade</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="capacidade"                data-endpoint="PATCHapi-setores--setor_id-"
+               value="7"
+               data-component="body">
+    <br>
+<p>validation.min validation.max. Example: <code>7</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>ativo</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="PATCHapi-setores--setor_id-" style="display: none">
+            <input type="radio" name="ativo"
+                   value="true"
+                   data-endpoint="PATCHapi-setores--setor_id-"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="PATCHapi-setores--setor_id-" style="display: none">
+            <input type="radio" name="ativo"
+                   value="false"
+                   data-endpoint="PATCHapi-setores--setor_id-"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>false</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-DELETEapi-setores--setor_id-">DELETE api/setores/{setor_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-DELETEapi-setores--setor_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://localhost/api/setores/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/setores/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-setores--setor_id-">
+</span>
+<span id="execution-results-DELETEapi-setores--setor_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-setores--setor_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-setores--setor_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-setores--setor_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-setores--setor_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-setores--setor_id-" data-method="DELETE"
+      data-path="api/setores/{setor_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-setores--setor_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-setores--setor_id-"
+                    onclick="tryItOut('DELETEapi-setores--setor_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-setores--setor_id-"
+                    onclick="cancelTryOut('DELETEapi-setores--setor_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-setores--setor_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/setores/{setor_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-setores--setor_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-setores--setor_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>setor_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="setor_id"                data-endpoint="DELETEapi-setores--setor_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the setor. Example: <code>1</code></p>
+            </div>
+                    </form>
 
                     <h2 id="endpoints-GETapi-admin-users">List all system users.</h2>
 
@@ -3923,7 +4509,7 @@ Must be one of:
     --data "{
     \"name\": \"b\",
     \"email\": \"zbailey@example.net\",
-    \"role\": \"tecnico\",
+    \"role\": \"logistica\",
     \"is_active\": false,
     \"phone\": \"i\",
     \"documento\": \"yvdljnikhwa\"
@@ -3944,7 +4530,7 @@ const headers = {
 let body = {
     "name": "b",
     "email": "zbailey@example.net",
-    "role": "tecnico",
+    "role": "logistica",
     "is_active": false,
     "phone": "i",
     "documento": "yvdljnikhwa"
@@ -4088,10 +4674,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="role"                data-endpoint="PATCHapi-admin-users--id-"
-               value="tecnico"
+               value="logistica"
                data-component="body">
     <br>
-<p>Example: <code>tecnico</code></p>
+<p>Example: <code>logistica</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>admin</code></li> <li><code>tecnico</code></li> <li><code>logistica</code></li> <li><code>saude</code></li></ul>
         </div>

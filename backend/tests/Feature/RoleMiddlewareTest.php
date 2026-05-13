@@ -16,6 +16,13 @@ class RoleMiddlewareTest extends TestCase
         $this->getJson('/api/setores')->assertUnauthorized();
     }
 
+    public function test_api_routes_return_json_401_without_accept_header(): void
+    {
+        $this->get('/api/setores')
+            ->assertUnauthorized()
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
+
     public function test_wrong_role_receives_403(): void
     {
         Sanctum::actingAs(User::factory()->create(['role' => 'logistica']));

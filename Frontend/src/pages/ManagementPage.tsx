@@ -22,7 +22,6 @@ import {
 } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import AssignmentIcon from '@mui/icons-material/Assignment'
 import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom'
 import GridViewIcon from '@mui/icons-material/GridView'
 import GroupIcon from '@mui/icons-material/Group'
@@ -211,15 +210,6 @@ export function ManagementPage() {
             sx={{ justifyContent: 'center' }}
           >
             Ver acolhidos
-          </Button>
-          <Button
-            component={RouterLink}
-            to="/acolhidos/cadastros"
-            variant="contained"
-            startIcon={<AssignmentIcon />}
-            sx={{ justifyContent: 'center' }}
-          >
-            Ficha detalhada
           </Button>
         </Stack>
       </Stack>
