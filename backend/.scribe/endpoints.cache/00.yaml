@@ -362,7 +362,7 @@ endpoints:
         name: data_entrada
         description: validation.date.
         required: true
-        example: '2026-05-07T00:13:24'
+        example: '2026-05-13T19:23:16'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -372,7 +372,7 @@ endpoints:
       responsavel_nome: b
       setor_id: 16
       observacoes: architecto
-      data_entrada: '2026-05-07T00:13:24'
+      data_entrada: '2026-05-13T19:23:16'
     fileParameters: []
     responses: []
     responseFields: []
@@ -505,7 +505,7 @@ endpoints:
         name: data_entrada
         description: validation.date.
         required: false
-        example: '2026-05-07T00:13:24'
+        example: '2026-05-13T19:23:16'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -515,7 +515,7 @@ endpoints:
       responsavel_nome: b
       setor_id: 16
       observacoes: architecto
-      data_entrada: '2026-05-07T00:13:24'
+      data_entrada: '2026-05-13T19:23:16'
     fileParameters: []
     responses: []
     responseFields: []
@@ -563,7 +563,7 @@ endpoints:
         name: data_saida
         description: validation.date.
         required: true
-        example: '2026-05-07T00:13:24'
+        example: '2026-05-13T19:23:16'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -581,7 +581,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      data_saida: '2026-05-07T00:13:24'
+      data_saida: '2026-05-13T19:23:16'
       tipo_saida: b
     fileParameters: []
     responses: []
@@ -662,18 +662,18 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       familia_id:
         custom: []
         name: familia_id
         description: 'The <code>id</code> of an existing record in the familias table.'
-        required: true
+        required: false
         example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       setor_id:
         custom: []
@@ -702,7 +702,7 @@ endpoints:
         name: data_nascimento
         description: validation.date.
         required: true
-        example: '2026-05-07T00:13:24'
+        example: '2026-05-13T19:23:16'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -723,69 +723,117 @@ endpoints:
         custom: []
         name: telefone
         description: validation.max.
-        required: true
+        required: false
         example: kcmyuwpwlvqwrsit
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       genero:
         custom: []
         name: genero
         description: validation.max.
-        required: true
+        required: false
         example: c
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       leito:
         custom: []
         name: leito
         description: validation.max.
-        required: true
+        required: false
         example: p
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       observacoes:
         custom: []
         name: observacoes
         description: ''
-        required: true
+        required: false
         example: architecto
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       data_entrada:
         custom: []
         name: data_entrada
         description: validation.date.
-        required: true
-        example: '2026-05-07T00:13:24'
+        required: false
+        example: '2026-05-13T19:23:16'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
+        deprecated: false
+      pcd:
+        custom: []
+        name: pcd
+        description: ''
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      gestante:
+        custom: []
+        name: gestante
+        description: ''
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      cronica:
+        custom: []
+        name: cronica
+        description: ''
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      idoso:
+        custom: []
+        name: idoso
+        description: ''
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
     cleanBodyParameters:
       codigo_pulseira: bngzmiyv
       familia_id: 16
       setor_id: 16
       nome: 'n'
-      data_nascimento: '2026-05-07T00:13:24'
+      data_nascimento: '2026-05-13T19:23:16'
       cpf: gzmiyvdljnikhway
       telefone: kcmyuwpwlvqwrsit
       genero: c
       leito: p
       observacoes: architecto
-      data_entrada: '2026-05-07T00:13:24'
+      data_entrada: '2026-05-13T19:23:16'
+      pcd: false
+      gestante: false
+      cronica: false
+      idoso: true
     fileParameters: []
     responses: []
     responseFields: []
@@ -929,7 +977,7 @@ endpoints:
         name: data_nascimento
         description: validation.date.
         required: false
-        example: '2026-05-07T00:13:24'
+        example: '2026-05-13T19:23:16'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -995,7 +1043,7 @@ endpoints:
         name: data_entrada
         description: validation.date.
         required: false
-        example: '2026-05-07T00:13:24'
+        example: '2026-05-13T19:23:16'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1006,13 +1054,13 @@ endpoints:
       familia_id: 16
       setor_id: 16
       nome: 'n'
-      data_nascimento: '2026-05-07T00:13:24'
+      data_nascimento: '2026-05-13T19:23:16'
       cpf: gzmiyvdljnikhway
       telefone: kcmyuwpwlvqwrsit
       genero: c
       leito: p
       observacoes: architecto
-      data_entrada: '2026-05-07T00:13:24'
+      data_entrada: '2026-05-13T19:23:16'
     fileParameters: []
     responses: []
     responseFields: []
@@ -1060,7 +1108,7 @@ endpoints:
         name: data_saida
         description: validation.date.
         required: true
-        example: '2026-05-07T00:13:24'
+        example: '2026-05-13T19:23:17'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1078,7 +1126,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      data_saida: '2026-05-07T00:13:24'
+      data_saida: '2026-05-13T19:23:17'
       tipo_saida: b
     fileParameters: []
     responses: []
@@ -1290,7 +1338,7 @@ endpoints:
         name: ativo
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1301,7 +1349,7 @@ endpoints:
       unidade: 'n'
       categoria: g
       estoque_atual: 12
-      ativo: true
+      ativo: false
     fileParameters: []
     responses: []
     responseFields: []
@@ -1421,7 +1469,7 @@ endpoints:
         name: data_entrega
         description: validation.date.
         required: true
-        example: '2026-05-07T00:13:24'
+        example: '2026-05-13T19:23:17'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1443,8 +1491,209 @@ endpoints:
       familia_id: 16
       acolhido_id: 16
       quantidade: 22
-      data_entrega: '2026-05-07T00:13:24'
+      data_entrega: '2026-05-13T19:23:17'
       observacoes: architecto
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/setores
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      nome:
+        custom: []
+        name: nome
+        description: validation.max.
+        required: true
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      cor:
+        custom: []
+        name: cor
+        description: 'Must match the regex /^#[0-9a-fA-F]{6}$/. validation.max.'
+        required: true
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      capacidade:
+        custom: []
+        name: capacidade
+        description: 'validation.min validation.max.'
+        required: false
+        example: 7
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      nome: b
+      cor: 'n'
+      capacidade: 7
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/setores/{setor_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      setor_id:
+        custom: []
+        name: setor_id
+        description: 'The ID of the setor.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      setor_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      nome:
+        custom: []
+        name: nome
+        description: validation.max.
+        required: false
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      cor:
+        custom: []
+        name: cor
+        description: 'Must match the regex /^#[0-9a-fA-F]{6}$/. validation.max.'
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      capacidade:
+        custom: []
+        name: capacidade
+        description: 'validation.min validation.max.'
+        required: false
+        example: 7
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      ativo:
+        custom: []
+        name: ativo
+        description: ''
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      nome: b
+      cor: 'n'
+      capacidade: 7
+      ativo: false
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/setores/{setor_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      setor_id:
+        custom: []
+        name: setor_id
+        description: 'The ID of the setor.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      setor_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses: []
     responseFields: []
@@ -1672,7 +1921,7 @@ endpoints:
         name: role
         description: ''
         required: false
-        example: tecnico
+        example: logistica
         type: string
         enumValues:
           - admin
@@ -1718,7 +1967,7 @@ endpoints:
     cleanBodyParameters:
       name: b
       email: zbailey@example.net
-      role: tecnico
+      role: logistica
       is_active: false
       phone: i
       documento: yvdljnikhwa

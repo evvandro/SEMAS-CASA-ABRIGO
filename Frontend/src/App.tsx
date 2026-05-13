@@ -7,6 +7,8 @@ import { LoginPage } from './pages/LoginPage'
 import { ManagementPage } from './pages/ManagementPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { SetoresPage } from './pages/SetoresPage'
+import { EstoquePage } from './pages/EstoquePage'
+import { SaidasPage } from './pages/SaidasPage'
 import { GuestRoute } from './routes/GuestRoute'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 
@@ -24,6 +26,8 @@ function App() {
           <Route path="/acolhidos/gestao" element={<ManagementPage />} />
           <Route path="/acolhidos/cadastros" element={<CadastrosPage />} />
           <Route path="/setores" element={<SetoresPage />} />
+          <Route path="/estoque" element={<EstoquePage />} />
+          <Route path="/saidas" element={<SaidasPage />} />
           <Route path="/gestao" element={<Navigate to="/acolhidos/gestao" replace />} />
           <Route path="/cadastros" element={<Navigate to="/acolhidos/cadastros" replace />} />
         </Route>
