@@ -77,12 +77,22 @@ export function LoginPage() {
       <Card sx={{ width: '100%', maxWidth: 460, boxShadow: 4 }}>
         <CardContent sx={{ p: 4 }}>
           <Stack spacing={3} component="form" onSubmit={handleSubmit}>
-            <Stack spacing={1}>
-              <Typography variant="h5">Acesso</Typography>
-              <Typography color="text.secondary">
-                SEMAS - Casa Abrigo
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 1 }}>
+              <Box
+                component="img"
+                src="/logosemas1.png"
+                alt="Sistema Casa Abrigo"
+                sx={{
+                  width: 270,
+                  height: 'auto',
+                  mb: 3,
+                }}
+              />
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>Acesso ao Sistema</Typography>
+              <Typography color="text.secondary" variant="body2" sx={{ textAlign: 'center', mt: 0.5 }}>
+                Insira suas credenciais para entrar na plataforma
               </Typography>
-            </Stack>
+            </Box>
 
             {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
 
