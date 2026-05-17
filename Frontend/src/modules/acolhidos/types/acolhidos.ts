@@ -1,12 +1,13 @@
 export type AlertCategory = 'pcd' | 'gestante' | 'cronica' | 'idoso'
 
-export type AcolhidoAction = 'view' | 'edit' | 'print' | 'exit'
+export type AcolhidoAction = 'view' | 'edit' | 'editFull' | 'print' | 'label' | 'exit'
 
-export type CadastroAction = Exclude<AcolhidoAction, 'view'>
+export type CadastroAction = Exclude<AcolhidoAction, 'view' | 'label' | 'editFull'>
 
 export type AcolhidosFilters = Record<AlertCategory, boolean>
 
 export interface Acolhido {
+  apiId: number
   id: string             // codigo_pulseira ou String(id)
   name: string
   cpf: string            // formatado: '000.000.000-00'
@@ -14,7 +15,16 @@ export interface Acolhido {
   sectorId: string       // String(setor.id) da API
   alerts: AlertCategory[]
   entry: string          // ISO date
+  entryTime?: string | null
   family?: number
+  birthDate?: string | null
+  phone?: string | null
+  gender?: string | null
+  bed?: string | null
+  notes?: string | null
+  belongings?: string | null
+  familyCode?: string | null
+  familyResponsible?: string | null
 }
 
 export interface Sector {

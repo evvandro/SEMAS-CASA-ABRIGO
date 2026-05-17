@@ -6,12 +6,14 @@ import {
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import EditIcon from '@mui/icons-material/Edit'
+import AssignmentIcon from '@mui/icons-material/Assignment'
 import PrintIcon from '@mui/icons-material/Print'
+import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { AlertBadges } from './AlertBadges'
 import { SectorPill } from './SectorPill'
 import type { Acolhido, AcolhidoAction, Sector } from '../types'
-import { formatDateTime } from '../utils/date'
+import { dateSortValue, formatEntryDateTime } from '../utils/date'
 
 type SortKey = 'id' | 'name' | 'age' | 'sectorId' | 'entry'
 type Sort = { by: SortKey; dir: 'asc' | 'desc' }
@@ -36,6 +38,10 @@ export function AcolhidosTable({ rows, sectorMap, onRowClick, onAction }: Props)
       if (sort.by === 'sectorId') {
         av = sectorMap[a.sectorId]?.name ?? ''
         bv = sectorMap[b.sectorId]?.name ?? ''
+      }
+      if (sort.by === 'entry') {
+        av = dateSortValue(a.entry, a.entryTime)
+        bv = dateSortValue(b.entry, b.entryTime)
       }
       if (typeof av === 'string') av = av.toLowerCase()
       if (typeof bv === 'string') bv = bv.toLowerCase()
@@ -85,7 +91,7 @@ export function AcolhidosTable({ rows, sectorMap, onRowClick, onAction }: Props)
               <TableCell><SectorPill sectorId={r.sectorId} sectorMap={sectorMap} /></TableCell>
               <TableCell><AlertBadges alerts={r.alerts} /></TableCell>
               <TableCell sx={{ fontFamily: 'ui-monospace, monospace', fontSize: 12.5, color: 'text.secondary' }}>
-                {formatDateTime(r.entry)}
+                {formatEntryDateTime(r.entry, r.entryTime)}
               </TableCell>
               <TableCell align="right" onClick={e => e.stopPropagation()}>
                 <RowActionsMenu row={r} onAction={onAction} />
@@ -154,8 +160,10 @@ function RowActionsMenu({ row, onAction }: { row: Acolhido; onAction: Props['onA
       <Menu anchorEl={anchor} open={!!anchor} onClose={close}
         slotProps={{ paper: { variant: 'outlined', sx: { mt: 0.5, minWidth: 200 } } }}>
         <MenuItem onClick={handle('view')}><ListItemIcon><VisibilityIcon fontSize="small" /></ListItemIcon><ListItemText>Ver ficha completa</ListItemText></MenuItem>
-        <MenuItem onClick={handle('edit')}><ListItemIcon><EditIcon fontSize="small" /></ListItemIcon><ListItemText>Editar cadastro</ListItemText></MenuItem>
-        <MenuItem onClick={handle('print')}><ListItemIcon><PrintIcon fontSize="small" /></ListItemIcon><ListItemText>Imprimir ficha</ListItemText></MenuItem>
+        <MenuItem onClick={handle('edit')}><ListItemIcon><EditIcon fontSize="small" /></ListItemIcon><ListItemText>Editar rápido</ListItemText></MenuItem>
+        <MenuItem onClick={handle('editFull')}><ListItemIcon><AssignmentIcon fontSize="small" /></ListItemIcon><ListItemText>Editar ficha detalhada</ListItemText></MenuItem>
+        <MenuItem onClick={handle('print')}><ListItemIcon><PrintIcon fontSize="small" /></ListItemIcon><ListItemText>Gerar PDF da ficha</ListItemText></MenuItem>
+        <MenuItem onClick={handle('label')}><ListItemIcon><LocalOfferIcon fontSize="small" /></ListItemIcon><ListItemText>Etiqueta de pertences</ListItemText></MenuItem>
         <Divider />
         <MenuItem onClick={handle('exit')} sx={{ color: 'error.main' }}>
           <ListItemIcon><LogoutIcon fontSize="small" sx={{ color: 'error.main' }} /></ListItemIcon>

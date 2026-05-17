@@ -1,52 +1,68 @@
-import { useState } from 'react'
 import {
-  Drawer, Box, Typography, Tabs, Tab, IconButton, Avatar, Chip,
-  Divider, Button, TextField,
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  Divider,
+  Drawer,
+  IconButton,
+  Stack,
+  Typography,
 } from '@mui/material'
-import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnector, TimelineContent } from '@mui/lab'
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import BadgeIcon from '@mui/icons-material/Badge'
 import CloseIcon from '@mui/icons-material/Close'
-import PrintIcon from '@mui/icons-material/Print'
 import EditIcon from '@mui/icons-material/Edit'
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'
+import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import LogoutIcon from '@mui/icons-material/Logout'
-import PersonIcon from '@mui/icons-material/Person'
-import HistoryIcon from '@mui/icons-material/History'
-import Inventory2Icon from '@mui/icons-material/Inventory2'
-import NotesIcon from '@mui/icons-material/Notes'
-import AddIcon from '@mui/icons-material/Add'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
+import PlaceIcon from '@mui/icons-material/Place'
+import type { ReactElement, ReactNode } from 'react'
 import { ALERT_META } from './AlertBadges'
-import type { Acolhido, CadastroAction, Sector } from '../types'
-import { formatDateTime } from '../utils/date'
+import type { Acolhido, AcolhidoAction, Sector } from '../types'
+import { formatDateOnly, formatEntryDateTime } from '../utils/date'
 
-const initials = (n: string) => n.split(' ').filter(Boolean).slice(0, 2).map(s => s[0]).join('').toUpperCase()
+const initials = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0])
+    .join('')
+    .toUpperCase()
 
-export function FichaDrawer({ row, onClose, onAction, sectorMap = {} }: {
+function valueOrFallback(value?: string | number | null) {
+  const normalized = value == null ? '' : String(value).trim()
+  return normalized || 'Não informado'
+}
+
+function sectorLabel(sector?: Sector) {
+  if (!sector) return 'Não informado'
+  return sector.sub ? `${sector.name} - ${sector.sub}` : sector.name
+}
+
+export function FichaDrawer({
+  row,
+  onClose,
+  onAction,
+  sectorMap = {},
+  operatorName,
+}: {
   row: Acolhido | null
   onClose: () => void
-  onAction: (action: CadastroAction, row: Acolhido) => void
+  onAction: (action: AcolhidoAction, row: Acolhido) => void
   sectorMap?: Record<string, Sector>
+  operatorName?: string | null
 }) {
-  const [tab, setTab] = useState(0)
   const open = !!row
+
   if (!row) {
     return <Drawer anchor="right" open={false} onClose={onClose} />
   }
+
   const sector = sectorMap[row.sectorId]
-
-  const history = [
-    { date: row.entry, title: 'Entrada na unidade', desc: `Triagem realizada · alocado em ${sector?.name}` },
-    { date: row.entry, title: 'Identificação verificada', desc: 'CPF e RG conferidos por Luana Martins' },
-    ...(row.alerts.includes('gestante') ? [{ date: row.entry, title: 'Encaminhamento médico', desc: 'Pré-natal — UBS Central agendado' }] : []),
-    ...(row.alerts.includes('cronica')  ? [{ date: row.entry, title: 'Plano de medicação', desc: 'Medicação contínua registrada' }] : []),
-    { date: row.entry, title: 'Kit de boas-vindas entregue', desc: 'Cobertor, kit higiene, alimentação' },
-  ]
-
-  const materials = [
-    { name: 'Kit Higiene Pessoal', sub: 'Adulto · sabonete, escova, pasta', qty: '1 un.', date: row.entry },
-    { name: 'Cobertor térmico',    sub: 'Tamanho casal',                    qty: '2 un.', date: row.entry },
-    { name: 'Refeição completa',   sub: 'Almoço + jantar',                  qty: '4 un.', date: '2026-04-21T12:00' },
-    ...(row.alerts.includes('cronica') ? [{ name: 'Medicação prescrita', sub: 'Hipertensão · 2x ao dia', qty: '7 dias', date: row.entry }] : []),
-    ...((row.family ?? 0) > 1 ? [{ name: 'Kit familiar', sub: `${row.family} pessoas`, qty: '1 un.', date: row.entry }] : []),
-  ]
 
   return (
     <Drawer
@@ -55,209 +71,220 @@ export function FichaDrawer({ row, onClose, onAction, sectorMap = {} }: {
       onClose={onClose}
       slotProps={{ paper: { sx: { width: { xs: '100vw', md: 720 } } } }}
     >
-      {/* Hero */}
-      <Box sx={{
-        p: 3,
-        borderBottom: '1px solid', borderColor: 'divider',
-        position: 'relative', overflow: 'hidden',
-        '&::before': {
-          content: '""', position: 'absolute', inset: 0,
-          background: `linear-gradient(135deg, ${sector?.color} 0%, transparent 60%)`,
-          opacity: 0.08,
-        },
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
-          <Avatar sx={{ width: 56, height: 56, bgcolor: sector?.color, fontSize: 19, fontWeight: 600 }}>
-            {initials(row.name)}
-          </Avatar>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant="h6" sx={{ mb: 0.5 }}>{row.name}</Typography>
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', color: 'text.secondary', fontSize: 12.5 }}>
-              <span>📋 {row.id}</span>
-              <span>🎂 {row.age} anos</span>
-              <span>👥 Família de {row.family}</span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: sector?.color }} />
-                {sector?.name} · {sector?.sub}
-              </span>
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Box
+          sx={{
+            p: 3,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              inset: 0,
+              background: sector?.color ? `linear-gradient(135deg, ${sector.color} 0%, transparent 58%)` : 'none',
+              opacity: 0.08,
+            },
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
+            <Avatar sx={{ width: 56, height: 56, bgcolor: sector?.color ?? 'primary.main', fontSize: 19, fontWeight: 700 }}>
+              {initials(row.name)}
+            </Avatar>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="h6" sx={{ mb: 0.75 }} noWrap>
+                {row.name}
+              </Typography>
+              <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap" color="text.secondary">
+                <Meta icon={<AssignmentIndIcon />} text={row.id} />
+                <Meta icon={<BadgeIcon />} text={valueOrFallback(row.cpf)} />
+                <Meta icon={<EventAvailableIcon />} text={`${row.age} anos`} />
+                <Meta icon={<PlaceIcon />} text={sectorLabel(sector)} />
+              </Stack>
             </Box>
+            <IconButton onClick={onClose} aria-label="Fechar ficha">
+              <CloseIcon />
+            </IconButton>
           </Box>
-          <IconButton onClick={onClose}><CloseIcon /></IconButton>
+
+          {row.alerts.length > 0 ? (
+            <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mt: 2, position: 'relative' }}>
+              {row.alerts.map(alert => {
+                const meta = ALERT_META[alert]
+                const Icon = meta.Icon
+
+                return (
+                  <Chip
+                    key={alert}
+                    size="small"
+                    icon={<Icon sx={{ fontSize: 13 }} />}
+                    label={meta.label}
+                    sx={{
+                      bgcolor: `${meta.color}14`,
+                      color: meta.color,
+                      border: '1px solid',
+                      borderColor: `${meta.color}40`,
+                      '& .MuiChip-icon': { color: meta.color },
+                    }}
+                  />
+                )
+              })}
+            </Stack>
+          ) : null}
         </Box>
-        {row.alerts.length > 0 && (
-          <Box sx={{ display: 'flex', gap: 0.75, mt: 2, flexWrap: 'wrap', position: 'relative' }}>
-            {row.alerts.map(a => {
-              const m = ALERT_META[a]
-              const Icon = m.Icon
-              return (
-                <Chip
-                  key={a}
-                  size="small"
-                  icon={<Icon sx={{ fontSize: 13 }} />}
-                  label={m.label}
-                  sx={{
-                    bgcolor: `${m.color}14`, color: m.color,
-                    border: '1px solid', borderColor: `${m.color}40`,
-                    '& .MuiChip-icon': { color: m.color },
-                  }}
-                />
-              )
-            })}
-          </Box>
-        )}
-      </Box>
 
-      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ px: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
-        <Tab icon={<PersonIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Visão Geral" />
-        <Tab icon={<HistoryIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Histórico" />
-        <Tab icon={<Inventory2Icon sx={{ fontSize: 16 }} />} iconPosition="start" label={`Entregas (${materials.length})`} />
-        <Tab icon={<NotesIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Anotações" />
-      </Tabs>
+        <Box sx={{ flex: 1, overflowY: 'auto', p: 3 }}>
+          <Stack spacing={3}>
+            <Section title="Identificação">
+              <DetailGrid>
+                <Detail label="Nome completo" value={row.name} />
+                <Detail label="Prontuário / pulseira" value={row.id} mono />
+                <Detail label="CPF" value={row.cpf} mono />
+                <Detail label="Data de nascimento" value={formatDateOnly(row.birthDate, 'Não informado')} />
+                <Detail label="Idade" value={`${row.age} anos`} />
+                <Detail label="Gênero" value={row.gender} />
+                <Detail label="Telefone" value={row.phone} />
+              </DetailGrid>
+            </Section>
 
-      <Box sx={{ flex: 1, overflowY: 'auto', p: 3 }}>
-        {tab === 0 && (
-          <>
-            <Subhead>Identificação</Subhead>
-            <Grid2>
-              <Detail label="Nome completo" value={row.name} />
-              <Detail label="CPF" value={row.cpf} mono />
-              <Detail label="Idade" value={`${row.age} anos`} />
-              <Detail label="Prontuário" value={row.id} mono />
-            </Grid2>
+            <Section title="Acolhimento">
+              <DetailGrid>
+                <Detail label="Data e hora de entrada" value={formatEntryDateTime(row.entry, row.entryTime, 'Não informado')} />
+                <Detail label="Setor" value={sectorLabel(sector)} />
+                <Detail label="Leito" value={row.bed} />
+                <Detail label="Família / prontuário" value={row.familyCode} mono />
+                <Detail label="Responsável familiar" value={row.familyResponsible} />
+                <Detail label="Operador atual" value={operatorName} />
+              </DetailGrid>
+            </Section>
 
-            <Subhead>Acolhimento</Subhead>
-            <Grid2>
-              <Detail label="Data de entrada" value={formatDateTime(row.entry)} />
-              <Detail label="Setor" value={`${sector?.name} — ${sector?.sub}`} />
-              {row.family != null && <Detail label="Família" value={`${row.family} ${row.family > 1 ? 'pessoas' : 'pessoa'}`} />}
-              <Detail label="Responsável" value="Luana Martins" />
-            </Grid2>
+            <Section title="Perfil preferencial">
+              {row.alerts.length === 0 ? (
+                <Typography variant="body2" color="text.secondary">
+                  Nenhuma condição prioritária registrada.
+                </Typography>
+              ) : (
+                <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                  {row.alerts.map(alert => {
+                    const meta = ALERT_META[alert]
+                    const Icon = meta.Icon
 
-            <Subhead>Perfil prioritário</Subhead>
-            {row.alerts.length === 0
-              ? <Typography variant="body2" color="text.secondary">Nenhuma condição prioritária registrada.</Typography>
-              : <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-                  {row.alerts.map(a => {
-                    const m = ALERT_META[a]
-                    const Icon = m.Icon
                     return (
-                      <Box component="li" key={a} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Box sx={{ width: 22, height: 22, borderRadius: 1, bgcolor: m.color, color: '#fff', display: 'grid', placeItems: 'center' }}>
-                          <Icon sx={{ fontSize: 12 }} />
-                        </Box>
-                        <Typography variant="body2">{m.label}</Typography>
-                      </Box>
+                      <Chip
+                        key={alert}
+                        icon={<Icon sx={{ fontSize: 14 }} />}
+                        label={meta.label}
+                        variant="outlined"
+                        sx={{ '& .MuiChip-icon': { color: meta.color } }}
+                      />
                     )
                   })}
-                </Box>
-            }
-          </>
-        )}
+                </Stack>
+              )}
+            </Section>
 
-        {tab === 1 && (
-          <>
-            <Subhead>Linha do tempo</Subhead>
-            <Timeline sx={{ p: 0, m: 0 }}>
-              {history.map((h, i) => (
-                <TimelineItem key={i} sx={{ '&::before': { display: 'none' } }}>
-                  <TimelineSeparator>
-                    <TimelineDot color="primary" sx={{ my: 0.5 }} />
-                    {i < history.length - 1 && <TimelineConnector />}
-                  </TimelineSeparator>
-                  <TimelineContent>
-                    <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{h.title}</Typography>
-                    <Typography variant="caption">{h.desc}</Typography>
-                    <Typography variant="caption" sx={{ display: 'block', color: 'text.disabled' }}>
-                      {formatDateTime(h.date)}
-                    </Typography>
-                  </TimelineContent>
-                </TimelineItem>
-              ))}
-            </Timeline>
-          </>
-        )}
+            <Section title="Observações">
+              <TextBlock value={row.notes} />
+            </Section>
 
-        {tab === 2 && (
-          <>
-            <Subhead>Materiais entregues</Subhead>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {materials.map((m, i) => (
-                <Box key={i} sx={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: 2, alignItems: 'center', p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-                  <Box>
-                    <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{m.name}</Typography>
-                    <Typography variant="caption">{m.sub}</Typography>
-                  </Box>
-                  <Typography variant="caption">{m.qty}</Typography>
-                  <Typography variant="caption" sx={{ color: 'text.disabled' }}>{formatDateTime(m.date)}</Typography>
-                </Box>
-              ))}
-            </Box>
-          </>
-        )}
+            <Section title="Pertences registrados">
+              <TextBlock value={row.belongings} />
+            </Section>
+          </Stack>
+        </Box>
 
-        {tab === 3 && (
-          <>
-            <Subhead>Observações da equipe</Subhead>
-            <Box sx={{ p: 1.5, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', borderRadius: 1, mb: 1 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                  Luana Martins · Assistente Social
-                </Typography>
-                <Typography variant="caption">{formatDateTime(row.entry)}</Typography>
-              </Box>
-              <Typography variant="body2">
-                Acolhimento realizado em condições adequadas. Família orientada sobre rotina da unidade.
-              </Typography>
-            </Box>
-            <TextField multiline minRows={3} fullWidth placeholder="Adicionar nova observação…" sx={{ mt: 1 }} />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-              <Button size="small" variant="contained" startIcon={<AddIcon sx={{ fontSize: 14 }} />}>
-                Adicionar nota
-              </Button>
-            </Box>
-          </>
-        )}
-      </Box>
-
-      <Divider />
-      <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
-        <Typography variant="caption">
-          Última atualização hoje, {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button startIcon={<PrintIcon />} onClick={() => onAction('print', row)}>Imprimir</Button>
-          <Button startIcon={<EditIcon />} onClick={() => onAction('edit', row)}>Editar</Button>
-          <Button variant="contained" startIcon={<LogoutIcon />} onClick={() => onAction('exit', row)}>
-            Registrar saída
-          </Button>
+        <Divider />
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+          <Typography variant="caption" color="text.secondary">
+            Dados do cadastro do acolhido
+          </Typography>
+          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+            <Button startIcon={<LocalOfferIcon />} onClick={() => onAction('label', row)}>
+              Etiqueta
+            </Button>
+            <Button startIcon={<PictureAsPdfIcon />} onClick={() => onAction('print', row)}>
+              PDF da ficha
+            </Button>
+            <Button startIcon={<EditIcon />} onClick={() => onAction('edit', row)}>
+              Editar rápido
+            </Button>
+            <Button startIcon={<AssignmentIcon />} onClick={() => onAction('editFull', row)}>
+              Ficha detalhada
+            </Button>
+            <Button variant="contained" startIcon={<LogoutIcon />} onClick={() => onAction('exit', row)}>
+              Registrar saída
+            </Button>
+          </Stack>
         </Box>
       </Box>
     </Drawer>
   )
 }
 
-const Subhead = ({ children }: { children: React.ReactNode }) => (
-  <Typography variant="caption" sx={{
-    display: 'block', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em',
-    color: 'text.disabled', pb: 1, mb: 1.5, borderBottom: '1px solid', borderColor: 'divider',
-  }}>
-    {children}
-  </Typography>
-)
+function Meta({ icon, text }: { icon: ReactElement; text: string }) {
+  return (
+    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12.5, '& svg': { fontSize: 15 } }}>
+      {icon}
+      <span>{text}</span>
+    </Box>
+  )
+}
 
-const Grid2 = ({ children }: { children: React.ReactNode }) => (
-  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px 24px', mb: 3 }}>
-    {children}
-  </Box>
-)
+function Section({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <Box>
+      <Typography
+        variant="caption"
+        sx={{
+          display: 'block',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          color: 'text.secondary',
+          pb: 1,
+          mb: 1.5,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        {title}
+      </Typography>
+      {children}
+    </Box>
+  )
+}
 
-const Detail = ({ label, value, mono }: { label: string; value: string; mono?: boolean }) => (
-  <Box>
-    <Typography variant="caption" sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'text.disabled', display: 'block' }}>
-      {label}
-    </Typography>
-    <Typography sx={{ fontSize: 13.5, fontWeight: 500, fontFamily: mono ? 'ui-monospace, monospace' : undefined }}>
-      {value}
-    </Typography>
-  </Box>
-)
+function DetailGrid({ children }: { children: ReactNode }) {
+  return (
+    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: '14px 24px' }}>
+      {children}
+    </Box>
+  )
+}
+
+function Detail({ label, value, mono }: { label: string; value?: string | number | null; mono?: boolean }) {
+  return (
+    <Box>
+      <Typography
+        variant="caption"
+        sx={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'text.disabled', display: 'block' }}
+      >
+        {label}
+      </Typography>
+      <Typography sx={{ fontSize: 13.5, fontWeight: 500, fontFamily: mono ? 'ui-monospace, monospace' : undefined }}>
+        {valueOrFallback(value)}
+      </Typography>
+    </Box>
+  )
+}
+
+function TextBlock({ value }: { value?: string | null }) {
+  return (
+    <Box sx={{ p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1, bgcolor: 'background.default' }}>
+      <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+        {valueOrFallback(value)}
+      </Typography>
+    </Box>
+  )
+}
