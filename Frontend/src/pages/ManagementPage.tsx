@@ -30,6 +30,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import { api } from '../services/api'
 import { fetchAcolhidos, fetchSetores, toSector } from '../services/acolhidosService'
 import type { Acolhido, AlertCategory, Sector } from '../modules/acolhidos/types'
+import { dateSortValue, formatEntryDateTime } from '../modules/acolhidos/utils/date'
 
 interface DashboardSummary {
   familias_ativas: number
@@ -46,11 +47,6 @@ const alertLabels: Record<AlertCategory, string> = {
   gestante: 'Gestante',
   cronica: 'Doença crônica',
   idoso: 'Idoso 60+',
-}
-
-function formatDate(value: string) {
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('pt-BR')
 }
 
 function StatCard({
@@ -166,7 +162,7 @@ export function ManagementPage() {
   const recentRows = useMemo(
     () =>
       [...rows]
-        .sort((a, b) => new Date(b.entry).getTime() - new Date(a.entry).getTime())
+        .sort((a, b) => dateSortValue(b.entry, b.entryTime) - dateSortValue(a.entry, a.entryTime))
         .slice(0, 6),
     [rows],
   )
@@ -367,7 +363,7 @@ export function ManagementPage() {
                     <TableCell sx={{ fontWeight: 600 }}>{row.name}</TableCell>
                     <TableCell>{row.cpf || '-'}</TableCell>
                     <TableCell>{sectorMap[row.sectorId]?.name ?? '-'}</TableCell>
-                    <TableCell>{formatDate(row.entry)}</TableCell>
+                    <TableCell>{formatEntryDateTime(row.entry, row.entryTime)}</TableCell>
                     <TableCell>
                       <Stack direction="row" gap={0.75} flexWrap="wrap">
                         {row.alerts.length > 0 ? (

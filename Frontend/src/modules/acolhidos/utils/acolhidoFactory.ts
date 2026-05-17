@@ -11,6 +11,7 @@ export const createAcolhidoFromCadastro = (payload: CadastroPayload): Acolhido =
   if (payload.idoso || age >= 60) alerts.push('idoso')
 
   return {
+    apiId: Date.now(),
     id: `AC-${String(235 + Math.floor(Math.random() * 40)).padStart(4, '0')}`,
     name: payload.name.trim(),
     cpf: payload.cpf,

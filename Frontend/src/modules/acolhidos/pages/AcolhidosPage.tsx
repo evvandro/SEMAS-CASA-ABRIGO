@@ -1,15 +1,73 @@
 import { Alert, Box, CircularProgress, Snackbar, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../auth/useAuth'
+import { updateAcolhidoRecord } from '../../../services/acolhidosService'
 import { AcolhidosTable } from '../components/AcolhidosTable'
 import { AcolhidosToolbar } from '../components/AcolhidosToolbar'
 import { CadastroDrawer } from '../components/CadastroDrawer'
 import { FichaDrawer } from '../components/FichaDrawer'
+import { PertencesLabelDialog } from '../components/PertencesLabelDialog'
 import { SectorHeatmap } from '../components/SectorHeatmap'
 import { useAcolhidosPageState } from '../hooks/useAcolhidosPageState'
+import type { Acolhido, AcolhidoAction } from '../types'
 
 export function AcolhidosPage() {
   const state = useAcolhidosPageState()
   const navigate = useNavigate()
+  const { user } = useAuth()
+
+  const handleAcolhidoAction = async (action: AcolhidoAction, row: Acolhido) => {
+    if (action === 'view') {
+      state.openFicha(row)
+      return
+    }
+
+    if (action === 'label') {
+      state.openLabel(row)
+      return
+    }
+
+    if (action === 'edit') {
+      state.openQuickEdit(row)
+      return
+    }
+
+    if (action === 'editFull') {
+      state.setFichaRow(null)
+      state.setLabelRow(null)
+      state.setEditRow(null)
+      navigate(`/acolhidos/cadastros?edit=${row.apiId}`)
+      return
+    }
+
+    if (action === 'print') {
+      try {
+        const detail = await state.getAcolhidoDetail(row)
+        const { openAcolhidoFichaPdf } = await import('../utils/pdfDocuments')
+        await openAcolhidoFichaPdf(detail, state.sectorMap[detail.sectorId], user?.name)
+        state.setToast({ message: 'PDF da ficha gerado com sucesso.', severity: 'success' })
+      } catch {
+        state.setToast({ message: 'Não foi possível gerar o PDF da ficha.', severity: 'error' })
+      }
+      return
+    }
+
+    state.handleAction(action, row)
+  }
+
+  const handleGenerateLabel = async ({ shelterName, belongings }: { shelterName: string; belongings: string }) => {
+    if (!state.labelRow) return
+
+    const updated = await updateAcolhidoRecord(state.labelRow.apiId, {
+      pertences_registrados: belongings || null,
+    })
+
+    state.applyAcolhidoUpdate(updated)
+    const { openPertencesLabelPdf } = await import('../utils/pdfDocuments')
+    await openPertencesLabelPdf(updated, state.sectorMap[updated.sectorId], shelterName, belongings)
+    state.setLabelRow(null)
+    state.setToast({ message: 'Etiqueta de pertences gerada com sucesso.', severity: 'success' })
+  }
 
   if (state.loading) {
     return (
@@ -42,15 +100,15 @@ export function AcolhidosPage() {
         sectorId={state.sectorId} onSector={state.setSectorId}
         sectors={state.sectors}
         count={state.filteredRows.length}
-        onNew={() => state.setCadastroOpen(true)}
+        onNew={() => { state.setEditRow(null); state.setCadastroOpen(true) }}
         onFullRegistration={() => navigate('/acolhidos/cadastros')}
       />
 
       <AcolhidosTable
         rows={state.filteredRows}
         sectorMap={state.sectorMap}
-        onRowClick={state.setFichaRow}
-        onAction={(action, row) => action === 'view' ? state.setFichaRow(row) : state.handleAction(action, row)}
+        onRowClick={state.openFicha}
+        onAction={handleAcolhidoAction}
       />
 
       <SectorHeatmap
@@ -64,20 +122,30 @@ export function AcolhidosPage() {
         row={state.fichaRow}
         sectorMap={state.sectorMap}
         onClose={() => state.setFichaRow(null)}
-        onAction={(action, row) => { state.setFichaRow(null); state.handleAction(action, row) }}
+        operatorName={user?.name}
+        onAction={handleAcolhidoAction}
+      />
+
+      <PertencesLabelDialog
+        row={state.labelRow}
+        sector={state.labelRow ? state.sectorMap[state.labelRow.sectorId] : undefined}
+        onClose={() => state.setLabelRow(null)}
+        onGenerate={handleGenerateLabel}
       />
 
       <CadastroDrawer
         open={state.cadastroOpen}
-        onClose={() => state.setCadastroOpen(false)}
-        onSave={state.handleSave}
+        onClose={state.closeCadastro}
+        onSave={state.editRow ? state.handleQuickUpdate : state.handleSave}
         sectors={state.sectors}
+        mode={state.editRow ? 'edit' : 'create'}
+        initialRow={state.editRow}
       />
 
       <Snackbar open={!!state.toast} autoHideDuration={2800} onClose={() => state.setToast(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity="success" onClose={() => state.setToast(null)} variant="filled" sx={{ borderRadius: 1 }}>
-          {state.toast}
+        <Alert severity={state.toast?.severity ?? 'success'} onClose={() => state.setToast(null)} variant="filled" sx={{ borderRadius: 1 }}>
+          {state.toast?.message}
         </Alert>
       </Snackbar>
     </Box>

@@ -5,7 +5,7 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { cadastroSchema } from '../schemas/cadastroSchema'
-import type { CadastroPayload, Sector } from '../types'
+import type { Acolhido, CadastroPayload, Sector } from '../types'
 import { formatCpf, formatDateInput } from '../utils/formFormatters'
 
 const empty: CadastroPayload = {
@@ -14,11 +14,35 @@ const empty: CadastroPayload = {
   sectorId: '', notes: '',
 }
 
-export function CadastroDrawer({ open, onClose, onSave, sectors }: {
+function toBrazilianDate(isoDate?: string | null) {
+  if (!isoDate) return ''
+  const [year, month, day] = isoDate.split('T')[0].split('-')
+  if (!year || !month || !day) return ''
+  return `${day}/${month}/${year}`
+}
+
+function toFormPayload(row: Acolhido): CadastroPayload {
+  return {
+    name: row.name,
+    cpf: row.cpf,
+    birth: toBrazilianDate(row.birthDate),
+    family: row.family ?? 1,
+    pcd: row.alerts.includes('pcd'),
+    gestante: row.alerts.includes('gestante'),
+    cronica: row.alerts.includes('cronica'),
+    idoso: row.alerts.includes('idoso'),
+    sectorId: row.sectorId,
+    notes: row.notes ?? '',
+  }
+}
+
+export function CadastroDrawer({ open, onClose, onSave, sectors, mode = 'create', initialRow = null }: {
   open: boolean
   onClose: () => void
   onSave: (payload: CadastroPayload) => void | Promise<void>
   sectors: Sector[]
+  mode?: 'create' | 'edit'
+  initialRow?: Acolhido | null
 }) {
   const [form, setForm] = useState<CadastroPayload>(empty)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -30,6 +54,12 @@ export function CadastroDrawer({ open, onClose, onSave, sectors }: {
     const timeout = window.setTimeout(() => firstRef.current?.focus(), 280)
     return () => window.clearTimeout(timeout)
   }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    setForm(initialRow ? toFormPayload(initialRow) : empty)
+    setErrors({})
+  }, [initialRow, open])
 
   const resetForm = () => {
     setForm(empty)
@@ -77,8 +107,12 @@ export function CadastroDrawer({ open, onClose, onSave, sectors }: {
       <Box onKeyDown={onKeyDown} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ p: 2.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid', borderColor: 'divider' }}>
           <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Cadastro rápido</Typography>
-            <Typography variant="caption">Entrada com dados essenciais</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              {mode === 'edit' ? 'Editar cadastro rápido' : 'Cadastro rápido'}
+            </Typography>
+            <Typography variant="caption">
+              {mode === 'edit' ? 'Atualização dos dados essenciais' : 'Entrada com dados essenciais'}
+            </Typography>
           </Box>
           <IconButton onClick={handleClose}><CloseIcon /></IconButton>
         </Box>
@@ -144,8 +178,8 @@ export function CadastroDrawer({ open, onClose, onSave, sectors }: {
           <SectionLabel n={3} title="Alocação de setor" />
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, mb: 1 }}>
             {sectors.map(s => {
-              const full = s.occupied >= s.capacity
               const active = form.sectorId === s.id
+              const full = s.occupied >= s.capacity && !active
               return (
                 <Box
                   key={s.id}
@@ -195,7 +229,7 @@ export function CadastroDrawer({ open, onClose, onSave, sectors }: {
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button onClick={handleClose} disabled={submitting}>Cancelar</Button>
             <Button variant="contained" onClick={submit} disabled={submitting}>
-              {submitting ? 'Salvando…' : 'Salvar ficha'}
+              {submitting ? 'Salvando…' : mode === 'edit' ? 'Salvar alterações' : 'Salvar ficha'}
             </Button>
           </Box>
         </Box>
