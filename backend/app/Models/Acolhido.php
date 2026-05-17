@@ -22,7 +22,13 @@ class Acolhido extends Model
         'genero',
         'leito',
         'observacoes',
+        'pertences_registrados',
+        'pcd',
+        'gestante',
+        'cronica',
+        'idoso',
         'data_entrada',
+        'hora_entrada',
         'data_saida',
         'tipo_saida',
     ];
@@ -33,6 +39,10 @@ class Acolhido extends Model
             'data_nascimento' => 'date',
             'data_entrada' => 'date',
             'data_saida' => 'date',
+            'pcd' => 'boolean',
+            'gestante' => 'boolean',
+            'cronica' => 'boolean',
+            'idoso' => 'boolean',
         ];
     }
 

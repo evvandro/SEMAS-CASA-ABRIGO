@@ -29,13 +29,19 @@ class AcolhidoDetalheResource extends JsonResource
             'setor' => $this->whenLoaded('setor', fn () => new SetorResource($this->setor)),
             'leito' => $this->leito,
             'data_entrada' => $this->data_entrada?->toDateString(),
+            'hora_entrada' => $this->hora_entrada ? substr((string) $this->hora_entrada, 0, 5) : null,
             'data_saida' => $this->data_saida?->toDateString(),
             'ativo' => $this->data_saida === null,
             'cpf' => $this->cpf,
             'telefone' => $this->telefone,
             'genero' => $this->genero,
             'data_nascimento' => $this->data_nascimento?->toDateString(),
+            'pcd' => (bool) $this->pcd,
+            'gestante' => (bool) $this->gestante,
+            'cronica' => (bool) $this->cronica,
+            'idoso' => (bool) $this->idoso,
             'observacoes' => $this->observacoes,
+            'pertences_registrados' => $this->pertences_registrados,
         ];
     }
 }

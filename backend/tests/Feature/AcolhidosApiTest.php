@@ -46,12 +46,22 @@ class AcolhidosApiTest extends TestCase
             'genero' => 'masculino',
             'leito' => 'A1',
             'observacoes' => 'Obs',
+            'pertences_registrados' => 'Mochila azul, sacola com roupas e documentos pessoais.',
             'data_entrada' => now()->toDateString(),
+            'hora_entrada' => '08:35',
+            'pcd' => true,
+            'gestante' => false,
+            'cronica' => true,
+            'idoso' => false,
         ]);
 
         $create
             ->assertCreated()
             ->assertJsonPath('data.nome', 'João da Silva')
+            ->assertJsonPath('data.pcd', true)
+            ->assertJsonPath('data.cronica', true)
+            ->assertJsonPath('data.hora_entrada', '08:35')
+            ->assertJsonPath('data.pertences_registrados', 'Mochila azul, sacola com roupas e documentos pessoais.')
             ->assertJsonStructure(['message', 'data' => ['id', 'codigo_pulseira']]);
 
         $acolhidoId = $create->json('data.id');
@@ -62,11 +72,21 @@ class AcolhidosApiTest extends TestCase
 
         $this->getJson("/api/acolhidos/{$acolhidoId}")
             ->assertOk()
-            ->assertJsonPath('data.id', $acolhidoId);
+            ->assertJsonPath('data.id', $acolhidoId)
+            ->assertJsonPath('data.hora_entrada', '08:35')
+            ->assertJsonPath('data.pertences_registrados', 'Mochila azul, sacola com roupas e documentos pessoais.');
 
-        $this->patchJson("/api/acolhidos/{$acolhidoId}", ['telefone' => '47999999999'])
+        $this->patchJson("/api/acolhidos/{$acolhidoId}", [
+            'telefone' => '47999999999',
+            'idoso' => true,
+            'hora_entrada' => '09:10',
+            'pertences_registrados' => 'Mochila azul atualizada.',
+        ])
             ->assertOk()
-            ->assertJsonPath('data.telefone', '47999999999');
+            ->assertJsonPath('data.telefone', '47999999999')
+            ->assertJsonPath('data.idoso', true)
+            ->assertJsonPath('data.hora_entrada', '09:10')
+            ->assertJsonPath('data.pertences_registrados', 'Mochila azul atualizada.');
 
         $this->postJson("/api/acolhidos/{$acolhidoId}/saida", [
             'data_saida' => now()->toDateString(),
@@ -75,7 +95,14 @@ class AcolhidosApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.ativo', false);
 
-        $this->assertDatabaseHas('acolhidos', ['id' => $acolhidoId]);
+        $this->assertDatabaseHas('acolhidos', [
+            'id' => $acolhidoId,
+            'pcd' => true,
+            'cronica' => true,
+            'idoso' => true,
+            'hora_entrada' => '09:10',
+            'pertences_registrados' => 'Mochila azul atualizada.',
+        ]);
     }
 
     public function test_create_requires_nome_and_data_entrada(): void

@@ -23,11 +23,15 @@ class AcolhidoResource extends JsonResource
             'nome' => $this->nome,
             'cpf' => $this->cpf,
             'data_nascimento' => $this->data_nascimento?->toDateString(),
+            'telefone' => $this->telefone,
+            'genero' => $this->genero,
             'leito' => $this->leito,
             'pcd' => (bool) $this->pcd,
             'gestante' => (bool) $this->gestante,
             'cronica' => (bool) $this->cronica,
             'idoso' => (bool) $this->idoso,
+            'observacoes' => $this->observacoes,
+            'pertences_registrados' => $this->pertences_registrados,
             'familia' => $this->whenLoaded('familia', function () {
                 return [
                     'id' => $this->familia?->id,
@@ -37,6 +41,7 @@ class AcolhidoResource extends JsonResource
             }),
             'setor' => $this->whenLoaded('setor', fn () => new SetorResource($this->setor)),
             'data_entrada' => $this->data_entrada?->toDateString(),
+            'hora_entrada' => $this->hora_entrada ? substr((string) $this->hora_entrada, 0, 5) : null,
             'data_saida' => $this->data_saida?->toDateString(),
             'ativo' => $this->data_saida === null,
         ];

@@ -18,8 +18,9 @@ class AcolhidoController extends Controller
         $acolhidos = Acolhido::query()
             ->select([
                 'id', 'codigo_pulseira', 'nome', 'cpf', 'data_nascimento',
-                'leito', 'pcd', 'gestante', 'cronica', 'idoso',
-                'familia_id', 'setor_id', 'data_entrada', 'data_saida',
+                'telefone', 'genero', 'leito', 'observacoes', 'pertences_registrados',
+                'pcd', 'gestante', 'cronica', 'idoso',
+                'familia_id', 'setor_id', 'data_entrada', 'hora_entrada', 'data_saida',
             ])
             ->whereNull('data_saida')
             ->with([
