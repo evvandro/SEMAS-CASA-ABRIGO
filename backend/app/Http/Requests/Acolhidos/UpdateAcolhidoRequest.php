@@ -28,11 +28,17 @@ class UpdateAcolhidoRequest extends FormRequest
             'nome' => ['sometimes', 'string', 'max:255'],
             'data_nascimento' => ['sometimes', 'date'],
             'cpf' => ['sometimes', 'string', 'max:20'],
-            'telefone' => ['sometimes', 'string', 'max:20'],
-            'genero' => ['sometimes', 'string', 'max:30'],
-            'leito' => ['sometimes', 'string', 'max:30'],
-            'observacoes' => ['sometimes', 'string'],
+            'telefone' => ['sometimes', 'nullable', 'string', 'max:20'],
+            'genero' => ['sometimes', 'nullable', 'string', 'max:30'],
+            'leito' => ['sometimes', 'nullable', 'string', 'max:30'],
+            'observacoes' => ['sometimes', 'nullable', 'string'],
+            'pertences_registrados' => ['sometimes', 'nullable', 'string'],
             'data_entrada' => ['sometimes', 'date'],
+            'hora_entrada' => ['sometimes', 'nullable', 'date_format:H:i'],
+            'pcd' => ['sometimes', 'boolean'],
+            'gestante' => ['sometimes', 'boolean'],
+            'cronica' => ['sometimes', 'boolean'],
+            'idoso' => ['sometimes', 'boolean'],
         ];
     }
 }
