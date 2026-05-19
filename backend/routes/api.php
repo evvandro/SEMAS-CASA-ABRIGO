@@ -8,6 +8,7 @@ use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\FamiliaController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\RecebimentoMaterialController;
 use App\Http\Controllers\SetorController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +39,8 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/materiais', [MaterialController::class, 'index']);
         Route::post('/materiais', [MaterialController::class, 'store']);
         Route::patch('/materiais/{material}', [MaterialController::class, 'update']);
+        Route::get('/recebimentos-materiais', [RecebimentoMaterialController::class, 'index']);
+        Route::post('/recebimentos-materiais', [RecebimentoMaterialController::class, 'store']);
 
         Route::get('/entregas', [EntregaController::class, 'index']);
         Route::post('/entregas', [EntregaController::class, 'store']);

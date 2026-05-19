@@ -21,6 +21,7 @@ class DashboardController extends Controller
             ->where('ativo', true)
             ->withCount([
                 'familias as familias_ativas_count' => fn ($q) => $q->whereNull('data_saida'),
+                'acolhidos as acolhidos_ativos_count' => fn ($q) => $q->whereNull('data_saida'),
             ])
             ->orderBy('nome')
             ->get();
@@ -35,6 +36,7 @@ class DashboardController extends Controller
                     return [
                         ...((new SetorResource($setor))->toArray(request())),
                         'familias_ativas_count' => (int) ($setor->familias_ativas_count ?? 0),
+                        'acolhidos_ativos_count' => (int) ($setor->acolhidos_ativos_count ?? 0),
                     ];
                 })->values(),
             ],
