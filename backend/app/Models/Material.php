@@ -29,4 +29,9 @@ class Material extends Model
     {
         return $this->hasMany(Entrega::class);
     }
+
+    public function recebimentoItens(): HasMany
+    {
+        return $this->hasMany(RecebimentoMaterialItem::class);
+    }
 }

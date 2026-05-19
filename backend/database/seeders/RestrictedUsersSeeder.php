@@ -13,8 +13,8 @@ class RestrictedUsersSeeder extends Seeder
         $users = [
             [
                 'name' => env('ADMIN_SEMAS_NAME', 'Administrador SEMAS'),
-                'email' => env('ADMIN_SEMAS_EMAIL', 'adm@semas.gov'),
-                'password' => env('ADMIN_SEMAS_PASSWORD', ''),
+                'email' => env('ADMIN_SEMAS_EMAIL', env('ADMIN_EMAIL', 'adm@semas.gov')),
+                'password' => env('ADMIN_SEMAS_PASSWORD', env('ADMIN_PASSWORD', '')),
                 'role' => User::ROLE_ADMIN,
                 'is_active' => true,
             ],
