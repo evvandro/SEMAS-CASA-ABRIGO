@@ -87,38 +87,39 @@ class AcolhidoController extends Controller
             'data' => new AcolhidoDetalheResource($acolhido->fresh()->load(['familia', 'setor'])),
         ]);
     }
-    public function registrarSaida(\Illuminate\Http\Request $request, $id)
-    {
-        $acolhido = \App\Models\Acolhido::find($id);
 
-        if (!$acolhido) {
+    public function registrarSaida(Request $request, $id)
+    {
+        $acolhido = Acolhido::find($id);
+
+        if (! $acolhido) {
             return response()->json(['error' => 'Acolhido não encontrado.'], 404);
         }
 
         $acolhido->status = 'desligado';
-        
+
         $acolhido->data_saida = $request->input('data_saida');
         $acolhido->hora_saida = $request->input('hora_saida');
         $acolhido->tipo_desligamento = $request->input('tipo_desligamento');
-        
+
         $acolhido->destino_informado = $request->input('destino_informado');
         $acolhido->endereco_destino = $request->input('endereco_destino');
         $acolhido->municipio_destino = $request->input('municipio_destino');
         $acolhido->telefone_destino = $request->input('telefone_destino');
-        
+
         $acolhido->encaminhamentos_rede = $request->input('encaminhamentos_rede');
         $acolhido->resumo_encaminhamento = $request->input('resumo_encaminhamento');
-        
+
         $acolhido->condicao_saida = $request->input('condicao_saida');
         $acolhido->observacoes_tecnicas = $request->input('observacoes_tecnicas');
-        
+
         $acolhido->responsavel_desligamento = $request->input('responsavel_desligamento');
         $acolhido->cargo_responsavel = $request->input('cargo_responsavel');
 
         $acolhido->save();
 
         return response()->json([
-            'message' => 'Ficha de saída salva'
+            'message' => 'Ficha de saída salva',
         ]);
     }
 }
