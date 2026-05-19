@@ -162,3 +162,12 @@ export async function updateAcolhidoRecord(
   const res = await api.patch<{ data: ApiAcolhido }>(`/acolhidos/${apiId}`, payload)
   return toAcolhido(res.data.data)
 }
+
+export async function registerAcolhidoSaida(apiId: number, dataSaida: string, tipoSaida: string, detalhesSaida: any): Promise<Acolhido> {
+  const res = await api.post<{ data: ApiAcolhido }>(`/acolhidos/${apiId}/saida`, {
+    data_saida: dataSaida,
+    tipo_saida: tipoSaida,
+    detalhes_saida: detalhesSaida,
+  })
+  return toAcolhido(res.data.data)
+}
