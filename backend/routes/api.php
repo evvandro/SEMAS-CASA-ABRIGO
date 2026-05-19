@@ -59,4 +59,6 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::patch('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     });
+    // Rota para salvar a ficha de saída do acolhido
+    Route::post('/acolhidos/saida/{id}', [AcolhidoController::class, 'registrarSaida']);
 });
