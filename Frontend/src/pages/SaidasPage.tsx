@@ -11,6 +11,7 @@ export function SaidasPage() {
   const [selectedAcolhido, setSelectedAcolhido] = useState<Acolhido | null>(null)
   const [loading, setLoading] = useState(false)
   const [successMsg, setSuccessMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
     loadAcolhidos()
@@ -30,12 +31,14 @@ export function SaidasPage() {
   }
 
   const handleOpenDrawer = () => {
-    if (!selectedAcolhido) return
     setDrawerOpen(true)
   }
 
   const handleSaveSaida = async (payload: SaidaPayload) => {
-    if (!selectedAcolhido) return
+    if (!selectedAcolhido) {
+      setErrorMsg('Selecione um acolhido na lista antes de salvar.')
+      return
+    }
     try {
       // payload.data is 'dd/mm/yyyy' from the form if prepopulated.
       const isoDate = payload.data.split('/').reverse().join('-')
@@ -82,9 +85,8 @@ export function SaidasPage() {
             variant="contained" 
             startIcon={<AddIcon />}
             onClick={handleOpenDrawer}
-            disabled={!selectedAcolhido}
           >
-            Anexar Formulário de Saída
+            Abrir Formulário de Saída
           </Button>
         </Stack>
       </Box>
@@ -105,6 +107,12 @@ export function SaidasPage() {
       <Snackbar open={!!successMsg} autoHideDuration={6000} onClose={() => setSuccessMsg('')}>
         <Alert onClose={() => setSuccessMsg('')} severity="success" sx={{ width: '100%' }}>
           {successMsg}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar open={!!errorMsg} autoHideDuration={6000} onClose={() => setErrorMsg('')}>
+        <Alert onClose={() => setErrorMsg('')} severity="error" sx={{ width: '100%' }}>
+          {errorMsg}
         </Alert>
       </Snackbar>
     </Box>
