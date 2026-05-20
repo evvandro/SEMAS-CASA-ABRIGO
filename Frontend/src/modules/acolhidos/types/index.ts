@@ -5,5 +5,6 @@ export type {
   AlertCategory,
   CadastroAction,
   CadastroPayload,
+  SaidaPayload,
   Sector,
 } from './acolhidos'

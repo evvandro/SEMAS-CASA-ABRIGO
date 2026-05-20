@@ -19,6 +19,7 @@ class RegistrarSaidaAcolhidoRequest extends FormRequest
         return [
             'data_saida' => ['required', 'date'],
             'tipo_saida' => ['required', 'string', 'max:80'],
+            'detalhes_saida' => ['nullable', 'array'],
         ];
     }
 }

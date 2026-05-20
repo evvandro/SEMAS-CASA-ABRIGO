@@ -31,6 +31,7 @@ class Acolhido extends Model
         'hora_entrada',
         'data_saida',
         'tipo_saida',
+        'detalhes_saida',
     ];
 
     protected function casts(): array
@@ -43,6 +44,7 @@ class Acolhido extends Model
             'gestante' => 'boolean',
             'cronica' => 'boolean',
             'idoso' => 'boolean',
+            'detalhes_saida' => 'array',
         ];
     }
 

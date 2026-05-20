@@ -48,3 +48,31 @@ export interface CadastroPayload {
   sectorId: string
   notes?: string
 }
+
+export interface SaidaPayload {
+  abrigoNome: string
+  abrigoMunicipio: string
+  abrigoGestor: string
+  prontuario?: string
+  registroIndividual?: string
+  nome: string
+  cpfRg: string
+  responsavelFamiliar?: string
+  integrantes: Array<{nome: string, documento: string}>
+  data: string
+  hora: string
+  tipoDesligamento: string
+  tipoDesligamentoOutro?: string
+  destinoInformado: string
+  destinoEndereco: string
+  destinoMunicipio: string
+  destinoTelefone?: string
+  encaminhamentos: string[]
+  encaminhamentoOutro?: string
+  encaminhamentoResumo?: string
+  condicoesNaSaida: string
+  condicoesObservacoes?: string
+  responsavelNome: string
+  responsavelCargo: string
+  responsavelData: string
+}

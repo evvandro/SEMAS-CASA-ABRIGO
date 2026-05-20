@@ -14,9 +14,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -37,7 +38,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -54,9 +58,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Handle login with restricted users and issue a Sanctum token.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -104,7 +109,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -121,9 +129,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Return the authenticated user.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -144,7 +153,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -161,9 +173,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Revoke current API token.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -175,7 +188,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -192,9 +208,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -215,7 +232,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -232,9 +252,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -255,7 +276,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -272,9 +296,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -295,7 +320,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -312,9 +340,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -360,7 +389,7 @@ endpoints:
         name: data_entrada
         description: validation.date.
         required: true
-        example: '2026-05-13T19:23:16'
+        example: '2026-05-20T00:58:33'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -370,11 +399,14 @@ endpoints:
       responsavel_nome: b
       setor_id: 16
       observacoes: architecto
-      data_entrada: '2026-05-13T19:23:16'
+      data_entrada: '2026-05-20T00:58:33'
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -391,9 +423,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -426,7 +459,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -443,9 +479,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -503,7 +540,7 @@ endpoints:
         name: data_entrada
         description: validation.date.
         required: false
-        example: '2026-05-13T19:23:16'
+        example: '2026-05-20T00:58:33'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -513,11 +550,14 @@ endpoints:
       responsavel_nome: b
       setor_id: 16
       observacoes: architecto
-      data_entrada: '2026-05-13T19:23:16'
+      data_entrada: '2026-05-20T00:58:33'
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -534,9 +574,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -561,7 +602,7 @@ endpoints:
         name: data_saida
         description: validation.date.
         required: true
-        example: '2026-05-13T19:23:16'
+        example: '2026-05-20T00:58:33'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -579,12 +620,15 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      data_saida: '2026-05-13T19:23:16'
+      data_saida: '2026-05-20T00:58:33'
       tipo_saida: b
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -601,9 +645,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -624,7 +669,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -641,9 +689,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -700,7 +749,7 @@ endpoints:
         name: data_nascimento
         description: validation.date.
         required: true
-        example: '2026-05-13T19:23:16'
+        example: '2026-05-20T00:58:33'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -761,12 +810,34 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
+      pertences_registrados:
+        custom: []
+        name: pertences_registrados
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
       data_entrada:
         custom: []
         name: data_entrada
         description: validation.date.
         required: false
-        example: '2026-05-13T19:23:16'
+        example: '2026-05-20T00:58:33'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      hora_entrada:
+        custom: []
+        name: hora_entrada
+        description: 'Must be a valid date in the format <code>H:i</code>.'
+        required: false
+        example: '00:58'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -777,7 +848,7 @@ endpoints:
         name: pcd
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -788,7 +859,7 @@ endpoints:
         name: gestante
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -799,7 +870,7 @@ endpoints:
         name: cronica
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -810,7 +881,7 @@ endpoints:
         name: idoso
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -821,21 +892,26 @@ endpoints:
       familia_id: 16
       setor_id: 16
       nome: 'n'
-      data_nascimento: '2026-05-13T19:23:16'
+      data_nascimento: '2026-05-20T00:58:33'
       cpf: gzmiyvdljnikhway
       telefone: kcmyuwpwlvqwrsit
       genero: c
       leito: p
       observacoes: architecto
-      data_entrada: '2026-05-13T19:23:16'
-      pcd: false
-      gestante: false
-      cronica: false
-      idoso: true
+      pertences_registrados: architecto
+      data_entrada: '2026-05-20T00:58:33'
+      hora_entrada: '00:58'
+      pcd: true
+      gestante: true
+      cronica: true
+      idoso: false
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -852,9 +928,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -887,7 +964,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -904,9 +984,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -975,7 +1056,7 @@ endpoints:
         name: data_nascimento
         description: validation.date.
         required: false
-        example: '2026-05-13T19:23:16'
+        example: '2026-05-20T00:58:33'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1001,7 +1082,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       genero:
         custom: []
@@ -1012,7 +1093,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       leito:
         custom: []
@@ -1023,7 +1104,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       observacoes:
         custom: []
@@ -1034,15 +1115,81 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
+        deprecated: false
+      pertences_registrados:
+        custom: []
+        name: pertences_registrados
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
       data_entrada:
         custom: []
         name: data_entrada
         description: validation.date.
         required: false
-        example: '2026-05-13T19:23:16'
+        example: '2026-05-20T00:58:33'
         type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      hora_entrada:
+        custom: []
+        name: hora_entrada
+        description: 'Must be a valid date in the format <code>H:i</code>.'
+        required: false
+        example: '00:58'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      pcd:
+        custom: []
+        name: pcd
+        description: ''
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      gestante:
+        custom: []
+        name: gestante
+        description: ''
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      cronica:
+        custom: []
+        name: cronica
+        description: ''
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      idoso:
+        custom: []
+        name: idoso
+        description: ''
+        required: false
+        example: false
+        type: boolean
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -1052,17 +1199,26 @@ endpoints:
       familia_id: 16
       setor_id: 16
       nome: 'n'
-      data_nascimento: '2026-05-13T19:23:16'
+      data_nascimento: '2026-05-20T00:58:33'
       cpf: gzmiyvdljnikhway
       telefone: kcmyuwpwlvqwrsit
       genero: c
       leito: p
       observacoes: architecto
-      data_entrada: '2026-05-13T19:23:16'
+      pertences_registrados: architecto
+      data_entrada: '2026-05-20T00:58:33'
+      hora_entrada: '00:58'
+      pcd: true
+      gestante: true
+      cronica: false
+      idoso: false
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1079,9 +1235,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1106,7 +1263,7 @@ endpoints:
         name: data_saida
         description: validation.date.
         required: true
-        example: '2026-05-13T19:23:17'
+        example: '2026-05-20T00:58:33'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1123,13 +1280,27 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      detalhes_saida:
+        custom: []
+        name: detalhes_saida
+        description: ''
+        required: false
+        example: null
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
     cleanBodyParameters:
-      data_saida: '2026-05-13T19:23:17'
+      data_saida: '2026-05-20T00:58:33'
       tipo_saida: b
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1146,9 +1317,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1169,7 +1341,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1186,9 +1361,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1248,7 +1424,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1265,9 +1444,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1336,7 +1516,7 @@ endpoints:
         name: ativo
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1347,11 +1527,14 @@ endpoints:
       unidade: 'n'
       categoria: g
       estoque_atual: 12
-      ativo: false
+      ativo: true
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1359,7 +1542,7 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/entregas
+    uri: api/recebimentos-materiais
     metadata:
       custom: []
       groupName: Endpoints
@@ -1368,9 +1551,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1391,7 +1575,415 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/recebimentos-materiais
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      nome_abrigo:
+        custom: []
+        name: nome_abrigo
+        description: validation.max.
+        required: true
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      municipio_uf:
+        custom: []
+        name: municipio_uf
+        description: validation.max.
+        required: true
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      orgao_responsavel:
+        custom: []
+        name: orgao_responsavel
+        description: validation.max.
+        required: true
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      data_recebimento:
+        custom: []
+        name: data_recebimento
+        description: validation.date.
+        required: true
+        example: '2026-05-20T00:58:33'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      hora_recebimento:
+        custom: []
+        name: hora_recebimento
+        description: 'Must be a valid date in the format <code>H:i</code>.'
+        required: true
+        example: '00:58'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      origem:
+        custom: []
+        name: origem
+        description: validation.max.
+        required: true
+        example: z
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      origem_outro:
+        custom: []
+        name: origem_outro
+        description: validation.max.
+        required: false
+        example: m
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      doador_nome:
+        custom: []
+        name: doador_nome
+        description: validation.max.
+        required: true
+        example: i
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      doador_documento:
+        custom: []
+        name: doador_documento
+        description: validation.max.
+        required: false
+        example: 'y'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      doador_contato:
+        custom: []
+        name: doador_contato
+        description: validation.max.
+        required: false
+        example: v
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      conferido:
+        custom: []
+        name: conferido
+        description: ''
+        required: true
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      motivo_nao_conferido:
+        custom: []
+        name: motivo_nao_conferido
+        description: validation.max.
+        required: false
+        example: d
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      possui_restricao:
+        custom: []
+        name: possui_restricao
+        description: ''
+        required: true
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      restricao_descricao:
+        custom: []
+        name: restricao_descricao
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      destinacao_inicial:
+        custom: []
+        name: destinacao_inicial
+        description: ''
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      local_armazenamento:
+        custom: []
+        name: local_armazenamento
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      recebido_por:
+        custom: []
+        name: recebido_por
+        description: validation.max.
+        required: true
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      funcao_equipe:
+        custom: []
+        name: funcao_equipe
+        description: validation.max.
+        required: false
+        example: z
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      entregue_por:
+        custom: []
+        name: entregue_por
+        description: validation.max.
+        required: false
+        example: m
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      observacoes_gerais:
+        custom: []
+        name: observacoes_gerais
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      itens:
+        custom: []
+        name: itens
+        description: validation.min.
+        required: true
+        example:
+          - []
+        type: 'object[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'itens[].categoria':
+        custom: []
+        name: 'itens[].categoria'
+        description: validation.max.
+        required: true
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'itens[].descricao':
+        custom: []
+        name: 'itens[].descricao'
+        description: validation.max.
+        required: true
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'itens[].quantidade':
+        custom: []
+        name: 'itens[].quantidade'
+        description: validation.min.
+        required: true
+        example: 67
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'itens[].unidade':
+        custom: []
+        name: 'itens[].unidade'
+        description: validation.max.
+        required: true
+        example: z
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'itens[].condicao':
+        custom: []
+        name: 'itens[].condicao'
+        description: ''
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'itens[].observacoes':
+        custom: []
+        name: 'itens[].observacoes'
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      nome_abrigo: b
+      municipio_uf: 'n'
+      orgao_responsavel: g
+      data_recebimento: '2026-05-20T00:58:33'
+      hora_recebimento: '00:58'
+      origem: z
+      origem_outro: m
+      doador_nome: i
+      doador_documento: 'y'
+      doador_contato: v
+      conferido: false
+      motivo_nao_conferido: d
+      possui_restricao: false
+      restricao_descricao: architecto
+      destinacao_inicial: architecto
+      local_armazenamento: 'n'
+      recebido_por: g
+      funcao_equipe: z
+      entregue_por: m
+      observacoes_gerais: architecto
+      itens:
+        -
+          categoria: b
+          descricao: 'n'
+          quantidade: 67
+          unidade: z
+          condicao: architecto
+          observacoes: architecto
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/entregas
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          vary: Origin
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1408,9 +2000,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1467,7 +2060,7 @@ endpoints:
         name: data_entrega
         description: validation.date.
         required: true
-        example: '2026-05-13T19:23:17'
+        example: '2026-05-20T00:58:33'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1489,12 +2082,15 @@ endpoints:
       familia_id: 16
       acolhido_id: 16
       quantidade: 22
-      data_entrega: '2026-05-13T19:23:17'
+      data_entrega: '2026-05-20T00:58:33'
       observacoes: architecto
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1511,9 +2107,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1561,7 +2158,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1578,9 +2178,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1638,7 +2239,7 @@ endpoints:
         name: ativo
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1648,11 +2249,14 @@ endpoints:
       nome: b
       cor: 'n'
       capacidade: 7
-      ativo: false
+      ativo: true
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1669,9 +2273,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1695,7 +2300,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1712,9 +2320,10 @@ endpoints:
       subgroupDescription: ''
       title: 'List all system users.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1735,7 +2344,10 @@ endpoints:
           vary: Origin
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1752,9 +2364,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Create a new restricted user.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1842,7 +2455,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1859,9 +2475,10 @@ endpoints:
       subgroupDescription: ''
       title: "Update an existing user's data."
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1919,7 +2536,7 @@ endpoints:
         name: role
         description: ''
         required: false
-        example: logistica
+        example: admin
         type: string
         enumValues:
           - admin
@@ -1965,14 +2582,17 @@ endpoints:
     cleanBodyParameters:
       name: b
       email: zbailey@example.net
-      role: logistica
+      role: admin
       is_active: false
       phone: i
       documento: yvdljnikhwa
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -1989,9 +2609,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Deactivate a user (soft disable — never physically deletes).'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -2015,7 +2636,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
