@@ -13,12 +13,14 @@ import {
   Paper,
   Snackbar,
   Stack,
+  Tab,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Tabs,
   TextField,
   Typography,
 } from '@mui/material'
@@ -122,6 +124,7 @@ export function EstoquePage() {
   const [recebimentos, setRecebimentos] = useState<Recebimento[]>([])
   const [form, setForm] = useState<FormState>(emptyForm)
   const [itens, setItens] = useState<RecebimentoItem[]>([{ ...emptyItem }])
+  const [activeView, setActiveView] = useState<'listagem' | 'cadastro'>('listagem')
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -200,6 +203,7 @@ export function EstoquePage() {
       setForm({ ...emptyForm, data_recebimento: today, hora_recebimento: now })
       setItens([{ ...emptyItem }])
       await load()
+      setActiveView('listagem')
     } catch {
       setError('Nao foi possivel salvar o recebimento.')
     } finally {
@@ -233,8 +237,19 @@ export function EstoquePage() {
         </Grid>
       </Grid>
 
+      <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
+        <Tabs
+          value={activeView}
+          onChange={(_, value: 'listagem' | 'cadastro') => setActiveView(value)}
+          sx={{ px: 2, minHeight: 48, borderBottom: '1px solid', borderColor: 'divider' }}
+        >
+          <Tab label="Listagem" value="listagem" />
+          <Tab label="Cadastro" value="cadastro" />
+        </Tabs>
+      </Paper>
+
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, lg: 8 }}>
+        <Grid size={{ xs: 12 }} sx={{ display: activeView === 'cadastro' ? 'block' : 'none' }}>
           <Paper elevation={0} sx={{ p: 2.5, border: '1px solid', borderColor: 'divider' }}>
             <Stack spacing={2.5}>
               <Box>
@@ -379,7 +394,7 @@ export function EstoquePage() {
           </Paper>
         </Grid>
 
-        <Grid size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12 }} sx={{ display: activeView === 'listagem' ? 'block' : 'none' }}>
           <Stack spacing={2}>
             <Paper elevation={0} sx={{ p: 2.5, border: '1px solid', borderColor: 'divider' }}>
               <Typography variant="h6" gutterBottom>Estoque por categoria</Typography>
@@ -397,7 +412,7 @@ export function EstoquePage() {
               <Box sx={{ p: 2 }}>
                 <Typography variant="h6">Materiais em estoque</Typography>
               </Box>
-              <TableContainer sx={{ maxHeight: 360 }}>
+              <TableContainer>
                 <Table stickyHeader size="small">
                   <TableHead>
                     <TableRow>
@@ -424,7 +439,7 @@ export function EstoquePage() {
         </Grid>
       </Grid>
 
-      <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
+      <Paper elevation={0} sx={{ display: activeView === 'listagem' ? 'block' : 'none', border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
         <Box sx={{ p: 2.5 }}>
           <Typography variant="h6">Ultimos recebimentos</Typography>
         </Box>
