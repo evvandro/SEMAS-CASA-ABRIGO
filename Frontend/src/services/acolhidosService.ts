@@ -1,5 +1,5 @@
 import { api } from './api'
-import type { Acolhido, AlertCategory, CadastroPayload, Sector } from '../modules/acolhidos/types'
+import type { Acolhido, AlertCategory, CadastroPayload, Sector, SaidaPayload } from '../modules/acolhidos/types'
 import { calculateAgeFromIsoDate } from '../modules/acolhidos/utils/date'
 
 // ── Tipos da API ──────────────────────────────────────────────────────────────
@@ -163,7 +163,7 @@ export async function updateAcolhidoRecord(
   return toAcolhido(res.data.data)
 }
 
-export async function registerAcolhidoSaida(apiId: number, dataSaida: string, tipoSaida: string, detalhesSaida: any): Promise<Acolhido> {
+export async function registerAcolhidoSaida(apiId: number, dataSaida: string, tipoSaida: string, detalhesSaida: SaidaPayload): Promise<Acolhido> {
   const res = await api.post<{ data: ApiAcolhido }>(`/acolhidos/${apiId}/saida`, {
     data_saida: dataSaida,
     tipo_saida: tipoSaida,

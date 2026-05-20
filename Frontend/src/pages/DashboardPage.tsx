@@ -125,9 +125,11 @@ export function DashboardPage() {
   const occupiedCapacity = setores.reduce((acc, setor) => acc + (setor.acolhidos_ativos_count ?? 0), 0)
   const occupancyPercent = totalCapacity > 0 ? Math.round((occupiedCapacity / totalCapacity) * 100) : 0
 
+  const dashboardSetores = dashboard?.setores
+
   const orderedSetores = useMemo(
-    () => [...setores].sort((a, b) => b.acolhidos_ativos_count - a.acolhidos_ativos_count),
-    [setores],
+    () => [...(dashboardSetores ?? [])].sort((a, b) => b.acolhidos_ativos_count - a.acolhidos_ativos_count),
+    [dashboardSetores],
   )
 
   if (loading) {
