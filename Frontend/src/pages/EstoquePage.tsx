@@ -28,6 +28,7 @@ import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Inventory2Icon from '@mui/icons-material/Inventory2'
 import SaveIcon from '@mui/icons-material/Save'
+import { TimeInput } from '../components/TimeInput'
 import { api } from '../services/api'
 
 interface Material {
@@ -273,7 +274,7 @@ export function EstoquePage() {
                   <TextField label="Data" type="date" value={form.data_recebimento} onChange={(e) => setField('data_recebimento', e.target.value)} fullWidth required slotProps={{ inputLabel: { shrink: true } }} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <TextField label="Hora" type="time" value={form.hora_recebimento} onChange={(e) => setField('hora_recebimento', e.target.value)} fullWidth required slotProps={{ inputLabel: { shrink: true } }} />
+                  <TimeInput label="Hora" value={form.hora_recebimento} onChange={(value) => setField('hora_recebimento', value)} required />
                 </Grid>
                 <Grid size={{ xs: 12, md: 3 }}>
                   <TextField select label="Origem dos materiais" value={form.origem} onChange={(e) => setField('origem', e.target.value)} fullWidth>

@@ -32,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
         Route::get('/acolhidos', [AcolhidoController::class, 'index']);
         Route::post('/acolhidos', [AcolhidoController::class, 'store']);
+        Route::post('/acolhidos/saida/{acolhido}', [AcolhidoController::class, 'registrarSaida']);
         Route::get('/acolhidos/{acolhido}', [AcolhidoController::class, 'show']);
         Route::patch('/acolhidos/{acolhido}', [AcolhidoController::class, 'update']);
         Route::post('/acolhidos/{acolhido}/saida', [AcolhidoController::class, 'saida']);
@@ -59,6 +60,5 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::patch('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     });
-    // Rota para salvar a ficha de saída do acolhido
-    Route::post('/acolhidos/saida/{id}', [AcolhidoController::class, 'registrarSaida']);
+
 });

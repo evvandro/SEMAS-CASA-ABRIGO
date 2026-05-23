@@ -89,7 +89,7 @@ export function useAcolhidosPageState() {
     const activeAlerts = (Object.keys(filters) as AlertCategory[]).filter(key => filters[key])
 
     return rows.filter(row => {
-      if (query && !`${row.name} ${row.cpf} ${row.id}`.toLowerCase().includes(query)) return false
+      if (query && !`${row.name} ${row.cpf} ${row.id} ${row.familyCode ?? ''} ${row.familyResponsible ?? ''}`.toLowerCase().includes(query)) return false
       if (activeAlerts.some(alert => !row.alerts.includes(alert))) return false
       if (sectorId && row.sectorId !== sectorId) return false
       return true
@@ -122,6 +122,27 @@ export function useAcolhidosPageState() {
         return sector
       }))
     }
+  }
+
+  const removeRow = (apiId: number) => {
+    const previous = rows.find(row => row.apiId === apiId)
+
+    setRows(prev => prev.filter(row => row.apiId !== apiId))
+    if (previous) {
+      setSectors(prev => prev.map(sector => (
+        sector.id === previous.sectorId ? { ...sector, occupied: Math.max(sector.occupied - 1, 0) } : sector
+      )))
+    }
+  }
+
+  const removeRowsByFamily = (familyId: number) => {
+    const removed = rows.filter(row => row.familyId === familyId)
+
+    setRows(prev => prev.filter(row => row.familyId !== familyId))
+    setSectors(prev => prev.map(sector => {
+      const removedCount = removed.filter(row => row.sectorId === sector.id).length
+      return removedCount ? { ...sector, occupied: Math.max(sector.occupied - removedCount, 0) } : sector
+    }))
   }
 
   const getAcolhidoDetail = async (row: Acolhido) => {
@@ -209,6 +230,8 @@ export function useAcolhidosPageState() {
     toast,
     setToast,
     applyAcolhidoUpdate,
+    removeRow,
+    removeRowsByFamily,
     getAcolhidoDetail,
     openFicha,
     openLabel,

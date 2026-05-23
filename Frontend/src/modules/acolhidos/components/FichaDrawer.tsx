@@ -19,9 +19,10 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import LogoutIcon from '@mui/icons-material/Logout'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import PlaceIcon from '@mui/icons-material/Place'
-import type { ReactElement, ReactNode } from 'react'
+import { useEffect, useState, type ReactElement, type ReactNode } from 'react'
+import { fetchFamiliaDetail } from '../../../services/familiasService'
 import { ALERT_META } from './AlertBadges'
-import type { Acolhido, AcolhidoAction, Sector } from '../types'
+import type { Acolhido, AcolhidoAction, Familia, Sector } from '../types'
 import { formatDateOnly, formatEntryDateTime } from '../utils/date'
 
 const initials = (name: string) =>
@@ -57,6 +58,36 @@ export function FichaDrawer({
   operatorName?: string | null
 }) {
   const open = !!row
+  const [familia, setFamilia] = useState<Familia | null>(null)
+  const [loadingFamilia, setLoadingFamilia] = useState(false)
+
+  useEffect(() => {
+    let active = true
+
+    const loadData = async () => {
+      if (!row?.familyId) {
+        setFamilia(null)
+        setLoadingFamilia(false)
+        return
+      }
+
+      setLoadingFamilia(true)
+      try {
+        const data = await fetchFamiliaDetail(row.familyId)
+        if (active) setFamilia(data)
+      } catch {
+        if (active) setFamilia(null)
+      } finally {
+        if (active) setLoadingFamilia(false)
+      }
+    }
+    
+    loadData()
+
+    return () => {
+      active = false
+    }
+  }, [row?.familyId])
 
   if (!row) {
     return <Drawer anchor="right" open={false} onClose={onClose} />
@@ -155,9 +186,45 @@ export function FichaDrawer({
                 <Detail label="Leito" value={row.bed} />
                 <Detail label="Família / prontuário" value={row.familyCode} mono />
                 <Detail label="Responsável familiar" value={row.familyResponsible} />
+                <Detail label="Parentesco" value={row.kinship} />
                 <Detail label="Operador atual" value={operatorName} />
               </DetailGrid>
             </Section>
+
+            {row.familyId ? (
+              <Section title="Grupo familiar">
+                {loadingFamilia ? (
+                  <Typography variant="body2" color="text.secondary">Carregando grupo familiar...</Typography>
+                ) : familia ? (
+                  <Stack spacing={1.5}>
+                    <DetailGrid>
+                      <Detail label="Codigo familiar" value={familia.codigo} mono />
+                      <Detail label="Responsavel" value={familia.responsavelNome} />
+                      <Detail label="Setor principal" value={familia.setorNome} />
+                      <Detail label="Membros ativos" value={familia.acolhidosCount} />
+                    </DetailGrid>
+                    <Stack spacing={1}>
+                      {familia.membros?.map((membro) => (
+                        <Box
+                          key={membro.apiId}
+                          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, p: 1.25, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}
+                        >
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{membro.name}</Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {valueOrFallback(membro.kinship)} | Leito {valueOrFallback(membro.bed)}
+                            </Typography>
+                          </Box>
+                          <Chip size="small" color={membro.active ? 'success' : 'default'} label={membro.active ? 'Ativo' : 'Saiu'} />
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Stack>
+                ) : (
+                  <Typography variant="body2" color="text.secondary">Nao foi possivel carregar o grupo familiar.</Typography>
+                )}
+              </Section>
+            ) : null}
 
             <Section title="Perfil preferencial">
               {row.alerts.length === 0 ? (
@@ -215,6 +282,11 @@ export function FichaDrawer({
             <Button variant="contained" startIcon={<LogoutIcon />} onClick={() => onAction('exit', row)}>
               Registrar saída
             </Button>
+            {row.familyId ? (
+              <Button color="warning" variant="contained" startIcon={<LogoutIcon />} onClick={() => onAction('exitFamily', row)}>
+                Registrar saida da familia
+              </Button>
+            ) : null}
           </Stack>
         </Box>
       </Box>

@@ -19,6 +19,17 @@ class Familia extends Model
         'data_entrada',
         'data_saida',
         'tipo_saida',
+        'hora_saida',
+        'destino_informado',
+        'endereco_destino',
+        'municipio_destino',
+        'telefone_destino',
+        'encaminhamentos_rede',
+        'resumo_encaminhamento',
+        'condicao_saida',
+        'observacoes_tecnicas',
+        'responsavel_desligamento',
+        'cargo_responsavel',
     ];
 
     protected function casts(): array
@@ -26,6 +37,7 @@ class Familia extends Model
         return [
             'data_entrada' => 'date',
             'data_saida' => 'date',
+            'encaminhamentos_rede' => 'array',
         ];
     }
 

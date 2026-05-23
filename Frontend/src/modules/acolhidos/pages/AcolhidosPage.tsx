@@ -1,20 +1,34 @@
 import { Alert, Box, CircularProgress, Snackbar, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../auth/useAuth'
-import { updateAcolhidoRecord } from '../../../services/acolhidosService'
+import { registerAcolhidoSaida, updateAcolhidoRecord } from '../../../services/acolhidosService'
+import { fetchFamiliaDetail, registerFamiliaSaida, toIsoDate } from '../../../services/familiasService'
 import { AcolhidosTable } from '../components/AcolhidosTable'
 import { AcolhidosToolbar } from '../components/AcolhidosToolbar'
 import { CadastroDrawer } from '../components/CadastroDrawer'
 import { FichaDrawer } from '../components/FichaDrawer'
 import { PertencesLabelDialog } from '../components/PertencesLabelDialog'
+import { SaidaDialog } from '../components/SaidaDialog'
 import { SectorHeatmap } from '../components/SectorHeatmap'
 import { useAcolhidosPageState } from '../hooks/useAcolhidosPageState'
-import type { Acolhido, AcolhidoAction } from '../types'
+import type { Acolhido, AcolhidoAction, Familia, SaidaPayload } from '../types'
+import { useState } from 'react'
+
+function getApiErrorMessage(error: unknown): string {
+  const response = (error as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }).response
+  const validationErrors = response?.data?.errors
+  const firstValidationMessage = validationErrors ? Object.values(validationErrors)[0]?.[0] : undefined
+
+  return firstValidationMessage ?? response?.data?.message ?? 'Nao foi possivel registrar a saida.'
+}
 
 export function AcolhidosPage() {
   const state = useAcolhidosPageState()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const [saidaOpen, setSaidaOpen] = useState(false)
+  const [saidaRow, setSaidaRow] = useState<Acolhido | null>(null)
+  const [saidaFamilia, setSaidaFamilia] = useState<Familia | null>(null)
 
   const handleAcolhidoAction = async (action: AcolhidoAction, row: Acolhido) => {
     if (action === 'view') {
@@ -40,6 +54,24 @@ export function AcolhidosPage() {
       return
     }
 
+    if (action === 'exit') {
+      setSaidaFamilia(null)
+      setSaidaRow(row)
+      setSaidaOpen(true)
+      return
+    }
+
+    if (action === 'exitFamily' && row.familyId) {
+      try {
+        setSaidaRow(null)
+        setSaidaFamilia(await fetchFamiliaDetail(row.familyId))
+        setSaidaOpen(true)
+      } catch {
+        state.setToast({ message: 'Nao foi possivel carregar a familia para saida.', severity: 'error' })
+      }
+      return
+    }
+
     if (action === 'print') {
       try {
         const detail = await state.getAcolhidoDetail(row)
@@ -53,6 +85,35 @@ export function AcolhidosPage() {
     }
 
     state.handleAction(action, row)
+  }
+
+  const handleSaveSaida = async (payload: SaidaPayload) => {
+    const tipoSaida = payload.tipoDesligamento === 'Outro' && payload.tipoDesligamentoOutro
+      ? payload.tipoDesligamentoOutro
+      : payload.tipoDesligamento
+
+    try {
+      if (saidaFamilia) {
+        await registerFamiliaSaida(saidaFamilia.id, payload)
+        state.removeRowsByFamily(saidaFamilia.id)
+        setSaidaOpen(false)
+        setSaidaFamilia(null)
+        state.setFichaRow(null)
+        state.setToast({ message: 'Saida da familia registrada com sucesso.', severity: 'success' })
+        return
+      }
+
+      if (saidaRow) {
+        await registerAcolhidoSaida(saidaRow.apiId, toIsoDate(payload.data), tipoSaida, payload)
+        state.removeRow(saidaRow.apiId)
+        setSaidaOpen(false)
+        setSaidaRow(null)
+        state.setFichaRow(null)
+        state.setToast({ message: 'Saida registrada com sucesso.', severity: 'success' })
+      }
+    } catch (error) {
+      state.setToast({ message: getApiErrorMessage(error), severity: 'error' })
+    }
   }
 
   const handleGenerateLabel = async ({ shelterName, belongings }: { shelterName: string; belongings: string }) => {
@@ -140,6 +201,18 @@ export function AcolhidosPage() {
         sectors={state.sectors}
         mode={state.editRow ? 'edit' : 'create'}
         initialRow={state.editRow}
+      />
+
+      <SaidaDialog
+        open={saidaOpen}
+        onClose={() => {
+          setSaidaOpen(false)
+          setSaidaRow(null)
+          setSaidaFamilia(null)
+        }}
+        onSave={handleSaveSaida}
+        initialRow={saidaRow}
+        initialFamily={saidaFamilia}
       />
 
       <Snackbar open={!!state.toast} autoHideDuration={2800} onClose={() => state.setToast(null)}
