@@ -1,6 +1,6 @@
 export type AlertCategory = 'pcd' | 'gestante' | 'cronica' | 'idoso'
 
-export type AcolhidoAction = 'view' | 'edit' | 'editFull' | 'print' | 'label' | 'exit'
+export type AcolhidoAction = 'view' | 'edit' | 'editFull' | 'print' | 'label' | 'exit' | 'exitFamily'
 
 export type CadastroAction = Exclude<AcolhidoAction, 'view' | 'label' | 'editFull'>
 
@@ -16,6 +16,13 @@ export interface Acolhido {
   alerts: AlertCategory[]
   entry: string          // ISO date
   entryTime?: string | null
+  exitDate?: string | null
+  exitTime?: string | null
+  exitType?: string | null
+  exitDestination?: string | null
+  exitCity?: string | null
+  exitCondition?: string | null
+  exitResponsible?: string | null
   family?: number
   birthDate?: string | null
   phone?: string | null
@@ -25,6 +32,33 @@ export interface Acolhido {
   belongings?: string | null
   familyCode?: string | null
   familyResponsible?: string | null
+  familyId?: number | null
+  familyMembersCount?: number | null
+  kinship?: string | null
+}
+
+export interface FamiliaMembro extends Acolhido {
+  active: boolean
+}
+
+export interface Familia {
+  id: number
+  codigo: string
+  responsavelNome: string | null
+  setorId: string
+  setorNome?: string | null
+  acolhidosCount: number
+  dataEntrada: string | null
+  dataSaida: string | null
+  horaSaida?: string | null
+  tipoSaida?: string | null
+  destinoInformado?: string | null
+  municipioDestino?: string | null
+  condicaoSaida?: string | null
+  responsavelDesligamento?: string | null
+  observacoes?: string | null
+  ativo: boolean
+  membros?: FamiliaMembro[]
 }
 
 export interface Sector {

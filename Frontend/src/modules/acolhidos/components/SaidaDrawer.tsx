@@ -6,8 +6,9 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { TimeInput } from '../../../components/TimeInput'
 import { saidaSchema } from '../schemas/saidaSchema'
-import type { SaidaPayload, Acolhido } from '../types'
+import type { SaidaPayload, Acolhido, Familia } from '../types'
 import { formatDateInput } from '../utils/formFormatters'
 
 const empty: SaidaPayload = {
@@ -21,11 +22,12 @@ const empty: SaidaPayload = {
   responsavelNome: '', responsavelCargo: '', responsavelData: ''
 }
 
-export function SaidaDrawer({ open, onClose, onSave, initialRow = null }: {
+export function SaidaDrawer({ open, onClose, onSave, initialRow = null, initialFamily = null }: {
   open: boolean
   onClose: () => void
   onSave: (payload: SaidaPayload) => void | Promise<void>
   initialRow?: Acolhido | null
+  initialFamily?: Familia | null
 }) {
   const [form, setForm] = useState<SaidaPayload>(empty)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -40,12 +42,25 @@ export function SaidaDrawer({ open, onClose, onSave, initialRow = null }: {
 
   useEffect(() => {
     if (!open) return
-    if (initialRow) {
+    if (initialFamily) {
       setForm(f => ({
         ...f,
+        prontuario: initialFamily.codigo,
+        nome: initialFamily.responsavelNome ?? initialFamily.codigo,
+        cpfRg: initialFamily.codigo,
+        responsavelFamiliar: initialFamily.responsavelNome ?? '',
+        integrantes: initialFamily.membros?.map(membro => ({ nome: membro.name, documento: membro.cpf })) ?? [],
+        data: new Date().toLocaleDateString('pt-BR'),
+        responsavelData: new Date().toLocaleDateString('pt-BR'),
+      }))
+    } else if (initialRow) {
+      setForm(f => ({
+        ...f,
+        prontuario: initialRow.familyCode ?? '',
+        registroIndividual: initialRow.id,
         nome: initialRow.name,
         cpfRg: initialRow.cpf,
-        // pre-fill date with today
+        responsavelFamiliar: initialRow.familyResponsible ?? '',
         data: new Date().toLocaleDateString('pt-BR'),
         responsavelData: new Date().toLocaleDateString('pt-BR'),
       }))
@@ -53,7 +68,7 @@ export function SaidaDrawer({ open, onClose, onSave, initialRow = null }: {
       setForm(empty)
     }
     setErrors({})
-  }, [initialRow, open])
+  }, [initialFamily, initialRow, open])
 
   const resetForm = () => {
     setForm(empty)
@@ -174,7 +189,7 @@ export function SaidaDrawer({ open, onClose, onSave, initialRow = null }: {
               <TextField label="Data *" fullWidth placeholder="DD/MM/AAAA" value={form.data} onChange={e => set('data', formatDateInput(e.target.value))} error={!!errors.data} helperText={errors.data} />
             </Box>
             <Box sx={{ gridColumn: 'span 6' }}>
-              <TextField label="Hora *" fullWidth placeholder="HH:MM" value={form.hora} onChange={e => set('hora', e.target.value)} error={!!errors.hora} helperText={errors.hora} />
+              <TimeInput label="Hora" required value={form.hora} onChange={value => set('hora', value)} error={!!errors.hora} helperText={errors.hora} />
             </Box>
           </Box>
           <FormControl fullWidth error={!!errors.tipoDesligamento} sx={{ mb: 3 }}>

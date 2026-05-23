@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use App\Models\Acolhido;
 use App\Http\Requests\Familias\RegistrarSaidaFamiliaRequest;
 use App\Http\Requests\Familias\StoreFamiliaRequest;
 use App\Http\Requests\Familias\UpdateFamiliaRequest;
@@ -16,10 +18,10 @@ class FamiliaController extends Controller
     public function index(Request $request): JsonResponse
     {
         $familias = Familia::query()
-            ->whereNull('data_saida')
+            ->when($request->get('status') === 'saida', fn ($q) => $q->whereNotNull('data_saida'), fn ($q) => $q->whereNull('data_saida'))
             ->with('setor')
             ->withCount([
-                'acolhidos as acolhidos_count' => fn ($q) => $q->whereNull('data_saida'),
+                'acolhidos as acolhidos_count' => fn ($q) => $request->get('status') === 'saida' ? $q : $q->whereNull('data_saida'),
             ])
             ->when($request->filled('setor_id'), fn ($q) => $q->where('setor_id', (int) $request->get('setor_id')))
             ->when($request->filled('search'), function ($q) use ($request) {
@@ -29,8 +31,11 @@ class FamiliaController extends Controller
                         ->orWhere('responsavel_nome', 'like', "%{$search}%");
                 });
             })
-            ->orderBy('responsavel_nome')
-            ->orderByDesc('id')
+            ->when(
+                $request->get('status') === 'saida',
+                fn ($q) => $q->orderByDesc('data_saida')->orderByDesc('hora_saida'),
+                fn ($q) => $q->orderBy('responsavel_nome')->orderByDesc('id'),
+            )
             ->get();
 
         return response()->json([
@@ -41,17 +46,34 @@ class FamiliaController extends Controller
 
     public function store(StoreFamiliaRequest $request): JsonResponse
     {
-        $familia = Familia::create($request->validated());
+        return DB::transaction(function () use ($request) {
+            $validated = $request->validated();
+            $acolhidosData = $validated['acolhidos'] ?? [];
+            unset($validated['acolhidos']);
 
-        $familia->load('setor');
-        $familia->loadCount([
-            'acolhidos as acolhidos_count' => fn ($q) => $q->whereNull('data_saida'),
-        ]);
+            $familia = Familia::create($validated);
 
-        return response()->json([
-            'message' => 'Família criada com sucesso.',
-            'data' => new FamiliaDetalheResource($familia),
-        ], 201);
+            foreach ($acolhidosData as $acolhidoData) {
+                if (empty($acolhidoData['codigo_pulseira'])) {
+                    $acolhidoData['codigo_pulseira'] = Acolhido::gerarCodigoPulseira();
+                }
+                $acolhidoData['familia_id'] = $familia->id;
+                $acolhidoData['setor_id'] = $familia->setor_id;
+                $acolhidoData['data_entrada'] = $familia->data_entrada;
+
+                Acolhido::create($acolhidoData);
+            }
+
+            $familia->load('setor');
+            $familia->loadCount([
+                'acolhidos as acolhidos_count' => fn ($q) => $q->whereNull('data_saida'),
+            ]);
+
+            return response()->json([
+                'message' => 'Família criada com sucesso.',
+                'data' => new FamiliaDetalheResource($familia),
+            ], 201);
+        });
     }
 
     public function show(Familia $familia): JsonResponse
@@ -87,16 +109,35 @@ class FamiliaController extends Controller
 
     public function saida(RegistrarSaidaFamiliaRequest $request, Familia $familia): JsonResponse
     {
-        $familia->update($request->validated());
+        return DB::transaction(function () use ($request, $familia) {
+            $validated = $request->validated();
+            $familia->update($validated);
 
-        $familia->load('setor');
-        $familia->loadCount([
-            'acolhidos as acolhidos_count' => fn ($q) => $q->whereNull('data_saida'),
-        ]);
+            $familia->acolhidos()->whereNull('data_saida')->update([
+                'data_saida' => $validated['data_saida'] ?? now(),
+                'hora_saida' => $validated['hora_saida'] ?? null,
+                'tipo_saida' => $validated['tipo_saida'] ?? null,
+                'destino_informado' => $validated['destino_informado'] ?? null,
+                'endereco_destino' => $validated['endereco_destino'] ?? null,
+                'municipio_destino' => $validated['municipio_destino'] ?? null,
+                'telefone_destino' => $validated['telefone_destino'] ?? null,
+                'encaminhamentos_rede' => isset($validated['encaminhamentos_rede']) ? json_encode($validated['encaminhamentos_rede']) : null,
+                'resumo_encaminhamento' => $validated['resumo_encaminhamento'] ?? null,
+                'condicao_saida' => $validated['condicao_saida'] ?? null,
+                'observacoes_tecnicas' => $validated['observacoes_tecnicas'] ?? null,
+                'responsavel_desligamento' => $validated['responsavel_desligamento'] ?? null,
+                'cargo_responsavel' => $validated['cargo_responsavel'] ?? null,
+            ]);
 
-        return response()->json([
-            'message' => 'Saída registrada com sucesso.',
-            'data' => new FamiliaDetalheResource($familia->fresh()->load('setor')),
-        ]);
+            $familia->load('setor');
+            $familia->loadCount([
+                'acolhidos as acolhidos_count' => fn ($q) => $q->whereNull('data_saida'),
+            ]);
+
+            return response()->json([
+                'message' => 'Saída registrada com sucesso para todos os membros.',
+                'data' => new FamiliaDetalheResource($familia->fresh()->load('setor')),
+            ]);
+        });
     }
 }

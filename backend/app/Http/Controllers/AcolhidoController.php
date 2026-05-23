@@ -10,6 +10,7 @@ use App\Http\Resources\AcolhidoResource;
 use App\Models\Acolhido;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AcolhidoController extends Controller
 {
@@ -20,11 +21,15 @@ class AcolhidoController extends Controller
                 'id', 'codigo_pulseira', 'nome', 'cpf', 'data_nascimento',
                 'telefone', 'genero', 'leito', 'observacoes', 'pertences_registrados',
                 'pcd', 'gestante', 'cronica', 'idoso',
-                'familia_id', 'setor_id', 'data_entrada', 'hora_entrada', 'data_saida',
+                'familia_id', 'parentesco', 'setor_id', 'data_entrada', 'hora_entrada',
+                'data_saida', 'hora_saida', 'tipo_saida', 'destino_informado', 'municipio_destino',
+                'condicao_saida', 'responsavel_desligamento',
             ])
-            ->whereNull('data_saida')
+            ->when($request->get('status') === 'saida', fn ($q) => $q->whereNotNull('data_saida'), fn ($q) => $q->whereNull('data_saida'))
             ->with([
-                'familia:id,codigo,responsavel_nome',
+                'familia' => fn ($q) => $q
+                    ->select(['id', 'codigo', 'responsavel_nome'])
+                    ->withCount(['acolhidos as acolhidos_count' => fn ($sub) => $sub->whereNull('data_saida')]),
                 'setor:id,nome,cor,capacidade,ativo',
             ])
             ->when($request->filled('setor_id'), fn ($q) => $q->where('setor_id', (int) $request->get('setor_id')))
@@ -33,10 +38,18 @@ class AcolhidoController extends Controller
                 $q->where(function ($sub) use ($search) {
                     $sub->where('nome', 'like', "%{$search}%")
                         ->orWhere('codigo_pulseira', 'like', "%{$search}%")
-                        ->orWhere('cpf', 'like', "%{$search}%");
+                        ->orWhere('cpf', 'like', "%{$search}%")
+                        ->orWhereHas('familia', function ($familia) use ($search) {
+                            $familia->where('codigo', 'like', "%{$search}%")
+                                ->orWhere('responsavel_nome', 'like', "%{$search}%");
+                        });
                 });
             })
-            ->orderBy('nome')
+            ->when(
+                $request->get('status') === 'saida',
+                fn ($q) => $q->orderByDesc('data_saida')->orderByDesc('hora_saida')->orderBy('nome'),
+                fn ($q) => $q->orderBy('nome'),
+            )
             ->get();
 
         return response()->json([
@@ -47,7 +60,10 @@ class AcolhidoController extends Controller
 
     public function show(Acolhido $acolhido): JsonResponse
     {
-        $acolhido->load(['familia', 'setor']);
+        $acolhido->load([
+            'familia' => fn ($q) => $q->withCount(['acolhidos as acolhidos_count' => fn ($sub) => $sub->whereNull('data_saida')]),
+            'setor',
+        ]);
 
         return response()->json([
             'message' => 'Acolhido obtido com sucesso.',
@@ -81,46 +97,28 @@ class AcolhidoController extends Controller
 
     public function saida(RegistrarSaidaAcolhidoRequest $request, Acolhido $acolhido): JsonResponse
     {
-        $acolhido->update($request->validated());
+        return DB::transaction(function () use ($request, $acolhido) {
+            $validated = $request->validated();
 
-        return response()->json([
-            'message' => 'Saída registrada com sucesso.',
-            'data' => new AcolhidoDetalheResource($acolhido->fresh()->load(['familia', 'setor'])),
-        ]);
+            $acolhido->update($validated);
+
+            if ($acolhido->familia_id) {
+                $familia = $acolhido->familia()->lockForUpdate()->first();
+
+                if ($familia && $familia->acolhidos()->whereNull('data_saida')->count() === 0) {
+                    $familia->update($validated);
+                }
+            }
+
+            return response()->json([
+                'message' => 'Saida registrada com sucesso.',
+                'data' => new AcolhidoDetalheResource($acolhido->fresh()->load(['familia', 'setor'])),
+            ]);
+        });
     }
 
-    public function registrarSaida(Request $request, $id)
+    public function registrarSaida(RegistrarSaidaAcolhidoRequest $request, Acolhido $acolhido): JsonResponse
     {
-        $acolhido = Acolhido::find($id);
-
-        if (! $acolhido) {
-            return response()->json(['error' => 'Acolhido não encontrado.'], 404);
-        }
-
-        $acolhido->status = 'desligado';
-
-        $acolhido->data_saida = $request->input('data_saida');
-        $acolhido->hora_saida = $request->input('hora_saida');
-        $acolhido->tipo_desligamento = $request->input('tipo_desligamento');
-
-        $acolhido->destino_informado = $request->input('destino_informado');
-        $acolhido->endereco_destino = $request->input('endereco_destino');
-        $acolhido->municipio_destino = $request->input('municipio_destino');
-        $acolhido->telefone_destino = $request->input('telefone_destino');
-
-        $acolhido->encaminhamentos_rede = $request->input('encaminhamentos_rede');
-        $acolhido->resumo_encaminhamento = $request->input('resumo_encaminhamento');
-
-        $acolhido->condicao_saida = $request->input('condicao_saida');
-        $acolhido->observacoes_tecnicas = $request->input('observacoes_tecnicas');
-
-        $acolhido->responsavel_desligamento = $request->input('responsavel_desligamento');
-        $acolhido->cargo_responsavel = $request->input('cargo_responsavel');
-
-        $acolhido->save();
-
-        return response()->json([
-            'message' => 'Ficha de saída salva',
-        ]);
+        return $this->saida($request, $acolhido);
     }
 }
