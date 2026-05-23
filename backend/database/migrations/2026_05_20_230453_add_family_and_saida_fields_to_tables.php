@@ -49,7 +49,7 @@ return new class extends Migration
                 'parentesco', 'hora_saida', 'destino_informado', 'endereco_destino',
                 'municipio_destino', 'telefone_destino', 'encaminhamentos_rede',
                 'resumo_encaminhamento', 'condicao_saida', 'observacoes_tecnicas',
-                'responsavel_desligamento', 'cargo_responsavel'
+                'responsavel_desligamento', 'cargo_responsavel',
             ]);
         });
 
@@ -58,7 +58,7 @@ return new class extends Migration
                 'hora_saida', 'destino_informado', 'endereco_destino',
                 'municipio_destino', 'telefone_destino', 'encaminhamentos_rede',
                 'resumo_encaminhamento', 'condicao_saida', 'observacoes_tecnicas',
-                'responsavel_desligamento', 'cargo_responsavel'
+                'responsavel_desligamento', 'cargo_responsavel',
             ]);
         });
     }

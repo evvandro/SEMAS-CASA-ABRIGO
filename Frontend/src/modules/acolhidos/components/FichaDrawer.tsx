@@ -64,23 +64,25 @@ export function FichaDrawer({
   useEffect(() => {
     let active = true
 
-    if (!row?.familyId) {
-      setFamilia(null)
-      setLoadingFamilia(false)
-      return
-    }
+    const loadData = async () => {
+      if (!row?.familyId) {
+        setFamilia(null)
+        setLoadingFamilia(false)
+        return
+      }
 
-    setLoadingFamilia(true)
-    fetchFamiliaDetail(row.familyId)
-      .then((data) => {
+      setLoadingFamilia(true)
+      try {
+        const data = await fetchFamiliaDetail(row.familyId)
         if (active) setFamilia(data)
-      })
-      .catch(() => {
+      } catch {
         if (active) setFamilia(null)
-      })
-      .finally(() => {
+      } finally {
         if (active) setLoadingFamilia(false)
-      })
+      }
+    }
+    
+    loadData()
 
     return () => {
       active = false

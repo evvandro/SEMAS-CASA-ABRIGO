@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
-use App\Models\Acolhido;
 use App\Http\Requests\Familias\RegistrarSaidaFamiliaRequest;
 use App\Http\Requests\Familias\StoreFamiliaRequest;
 use App\Http\Requests\Familias\UpdateFamiliaRequest;
 use App\Http\Resources\FamiliaDetalheResource;
 use App\Http\Resources\FamiliaResource;
+use App\Models\Acolhido;
 use App\Models\Familia;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FamiliaController extends Controller
 {
