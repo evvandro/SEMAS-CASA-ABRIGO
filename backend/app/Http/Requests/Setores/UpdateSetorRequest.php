@@ -20,6 +20,8 @@ class UpdateSetorRequest extends FormRequest
             'cor' => ['sometimes', 'string', 'max:30', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'capacidade' => ['nullable', 'integer', 'min:1', 'max:500'],
             'ativo' => ['sometimes', 'boolean'],
+            'leitos_interditados' => ['sometimes', 'array'],
+            'leitos_interditados.*' => ['string', 'max:30'],
         ];
     }
 
@@ -36,6 +38,9 @@ class UpdateSetorRequest extends FormRequest
             'capacidade.min' => 'A capacidade deve ser pelo menos 1.',
             'capacidade.max' => 'A capacidade não pode ser maior que 500.',
             'ativo.boolean' => 'O campo ativo deve ser verdadeiro ou falso.',
+            'leitos_interditados.array' => 'Os leitos interditados devem ser enviados em uma lista.',
+            'leitos_interditados.*.string' => 'Cada leito interditado deve ser um texto.',
+            'leitos_interditados.*.max' => 'Cada leito interditado não pode ter mais de 30 caracteres.',
         ];
     }
 }

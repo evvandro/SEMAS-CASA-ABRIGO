@@ -13,7 +13,6 @@ class SetorController extends Controller
     public function index(): JsonResponse
     {
         $setores = Setor::query()
-            ->where('ativo', true)
             ->orderBy('nome')
             ->get();
 

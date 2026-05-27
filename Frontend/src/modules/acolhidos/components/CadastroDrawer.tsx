@@ -1,17 +1,18 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import {
   Drawer, Box, Typography, IconButton, TextField, Button, Divider,
-  FormControlLabel, Checkbox,
+  FormControlLabel, Checkbox, FormControl, FormHelperText, InputLabel, MenuItem, Select,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { cadastroSchema } from '../schemas/cadastroSchema'
 import type { Acolhido, CadastroPayload, Sector } from '../types'
 import { formatCpf, formatDateInput } from '../utils/formFormatters'
+import { buildBedOptions, getSectorCapacitySummary } from '../utils/sectorCapacity'
 
 const empty: CadastroPayload = {
-  name: '', cpf: '', birth: '', family: 1,
+  name: '', cpf: '', birth: '',
   pcd: false, gestante: false, cronica: false, idoso: false,
-  sectorId: '', notes: '',
+  sectorId: '', bed: '', notes: '',
 }
 
 function toBrazilianDate(isoDate?: string | null) {
@@ -26,21 +27,22 @@ function toFormPayload(row: Acolhido): CadastroPayload {
     name: row.name,
     cpf: row.cpf,
     birth: toBrazilianDate(row.birthDate),
-    family: row.family ?? 1,
     pcd: row.alerts.includes('pcd'),
     gestante: row.alerts.includes('gestante'),
     cronica: row.alerts.includes('cronica'),
     idoso: row.alerts.includes('idoso'),
     sectorId: row.sectorId,
+    bed: row.bed ?? '',
     notes: row.notes ?? '',
   }
 }
 
-export function CadastroDrawer({ open, onClose, onSave, sectors, mode = 'create', initialRow = null }: {
+export function CadastroDrawer({ open, onClose, onSave, sectors, rows, mode = 'create', initialRow = null }: {
   open: boolean
   onClose: () => void
   onSave: (payload: CadastroPayload) => void | Promise<void>
   sectors: Sector[]
+  rows: Acolhido[]
   mode?: 'create' | 'edit'
   initialRow?: Acolhido | null
 }) {
@@ -75,6 +77,30 @@ export function CadastroDrawer({ open, onClose, onSave, sectors, mode = 'create'
     setForm(f => ({ ...f, [k]: v }))
     setErrors(e => ({ ...e, [k]: '' }))
   }
+
+  const setSector = (sectorId: string) => {
+    setForm(f => ({ ...f, sectorId, bed: '' }))
+    setErrors(e => ({ ...e, sectorId: '', bed: '' }))
+  }
+
+  const selectedSector = useMemo(
+    () => sectors.find(s => s.id === form.sectorId),
+    [form.sectorId, sectors],
+  )
+
+  const bedOptions = useMemo(() => {
+    if (!selectedSector) return []
+
+    return buildBedOptions({
+      capacity: selectedSector.capacity,
+      active: selectedSector.active,
+      blockedBeds: selectedSector.blockedBeds,
+      occupiedBeds: rows
+        .filter(row => row.sectorId === selectedSector.id && row.apiId !== initialRow?.apiId)
+        .map(row => row.bed),
+      currentBed: form.bed,
+    })
+  }, [form.bed, initialRow?.apiId, rows, selectedSector])
 
   const submit = async () => {
     const result = cadastroSchema.safeParse(form)
@@ -155,16 +181,6 @@ export function CadastroDrawer({ open, onClose, onSave, sectors, mode = 'create'
                 slotProps={{ htmlInput: { inputMode: 'numeric' } }}
               />
             </Box>
-            <Box sx={{ gridColumn: 'span 6' }}>
-              <TextField
-                label="Pessoas na família"
-                type="number"
-                fullWidth
-                value={form.family}
-                onChange={e => set('family', Number(e.target.value))}
-                slotProps={{ htmlInput: { min: 1, max: 20 } }}
-              />
-            </Box>
           </Box>
 
           <SectionLabel n={2} title="Saúde e perfil prioritário" />
@@ -178,30 +194,45 @@ export function CadastroDrawer({ open, onClose, onSave, sectors, mode = 'create'
           <SectionLabel n={3} title="Alocação de setor" />
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, mb: 1 }}>
             {sectors.map(s => {
-              const active = form.sectorId === s.id
-              const full = s.occupied >= s.capacity && !active
+              const selected = form.sectorId === s.id
+              const interdicted = !s.active
+              const summary = getSectorCapacitySummary(s)
+              const noUsefulBeds = s.active && summary.capacity > 0 && summary.usableCapacity === 0
+              const full = s.active && summary.usableCapacity > 0 && summary.occupied >= summary.usableCapacity
+              const unavailable = !selected && (interdicted || noUsefulBeds || full)
+              const status = interdicted
+                ? 'Interditado'
+                : noUsefulBeds || full
+                  ? 'Sem vagas'
+                  : `${summary.occupied}/${summary.usableCapacity || summary.capacity}`
+              const blockedLabel = summary.blockedBedsCount > 0
+                ? `${summary.blockedBedsCount} ${summary.blockedBedsCount === 1 ? 'leito interditado' : 'leitos interditados'}`
+                : s.sub
+
               return (
                 <Box
                   key={s.id}
-                  onClick={full ? undefined : () => set('sectorId', s.id)}
+                  onClick={unavailable ? undefined : () => setSector(s.id)}
                   sx={{
                     p: 1.25,
                     border: '1px solid',
-                    borderColor: active ? 'primary.main' : 'divider',
-                    bgcolor: active ? 'primary.light' : 'background.paper',
+                    borderColor: selected ? 'primary.main' : interdicted ? 'error.light' : 'divider',
+                    bgcolor: selected ? 'primary.light' : 'background.paper',
                     borderRadius: 1,
-                    cursor: full ? 'not-allowed' : 'pointer',
-                    opacity: full ? 0.5 : 1,
+                    cursor: unavailable ? 'not-allowed' : 'pointer',
+                    opacity: unavailable ? 0.5 : 1,
                     display: 'flex', alignItems: 'center', gap: 1,
                   }}
                 >
                   <Box sx={{ width: 10, height: 10, borderRadius: 0.4, bgcolor: s.color }} />
                   <Box sx={{ flex: 1 }}>
                     <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{s.name}</Typography>
-                    <Typography variant="caption">{s.sub}</Typography>
+                    <Typography variant="caption" color={summary.blockedBedsCount > 0 ? 'error.main' : 'text.secondary'}>
+                      {blockedLabel}
+                    </Typography>
                   </Box>
                   <Typography variant="caption">
-                    {full ? 'Lotado' : `${s.occupied}/${s.capacity}`}
+                    {status}
                   </Typography>
                 </Box>
               )
@@ -212,6 +243,30 @@ export function CadastroDrawer({ open, onClose, onSave, sectors, mode = 'create'
               {errors.sectorId}
             </Typography>
           )}
+
+          <Box sx={{ mt: 2 }}>
+            <FormControl fullWidth disabled={!selectedSector || !selectedSector.active}>
+              <InputLabel>Leito</InputLabel>
+              <Select
+                label="Leito"
+                value={form.bed ?? ''}
+                onChange={e => set('bed', String(e.target.value))}
+              >
+                <MenuItem value="">Sem leito definido</MenuItem>
+                {bedOptions.length === 0 && selectedSector ? (
+                  <MenuItem value="" disabled>Nenhum leito disponível</MenuItem>
+                ) : null}
+                {bedOptions.map(option => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText>
+                {selectedSector ? 'Somente leitos livres aparecem na lista.' : 'Selecione um setor primeiro.'}
+              </FormHelperText>
+            </FormControl>
+          </Box>
 
           <Box sx={{ mt: 2 }}>
             <TextField

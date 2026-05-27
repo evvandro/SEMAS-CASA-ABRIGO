@@ -21,6 +21,7 @@ class SetorResource extends JsonResource
             'cor' => $this->cor,
             'capacidade' => $this->capacidade,
             'ativo' => $this->ativo,
+            'leitos_interditados' => $this->leitos_interditados ?? [],
         ];
     }
 }

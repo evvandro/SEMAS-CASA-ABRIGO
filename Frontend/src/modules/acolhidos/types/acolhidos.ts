@@ -68,18 +68,20 @@ export interface Sector {
   color: string          // hex
   capacity: number
   occupied: number       // calculado a partir dos acolhidos
+  active: boolean
+  blockedBeds: string[]
 }
 
 export interface CadastroPayload {
   name: string
   cpf: string
   birth: string          // 'DD/MM/YYYY'
-  family: number
   pcd: boolean
   gestante: boolean
   cronica: boolean
   idoso: boolean
   sectorId: string
+  bed?: string
   notes?: string
 }
 

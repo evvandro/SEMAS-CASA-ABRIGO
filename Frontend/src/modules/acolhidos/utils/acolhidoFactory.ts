@@ -17,8 +17,9 @@ export const createAcolhidoFromCadastro = (payload: CadastroPayload): Acolhido =
     cpf: payload.cpf,
     age,
     sectorId: payload.sectorId,
+    bed: payload.bed || null,
     alerts,
     entry: new Date().toISOString(),
-    family: Number(payload.family) || 1,
+    family: 1,
   }
 }
