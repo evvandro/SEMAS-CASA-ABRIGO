@@ -15,7 +15,7 @@ RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoload
 COPY . .
 
 RUN cp .env.example .env \
-    && php artisan key:generate --force \
+    && sed -i "s|APP_KEY=|APP_KEY=$(php -r \"echo 'base64:'.base64_encode(random_bytes(32));\")|" .env \
     && composer run-script post-autoload-dump
 
 RUN php artisan config:clear \
