@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import {
   createAcolhido,
   fetchAcolhidoDetail,
@@ -9,11 +10,7 @@ import {
   updateAcolhidoRecord,
 } from '../../../services/acolhidosService'
 import type { Acolhido, AcolhidoAction, AcolhidosFilters, AlertCategory, CadastroPayload, Sector } from '../types'
-
-type Toast = {
-  message: string
-  severity: 'success' | 'info' | 'error'
-}
+import { scrollAppContentToTop } from '../../../utils/scrollAppContent'
 
 const emptyFilters: AcolhidosFilters = {
   gestante: false,
@@ -34,7 +31,6 @@ export function useAcolhidosPageState() {
   const [labelRow, setLabelRow] = useState<Acolhido | null>(null)
   const [editRow, setEditRow] = useState<Acolhido | null>(null)
   const [cadastroOpen, setCadastroOpen] = useState(false)
-  const [toast, setToast] = useState<Toast | null>(null)
 
   useEffect(() => {
     let active = true
@@ -97,14 +93,22 @@ export function useAcolhidosPageState() {
   }, [rows, search, filters, sectorId])
 
   const handleSave = async (payload: CadastroPayload) => {
-    const newRow = await createAcolhido(payload)
+    try {
+      const newRow = await createAcolhido(payload)
 
-    setRows(prev => [newRow, ...prev])
-    setSectors(prev =>
-      prev.map(s => s.id === newRow.sectorId ? { ...s, occupied: s.occupied + 1 } : s),
-    )
-    setCadastroOpen(false)
-    setToast({ message: `${newRow.name.split(' ')[0]} acolhido(a) com sucesso`, severity: 'success' })
+      setRows(prev => [newRow, ...prev])
+      setSectors(prev =>
+        prev.map(s => s.id === newRow.sectorId ? { ...s, occupied: s.occupied + 1 } : s),
+      )
+      setCadastroOpen(false)
+      window.dispatchEvent(new Event('refetch-acolhidos-count'))
+      scrollAppContentToTop()
+      toast.success(`${newRow.name.split(' ')[0]} acolhido(a) com sucesso`)
+    } catch (error) {
+      scrollAppContentToTop()
+      toast.error('Nao foi possivel salvar o cadastro.')
+      throw error
+    }
   }
 
   const applyAcolhidoUpdate = (updated: Acolhido) => {
@@ -154,14 +158,14 @@ export function useAcolhidosPageState() {
   const openFicha = (row: Acolhido) => {
     setFichaRow(row)
     void getAcolhidoDetail(row).catch(() => {
-      setToast({ message: 'Não foi possível carregar a ficha completa.', severity: 'error' })
+      toast.error('Nao foi possivel carregar a ficha completa.')
     })
   }
 
   const openLabel = (row: Acolhido) => {
     setLabelRow(row)
     void getAcolhidoDetail(row).then(setLabelRow).catch(() => {
-      setToast({ message: 'Não foi possível carregar os dados da etiqueta.', severity: 'error' })
+      toast.error('Nao foi possivel carregar os dados da etiqueta.')
     })
   }
 
@@ -169,7 +173,7 @@ export function useAcolhidosPageState() {
     setEditRow(row)
     setCadastroOpen(true)
     void getAcolhidoDetail(row).then(setEditRow).catch(() => {
-      setToast({ message: 'Não foi possível carregar o cadastro para edição.', severity: 'error' })
+      toast.error('Nao foi possivel carregar o cadastro para edicao.')
     })
   }
 
@@ -181,10 +185,17 @@ export function useAcolhidosPageState() {
   const handleQuickUpdate = async (payload: CadastroPayload) => {
     if (!editRow) return
 
-    const updated = await updateAcolhidoRecord(editRow.apiId, toCadastroPayload(payload))
-    applyAcolhidoUpdate(updated)
-    closeCadastro()
-    setToast({ message: `${updated.name.split(' ')[0]} atualizado(a) com sucesso`, severity: 'success' })
+    try {
+      const updated = await updateAcolhidoRecord(editRow.apiId, toCadastroPayload(payload))
+      applyAcolhidoUpdate(updated)
+      closeCadastro()
+      scrollAppContentToTop()
+      toast.success(`${updated.name.split(' ')[0]} atualizado(a) com sucesso`)
+    } catch (error) {
+      scrollAppContentToTop()
+      toast.error('Nao foi possivel atualizar o cadastro.')
+      throw error
+    }
   }
 
   const handleAction = (action: AcolhidoAction, row: Acolhido) => {
@@ -203,7 +214,7 @@ export function useAcolhidosPageState() {
       return
     }
 
-    setToast({ message: `Ação: ${action} — ${row.name.split(' ')[0]}`, severity: 'info' })
+    toast(`Ação: ${action} — ${row.name.split(' ')[0]}`)
   }
 
   return {
@@ -227,8 +238,6 @@ export function useAcolhidosPageState() {
     setEditRow,
     cadastroOpen,
     setCadastroOpen,
-    toast,
-    setToast,
     applyAcolhidoUpdate,
     removeRow,
     removeRowsByFamily,

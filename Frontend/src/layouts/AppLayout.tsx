@@ -10,6 +10,7 @@ import Inventory2Icon from '@mui/icons-material/Inventory2'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { useEffect, useState } from 'react'
+import { Toaster } from 'sonner'
 import { useAuth } from '../auth/useAuth'
 import { api } from '../services/api'
 
@@ -66,9 +67,15 @@ export function AppLayout() {
   const [acolhidosAtivos, setAcolhidosAtivos] = useState<number | null>(null)
 
   useEffect(() => {
-    api.get<{ data: { acolhidos_ativos: number } }>('/dashboard')
-      .then(res => setAcolhidosAtivos(res.data.data.acolhidos_ativos))
-      .catch(() => null)
+    const fetchAcolhidosCount = () => {
+      api.get<{ data: { acolhidos_ativos: number } }>('/dashboard')
+        .then(res => setAcolhidosAtivos(res.data.data.acolhidos_ativos))
+        .catch(() => null)
+    }
+
+    fetchAcolhidosCount()
+    window.addEventListener('refetch-acolhidos-count', fetchAcolhidosCount)
+    return () => window.removeEventListener('refetch-acolhidos-count', fetchAcolhidosCount)
   }, [])
 
   const handleLogout = async () => {
@@ -90,6 +97,7 @@ export function AppLayout() {
         bgcolor: 'background.default',
       }}
     >
+      <Toaster position="top-right" richColors closeButton duration={3500} visibleToasts={3} />
       <Drawer
         variant="permanent"
         sx={{
@@ -231,7 +239,7 @@ export function AppLayout() {
           </Typography>
         </Toolbar>
 
-        <Box sx={{ flex: 1, overflow: 'auto', p: { xs: 2, md: 3.5 } }}>
+        <Box data-app-scroll-area sx={{ flex: 1, overflow: 'auto', p: { xs: 2, md: 3.5 } }}>
           <Box sx={{ maxWidth: 1280, mx: 'auto' }}>
             <Outlet />
           </Box>

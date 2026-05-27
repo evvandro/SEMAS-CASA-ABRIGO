@@ -13,7 +13,6 @@ import {
   Divider,
   Grid,
   IconButton,
-  Snackbar,
   Stack,
   TextField,
   Tooltip,
@@ -25,6 +24,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import GridViewIcon from '@mui/icons-material/GridView'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { useAuth } from '../auth/useAuth'
 import {
   createSetor,
@@ -34,6 +34,7 @@ import {
   type ApiSetor,
   type SetorPayload,
 } from '../services/setoresService'
+import { scrollAppContentToTop } from '../utils/scrollAppContent'
 
 const PRESET_COLORS = [
   '#2e7d32', '#1565c0', '#c2185b', '#f9a825',
@@ -55,7 +56,6 @@ export function SetoresPage() {
   const [setores, setSetores] = useState<ApiSetor[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<ApiSetor | null>(null)
@@ -109,16 +109,20 @@ export function SetoresPage() {
       if (editing) {
         const updated = await updateSetor(editing.id, payload)
         setSetores(prev => prev.map(s => s.id === updated.id ? updated : s))
-        setToast('Setor atualizado.')
+        scrollAppContentToTop()
+        toast.success('Setor atualizado.')
       } else {
         const created = await createSetor(payload)
         setSetores(prev => [...prev, created])
-        setToast('Setor criado.')
+        scrollAppContentToTop()
+        toast.success('Setor criado.')
       }
       setDialogOpen(false)
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
       setFormError(msg ?? 'Erro ao salvar setor.')
+      scrollAppContentToTop()
+      toast.error(msg ?? 'Erro ao salvar setor.')
     } finally {
       setSaving(false)
     }
@@ -130,11 +134,14 @@ export function SetoresPage() {
     try {
       await deleteSetor(confirmDelete.id)
       setSetores(prev => prev.filter(s => s.id !== confirmDelete.id))
-      setToast('Setor removido.')
+      scrollAppContentToTop()
+      toast.success('Setor removido.')
       setConfirmDelete(null)
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
       setError(msg ?? 'Erro ao remover setor.')
+      scrollAppContentToTop()
+      toast.error(msg ?? 'Erro ao remover setor.')
       setConfirmDelete(null)
     } finally {
       setDeleting(false)
@@ -350,16 +357,6 @@ export function SetoresPage() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        open={!!toast}
-        autoHideDuration={2800}
-        onClose={() => setToast(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="success" onClose={() => setToast(null)} variant="filled" sx={{ borderRadius: 1 }}>
-          {toast}
-        </Alert>
-      </Snackbar>
     </Stack>
   )
 }

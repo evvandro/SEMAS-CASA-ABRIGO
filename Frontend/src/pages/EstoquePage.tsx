@@ -11,7 +11,6 @@ import {
   IconButton,
   MenuItem,
   Paper,
-  Snackbar,
   Stack,
   Tab,
   Table,
@@ -28,8 +27,10 @@ import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Inventory2Icon from '@mui/icons-material/Inventory2'
 import SaveIcon from '@mui/icons-material/Save'
+import { toast } from 'sonner'
 import { TimeInput } from '../components/TimeInput'
 import { api } from '../services/api'
+import { scrollAppContentToTop } from '../utils/scrollAppContent'
 
 interface Material {
   id: number
@@ -129,7 +130,6 @@ export function EstoquePage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
 
   const load = async () => {
     setLoading(true)
@@ -200,13 +200,16 @@ export function EstoquePage() {
         itens: validItems,
       })
 
-      setToast('Recebimento registrado e estoque atualizado.')
+      scrollAppContentToTop()
+      toast.success('Recebimento registrado e estoque atualizado.')
       setForm({ ...emptyForm, data_recebimento: today, hora_recebimento: now })
       setItens([{ ...emptyItem }])
       await load()
       setActiveView('listagem')
     } catch {
       setError('Nao foi possivel salvar o recebimento.')
+      scrollAppContentToTop()
+      toast.error('Nao foi possivel salvar o recebimento.')
     } finally {
       setSubmitting(false)
     }
@@ -477,9 +480,6 @@ export function EstoquePage() {
         </TableContainer>
       </Paper>
 
-      <Snackbar open={!!toast} autoHideDuration={2800} onClose={() => setToast(null)}>
-        <Alert severity="success" variant="filled" onClose={() => setToast(null)}>{toast}</Alert>
-      </Snackbar>
     </Stack>
   )
 }

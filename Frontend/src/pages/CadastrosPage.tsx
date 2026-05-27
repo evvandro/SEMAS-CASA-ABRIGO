@@ -28,6 +28,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import SaveIcon from '@mui/icons-material/Save'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import { TimeInput } from '../components/TimeInput'
 import {
   createAcolhidoRecord,
@@ -38,6 +39,7 @@ import {
 } from '../services/acolhidosService'
 import { createFamilia } from '../services/familiasService'
 import type { Acolhido } from '../modules/acolhidos/types'
+import { scrollAppContentToTop } from '../utils/scrollAppContent'
 
 interface FormData {
   dataEntrada: string
@@ -423,7 +425,11 @@ export function CadastrosPage() {
     setSubmitError(null)
     setSubmitMessage(null)
 
-    if (!validate()) return
+    if (!validate()) {
+      scrollAppContentToTop()
+      toast.error('Corrija os campos obrigatórios antes de continuar.')
+      return
+    }
 
     setSubmitting(true)
 
@@ -456,6 +462,9 @@ export function CadastrosPage() {
         })
 
         setSubmitMessage(`Familia ${saved.codigo} cadastrada com ${saved.acolhidosCount} membros.`)
+        window.dispatchEvent(new Event('refetch-acolhidos-count'))
+        scrollAppContentToTop()
+        toast.success(`Familia ${saved.codigo} cadastrada com ${saved.acolhidosCount} membros.`)
         setFormData(initialFormData)
         setBaselineFormData(initialFormData)
         setFamilyMembers([createFamilyMember(), createFamilyMember()])
@@ -485,6 +494,11 @@ export function CadastrosPage() {
         : await createAcolhidoRecord(payload)
 
       setSubmitMessage(`Ficha de ${saved.name} ${editId ? 'atualizada' : 'salva'} com sucesso.`)
+      if (!editId) {
+        window.dispatchEvent(new Event('refetch-acolhidos-count'))
+      }
+      scrollAppContentToTop()
+      toast.success(`Ficha de ${saved.name} ${editId ? 'atualizada' : 'salva'} com sucesso.`)
       if (editId) {
         const nextFormData = toFormDataFromAcolhido(saved)
         setFormData(nextFormData)
@@ -496,6 +510,8 @@ export function CadastrosPage() {
       setFieldErrors({})
     } catch (error) {
       setSubmitError(getErrorMessage(error))
+      scrollAppContentToTop()
+      toast.error(getErrorMessage(error))
     } finally {
       setSubmitting(false)
     }

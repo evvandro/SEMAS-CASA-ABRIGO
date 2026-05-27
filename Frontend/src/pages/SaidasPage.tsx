@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react'
 import {
-  Alert,
   Autocomplete,
   Box,
   Button,
   Chip,
   Paper,
-  Snackbar,
   Stack,
   Tab,
   Table,
@@ -19,10 +17,12 @@ import {
   Typography,
 } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
+import { toast } from 'sonner'
 import { SaidaDialog } from '../modules/acolhidos/components/SaidaDialog'
 import type { Acolhido, Familia, SaidaPayload } from '../modules/acolhidos/types'
 import { fetchAcolhidos, registerAcolhidoSaida } from '../services/acolhidosService'
 import { fetchFamiliaDetail, fetchFamilias, registerFamiliaSaida, toIsoDate } from '../services/familiasService'
+import { scrollAppContentToTop } from '../utils/scrollAppContent'
 
 type SaidasTab = 'pessoas' | 'familias'
 
@@ -44,8 +44,6 @@ export function SaidasPage() {
   const [selectedAcolhido, setSelectedAcolhido] = useState<Acolhido | null>(null)
   const [selectedFamilia, setSelectedFamilia] = useState<Familia | null>(null)
   const [loading, setLoading] = useState(false)
-  const [successMsg, setSuccessMsg] = useState('')
-  const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
     void loadData()
@@ -65,7 +63,7 @@ export function SaidasPage() {
       setHistoricoAcolhidos(pessoasSaidas)
       setHistoricoFamilias(familiasSaidas)
     } catch {
-      setErrorMsg('Nao foi possivel carregar pessoas e familias ativas.')
+      toast.error('Nao foi possivel carregar pessoas e familias ativas.')
     } finally {
       setLoading(false)
     }
@@ -73,13 +71,13 @@ export function SaidasPage() {
 
   const openDialog = async () => {
     if (tab === 'pessoas' && !selectedAcolhido) {
-      setErrorMsg('Selecione uma pessoa antes de abrir a ficha de saida.')
+      toast.error('Selecione uma pessoa antes de abrir a ficha de saida.')
       return
     }
 
     if (tab === 'familias') {
       if (!selectedFamilia) {
-        setErrorMsg('Selecione uma familia antes de abrir a ficha de saida.')
+        toast.error('Selecione uma familia antes de abrir a ficha de saida.')
         return
       }
 
@@ -112,18 +110,23 @@ export function SaidasPage() {
         })) ?? []
         setHistoricoAcolhidos(prev => [...membrosSaidos, ...prev])
         setSelectedFamilia(null)
-        setSuccessMsg('Saida da familia registrada com sucesso.')
+        window.dispatchEvent(new Event('refetch-acolhidos-count'))
+        scrollAppContentToTop()
+        toast.success('Saida da familia registrada com sucesso.')
       } else if (selectedAcolhido) {
         const pessoaSaida = await registerAcolhidoSaida(selectedAcolhido.apiId, toIsoDate(payload.data), tipoSaida, payload)
         setAcolhidos(prev => prev.filter(acolhido => acolhido.apiId !== selectedAcolhido.apiId))
         setHistoricoAcolhidos(prev => [pessoaSaida, ...prev])
         setSelectedAcolhido(null)
-        setSuccessMsg('Saida registrada com sucesso.')
+        window.dispatchEvent(new Event('refetch-acolhidos-count'))
+        scrollAppContentToTop()
+        toast.success('Saida registrada com sucesso.')
       }
 
       setDialogOpen(false)
     } catch (error) {
-      setErrorMsg(getApiErrorMessage(error))
+      scrollAppContentToTop()
+      toast.error(getApiErrorMessage(error))
     }
   }
 
@@ -246,17 +249,6 @@ export function SaidasPage() {
         initialFamily={tab === 'familias' ? selectedFamilia : null}
       />
 
-      <Snackbar open={!!successMsg} autoHideDuration={5000} onClose={() => setSuccessMsg('')}>
-        <Alert onClose={() => setSuccessMsg('')} severity="success" sx={{ width: '100%' }}>
-          {successMsg}
-        </Alert>
-      </Snackbar>
-
-      <Snackbar open={!!errorMsg} autoHideDuration={5000} onClose={() => setErrorMsg('')}>
-        <Alert onClose={() => setErrorMsg('')} severity="error" sx={{ width: '100%' }}>
-          {errorMsg}
-        </Alert>
-      </Snackbar>
     </Box>
   )
 }
