@@ -14,7 +14,9 @@ RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoload
 
 COPY . .
 
-RUN composer run-script post-autoload-dump
+RUN cp .env.example .env \
+    && php artisan key:generate --force \
+    && composer run-script post-autoload-dump
 
 RUN php artisan config:clear \
     && php artisan route:cache \
