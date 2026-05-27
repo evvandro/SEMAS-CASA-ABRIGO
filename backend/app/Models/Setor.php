@@ -9,12 +9,13 @@ class Setor extends Model
 {
     protected $table = 'setores';
 
-    protected $fillable = ['nome', 'cor', 'capacidade', 'ativo'];
+    protected $fillable = ['nome', 'cor', 'capacidade', 'ativo', 'leitos_interditados'];
 
     protected function casts(): array
     {
         return [
             'ativo' => 'boolean',
+            'leitos_interditados' => 'array',
         ];
     }
 

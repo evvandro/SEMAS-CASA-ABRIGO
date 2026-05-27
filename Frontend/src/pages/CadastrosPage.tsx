@@ -31,6 +31,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { TimeInput } from '../components/TimeInput'
 import {
   createAcolhidoRecord,
+  fetchAcolhidos,
   fetchAcolhidoDetail,
   fetchSetores,
   updateAcolhidoRecord,
@@ -38,6 +39,7 @@ import {
 } from '../services/acolhidosService'
 import { createFamilia } from '../services/familiasService'
 import type { Acolhido } from '../modules/acolhidos/types'
+import { buildBedOptions } from '../modules/acolhidos/utils/sectorCapacity'
 
 interface FormData {
   dataEntrada: string
@@ -265,6 +267,7 @@ export function CadastrosPage() {
   const [familyMembers, setFamilyMembers] = useState<FamilyMemberForm[]>([createFamilyMember(), createFamilyMember()])
   const [baselineFormData, setBaselineFormData] = useState<FormData>(initialFormData)
   const [sectors, setSectors] = useState<ApiSetor[]>([])
+  const [activeAcolhidos, setActiveAcolhidos] = useState<Acolhido[]>([])
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [loadingSectors, setLoadingSectors] = useState(true)
   const [loadingAcolhido, setLoadingAcolhido] = useState(false)
@@ -286,8 +289,11 @@ export function CadastrosPage() {
       setLoadError(null)
 
       try {
-        const data = await fetchSetores()
-        if (active) setSectors(data.filter((setor) => setor.ativo))
+        const [data, acolhidos] = await Promise.all([fetchSetores(), fetchAcolhidos()])
+        if (active) {
+          setSectors(data)
+          setActiveAcolhidos(acolhidos)
+        }
       } catch {
         if (active) setLoadError('Nao foi possivel carregar os setores.')
       } finally {
@@ -345,9 +351,36 @@ export function CadastrosPage() {
     [formData.setorId, sectors],
   )
 
+  const occupiedBedValues = useMemo(
+    () => activeAcolhidos
+      .filter((acolhido) => acolhido.sectorId === formData.setorId && acolhido.apiId !== editId)
+      .map((acolhido) => acolhido.bed),
+    [activeAcolhidos, editId, formData.setorId],
+  )
+
+  const individualBedOptions = useMemo(() => {
+    if (!selectedSetor) return []
+
+    return buildBedOptions({
+      capacity: selectedSetor.capacidade,
+      active: selectedSetor.ativo,
+      blockedBeds: selectedSetor.leitos_interditados,
+      occupiedBeds: occupiedBedValues,
+      currentBed: formData.leito,
+    })
+  }, [formData.leito, occupiedBedValues, selectedSetor])
+
   const setField = <K extends keyof FormData>(field: K, value: FormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
     setFieldErrors((prev) => ({ ...prev, [field]: undefined }))
+    setSubmitMessage(null)
+    setSubmitError(null)
+  }
+
+  const setSetor = (setorId: string) => {
+    setFormData((prev) => ({ ...prev, setorId, leito: '' }))
+    setFamilyMembers((prev) => prev.map((member) => ({ ...member, leito: '' })))
+    setFieldErrors((prev) => ({ ...prev, setorId: undefined, leito: undefined }))
     setSubmitMessage(null)
     setSubmitError(null)
   }
@@ -356,6 +389,21 @@ export function CadastrosPage() {
     setFamilyMembers((prev) => prev.map((member, idx) => (idx === index ? { ...member, [field]: value } : member)))
     setSubmitMessage(null)
     setSubmitError(null)
+  }
+
+  const getFamilyMemberBedOptions = (index: number) => {
+    if (!selectedSetor) return []
+
+    return buildBedOptions({
+      capacity: selectedSetor.capacidade,
+      active: selectedSetor.ativo,
+      blockedBeds: selectedSetor.leitos_interditados,
+      occupiedBeds: [
+        ...occupiedBedValues,
+        ...familyMembers.filter((_, memberIndex) => memberIndex !== index).map((member) => member.leito),
+      ],
+      currentBed: familyMembers[index]?.leito,
+    })
   }
 
   const addFamilyMember = () => {
@@ -587,12 +635,12 @@ export function CadastrosPage() {
                   <Select
                     label="Setor"
                     value={formData.setorId}
-                    onChange={(event) => setField('setorId', String(event.target.value))}
+                    onChange={(event) => setSetor(String(event.target.value))}
                     disabled={loadingSectors}
                   >
                     {sectors.map((setor) => (
-                      <MenuItem key={setor.id} value={String(setor.id)}>
-                        {setor.nome}
+                      <MenuItem key={setor.id} value={String(setor.id)} disabled={!setor.ativo}>
+                        {setor.nome}{setor.ativo ? '' : ' (interditado)'}
                       </MenuItem>
                     ))}
                   </Select>
@@ -603,12 +651,27 @@ export function CadastrosPage() {
               </Grid>
               {!isFamilyMode ? (
                 <Grid size={{ xs: 12, md: 2 }}>
-                  <TextField
-                    fullWidth
-                    label="Leito"
-                    value={formData.leito}
-                    onChange={(event) => setField('leito', event.target.value)}
-                  />
+                  <FormControl fullWidth disabled={!selectedSetor || !selectedSetor.ativo}>
+                    <InputLabel>Leito</InputLabel>
+                    <Select
+                      label="Leito"
+                      value={formData.leito}
+                      onChange={(event) => setField('leito', String(event.target.value))}
+                    >
+                      <MenuItem value="">Sem leito</MenuItem>
+                      {individualBedOptions.length === 0 && selectedSetor ? (
+                        <MenuItem value="" disabled>Nenhum leito livre</MenuItem>
+                      ) : null}
+                      {individualBedOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText>
+                      {selectedSetor ? 'Livres do setor selecionado.' : 'Selecione um setor.'}
+                    </FormHelperText>
+                  </FormControl>
                 </Grid>
               ) : null}
             </Grid>
@@ -758,7 +821,27 @@ export function CadastrosPage() {
                           <TextField fullWidth label="Telefone" value={member.telefone} onChange={(event) => setFamilyMemberField(index, 'telefone', event.target.value)} />
                         </Grid>
                         <Grid size={{ xs: 12, md: 3 }}>
-                          <TextField fullWidth label="Leito" value={member.leito} onChange={(event) => setFamilyMemberField(index, 'leito', event.target.value)} />
+                          <FormControl fullWidth disabled={!selectedSetor || !selectedSetor.ativo}>
+                            <InputLabel>Leito</InputLabel>
+                            <Select
+                              label="Leito"
+                              value={member.leito}
+                              onChange={(event) => setFamilyMemberField(index, 'leito', String(event.target.value))}
+                            >
+                              <MenuItem value="">Sem leito</MenuItem>
+                              {getFamilyMemberBedOptions(index).length === 0 && selectedSetor ? (
+                                <MenuItem value="" disabled>Nenhum leito livre</MenuItem>
+                              ) : null}
+                              {getFamilyMemberBedOptions(index).map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                            <FormHelperText>
+                              {selectedSetor ? 'Livres do setor selecionado.' : 'Selecione um setor.'}
+                            </FormHelperText>
+                          </FormControl>
                         </Grid>
                         <Grid size={{ xs: 12 }}>
                           <FormGroup row>

@@ -10,6 +10,7 @@ export interface ApiSetor {
   cor: string
   capacidade: number | null
   ativo: boolean
+  leitos_interditados?: string[]
 }
 
 export interface ApiAcolhido {
@@ -131,6 +132,8 @@ export function toSector(api: ApiSetor, occupied = 0): Sector {
     color: api.cor,
     capacity: api.capacidade ?? 0,
     occupied,
+    active: api.ativo,
+    blockedBeds: api.leitos_interditados ?? [],
   }
 }
 
@@ -141,6 +144,7 @@ export function toCadastroPayload(payload: CadastroPayload) {
     cpf: payload.cpf.replace(/\D/g, '') || null,
     data_nascimento: day && month && year ? `${year}-${month}-${day}` : null,
     setor_id: Number(payload.sectorId),
+    leito: payload.bed?.trim() || null,
     pcd: payload.pcd,
     gestante: payload.gestante,
     cronica: payload.cronica,

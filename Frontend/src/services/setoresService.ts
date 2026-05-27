@@ -6,12 +6,14 @@ export interface ApiSetor {
   cor: string
   capacidade: number | null
   ativo: boolean
+  leitos_interditados?: string[]
 }
 
 export interface SetorPayload {
   nome: string
   cor: string
   capacidade: number | null
+  leitos_interditados?: string[]
 }
 
 export async function fetchSetores(): Promise<ApiSetor[]> {
