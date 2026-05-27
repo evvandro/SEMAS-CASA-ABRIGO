@@ -204,6 +204,7 @@ export function AcolhidosPage() {
         onClose={state.closeCadastro}
         onSave={state.editRow ? state.handleQuickUpdate : state.handleSave}
         sectors={state.sectors}
+        rows={state.rows}
         mode={state.editRow ? 'edit' : 'create'}
         initialRow={state.editRow}
       />
