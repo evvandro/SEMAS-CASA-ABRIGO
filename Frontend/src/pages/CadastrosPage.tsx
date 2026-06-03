@@ -84,7 +84,7 @@ interface FamilyMemberForm {
   pertencesRegistrados: string
 }
 
-const riskOptions = ['Enchente', 'Deslizamento', 'Vendaval', 'Incendio', 'Interdicao de moradia', 'Outro']
+const riskOptions = ['Enchente', 'Deslizamento', 'Vendaval', 'Incêndio', 'Interdição de moradia', 'Outro']
 
 const initialFormData: FormData = {
   dataEntrada: '',
@@ -256,7 +256,7 @@ function getErrorMessage(error: unknown): string {
   const validationErrors = response?.data?.errors
   const firstValidationMessage = validationErrors ? Object.values(validationErrors)[0]?.[0] : undefined
 
-  return firstValidationMessage ?? response?.data?.message ?? 'Nao foi possivel salvar a ficha. Verifique os dados.'
+  return firstValidationMessage ?? response?.data?.message ?? 'Não foi possível salvar a ficha. Verifique os dados.'
 }
 
 export function CadastrosPage() {
@@ -295,7 +295,7 @@ export function CadastrosPage() {
           setActiveAcolhidos(acolhidos)
         }
       } catch {
-        if (active) setLoadError('Nao foi possivel carregar os setores.')
+        if (active) setLoadError('Não foi possível carregar os setores.')
       } finally {
         if (active) setLoadingSectors(false)
       }
@@ -333,7 +333,7 @@ export function CadastrosPage() {
         setBaselineFormData(nextFormData)
         setFieldErrors({})
       } catch {
-        if (active) setLoadError('Nao foi possivel carregar o cadastro para edicao.')
+        if (active) setLoadError('Não foi possível carregar o cadastro para edição.')
       } finally {
         if (active) setLoadingAcolhido(false)
       }
@@ -434,12 +434,12 @@ export function CadastrosPage() {
     if (!formData.dataEntrada) errors.dataEntrada = 'Informe a data de entrada.'
     if (!formData.setorId) errors.setorId = 'Selecione um setor.'
     if (isFamilyMode && formData.responsavelFamiliar.trim().length < 3) {
-      errors.responsavelFamiliar = 'Informe o responsavel familiar.'
+      errors.responsavelFamiliar = 'Informe o responsável familiar.'
     }
 
     if (!isFamilyMode) {
       if (formData.nomeCompleto.trim().length < 3) errors.nomeCompleto = 'Informe o nome completo.'
-      if (formData.cpf && onlyDigits(formData.cpf).length !== 11) errors.cpf = 'CPF deve ter 11 digitos.'
+      if (formData.cpf && onlyDigits(formData.cpf).length !== 11) errors.cpf = 'CPF deve ter 11 dígitos.'
     }
 
     if (isFamilyMode) {
@@ -449,7 +449,7 @@ export function CadastrosPage() {
       })
 
       if (memberError) {
-        errors.nomeCompleto = 'Cada membro precisa ter nome; CPF deve ter 11 digitos quando preenchido.'
+        errors.nomeCompleto = 'Cada membro precisa ter nome; CPF deve ter 11 dígitos quando preenchido.'
       }
     }
 
@@ -503,7 +503,7 @@ export function CadastrosPage() {
           })),
         })
 
-        setSubmitMessage(`Familia ${saved.codigo} cadastrada com ${saved.acolhidosCount} membros.`)
+        setSubmitMessage(`Família ${saved.codigo} cadastrada com ${saved.acolhidosCount} membros.`)
         setFormData(initialFormData)
         setBaselineFormData(initialFormData)
         setFamilyMembers([createFamilyMember(), createFamilyMember()])
@@ -569,7 +569,7 @@ export function CadastrosPage() {
             <Box>
               <Typography variant="h4">{isEditing ? 'Editar ficha detalhada' : 'Ficha detalhada de entrada'}</Typography>
               <Typography color="text.secondary" sx={{ mt: 1 }}>
-                {isEditing ? 'Atualizacao do cadastro completo do acolhido.' : 'Cadastro essencial para acolhimento temporario.'}
+                {isEditing ? 'Atualização do cadastro completo do acolhido.' : 'Cadastro essencial para acolhimento temporário.'}
               </Typography>
             </Box>
             <Chip
@@ -599,7 +599,7 @@ export function CadastrosPage() {
               variant={entryMode === 'familia' ? 'contained' : 'outlined'}
               onClick={() => setEntryMode('familia')}
             >
-              Familia
+              Família
             </Button>
           </Stack>
         </Paper>
@@ -607,7 +607,7 @@ export function CadastrosPage() {
 
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={3}>
-          <FormSection title="1. Entrada e alocacao">
+          <FormSection title="1. Entrada e alocação">
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 3 }}>
                 <TextField
@@ -678,7 +678,7 @@ export function CadastrosPage() {
           </FormSection>
 
           {!isFamilyMode ? (
-            <FormSection title="2. Identificacao da pessoa acolhida">
+            <FormSection title="2. Identificação da pessoa acolhida">
               <Grid container spacing={2}>
                 <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
@@ -721,7 +721,7 @@ export function CadastrosPage() {
                       <MenuItem value="Feminino">Feminino</MenuItem>
                       <MenuItem value="Masculino">Masculino</MenuItem>
                       <MenuItem value="Outro">Outro</MenuItem>
-                      <MenuItem value="Nao informado">Nao informado</MenuItem>
+                      <MenuItem value="Nao informado">Não informado</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -736,7 +736,7 @@ export function CadastrosPage() {
                 <Grid size={{ xs: 12, md: 4 }}>
                   <TextField
                     fullWidth
-                    label="Responsavel familiar"
+                    label="Responsável familiar"
                     value={formData.responsavelFamiliar}
                     onChange={(event) => setField('responsavelFamiliar', event.target.value)}
                   />
@@ -749,7 +749,7 @@ export function CadastrosPage() {
                 <TextField
                   fullWidth
                   required
-                  label="Responsavel familiar"
+                  label="Responsável familiar"
                   value={formData.responsavelFamiliar}
                   onChange={(event) => setField('responsavelFamiliar', event.target.value)}
                   error={!!fieldErrors.responsavelFamiliar}
@@ -813,7 +813,7 @@ export function CadastrosPage() {
                               <MenuItem value="Feminino">Feminino</MenuItem>
                               <MenuItem value="Masculino">Masculino</MenuItem>
                               <MenuItem value="Outro">Outro</MenuItem>
-                              <MenuItem value="Nao informado">Nao informado</MenuItem>
+                              <MenuItem value="Nao informado">Não informado</MenuItem>
                             </Select>
                           </FormControl>
                         </Grid>
@@ -846,13 +846,13 @@ export function CadastrosPage() {
                         <Grid size={{ xs: 12 }}>
                           <FormGroup row>
                             <FormControlLabel control={<Checkbox checked={member.pcd} onChange={(event) => setFamilyMemberField(index, 'pcd', event.target.checked)} />} label="PCD" />
-                            <FormControlLabel control={<Checkbox checked={member.cronica} onChange={(event) => setFamilyMemberField(index, 'cronica', event.target.checked)} />} label="Doenca cronica" />
+                            <FormControlLabel control={<Checkbox checked={member.cronica} onChange={(event) => setFamilyMemberField(index, 'cronica', event.target.checked)} />} label="Doença crônica" />
                             <FormControlLabel control={<Checkbox checked={member.gestante} onChange={(event) => setFamilyMemberField(index, 'gestante', event.target.checked)} />} label="Gestante" />
                             <FormControlLabel control={<Checkbox checked={member.idoso} onChange={(event) => setFamilyMemberField(index, 'idoso', event.target.checked)} />} label="Idoso 60+" />
                           </FormGroup>
                         </Grid>
                         <Grid size={{ xs: 12, md: 6 }}>
-                          <TextField fullWidth multiline minRows={2} label="Observacoes individuais" value={member.observacoesGerais} onChange={(event) => setFamilyMemberField(index, 'observacoesGerais', event.target.value)} />
+                          <TextField fullWidth multiline minRows={2} label="Observações individuais" value={member.observacoesGerais} onChange={(event) => setFamilyMemberField(index, 'observacoesGerais', event.target.value)} />
                         </Grid>
                         <Grid size={{ xs: 12, md: 6 }}>
                           <TextField fullWidth multiline minRows={2} label="Pertences individuais" value={member.pertencesRegistrados} onChange={(event) => setFamilyMemberField(index, 'pertencesRegistrados', event.target.value)} />
@@ -869,9 +869,9 @@ export function CadastrosPage() {
           )}
 
           {!isFamilyMode ? (
-          <FormSection title="3. Publico preferencial">
+          <FormSection title="3. Público preferencial">
             <FormControl component="fieldset">
-              <FormLabel>Marque as condicoes prioritarias</FormLabel>
+              <FormLabel>Marque as condições prioritárias</FormLabel>
               <FormGroup row>
                 <FormControlLabel
                   control={<Checkbox checked={formData.pcd} onChange={(event) => setField('pcd', event.target.checked)} />}
@@ -879,7 +879,7 @@ export function CadastrosPage() {
                 />
                 <FormControlLabel
                   control={<Checkbox checked={formData.cronica} onChange={(event) => setField('cronica', event.target.checked)} />}
-                  label="Doenca cronica"
+                  label="Doença crônica"
                 />
                 <FormControlLabel
                   control={<Checkbox checked={formData.gestante} onChange={(event) => setField('gestante', event.target.checked)} />}
@@ -894,7 +894,7 @@ export function CadastrosPage() {
           </FormSection>
           ) : null}
 
-          <FormSection title="4. Motivo e saude">
+          <FormSection title="4. Motivo e saúde">
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 5 }}>
                 <FormControl>
@@ -918,7 +918,7 @@ export function CadastrosPage() {
               <Grid size={{ xs: 12, md: 7 }}>
                 <TextField
                   fullWidth
-                  label="Condicoes de saude e encaminhamentos"
+                  label="Condições de saúde e encaminhamentos"
                   multiline
                   minRows={6}
                   value={formData.observacoesSaude}
@@ -928,12 +928,12 @@ export function CadastrosPage() {
             </Grid>
           </FormSection>
 
-          <FormSection title="5. Responsavel e observacoes">
+          <FormSection title="5. Responsável e observações">
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 5 }}>
                 <TextField
                   fullWidth
-                  label="Nome do responsavel pelo atendimento"
+                  label="Nome do responsável pelo atendimento"
                   value={formData.nomeResponsavelAtendimento}
                   onChange={(event) => setField('nomeResponsavelAtendimento', event.target.value)}
                 />
@@ -941,7 +941,7 @@ export function CadastrosPage() {
               <Grid size={{ xs: 12, md: 3 }}>
                 <TextField
                   fullWidth
-                  label="Cargo / funcao"
+                  label="Cargo / função"
                   value={formData.cargoFuncao}
                   onChange={(event) => setField('cargoFuncao', event.target.value)}
                 />
@@ -949,7 +949,7 @@ export function CadastrosPage() {
               <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
-                  label="Observacoes gerais"
+                  label="Observações gerais"
                   multiline
                   minRows={4}
                   value={formData.observacoesGerais}
@@ -981,7 +981,7 @@ export function CadastrosPage() {
               </Box>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <Button variant="outlined" onClick={handleReset} disabled={submitting}>
-                  {isEditing ? 'Restaurar dados' : 'Limpar formulario'}
+                  {isEditing ? 'Restaurar dados' : 'Limpar formulário'}
                 </Button>
                 {isEditing ? (
                   <Button variant="text" onClick={() => navigate('/acolhidos')} disabled={submitting}>

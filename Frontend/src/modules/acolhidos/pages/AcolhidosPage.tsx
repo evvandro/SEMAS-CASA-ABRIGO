@@ -41,6 +41,12 @@ export function AcolhidosPage() {
       return
     }
 
+    if (action === 'deliver') {
+      state.setFichaRow(null)
+      navigate(`/estoque?acolhido=${row.apiId}`)
+      return
+    }
+
     if (action === 'edit') {
       state.openQuickEdit(row)
       return

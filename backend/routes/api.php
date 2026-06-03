@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
         Route::get('/entregas', [EntregaController::class, 'index']);
         Route::post('/entregas', [EntregaController::class, 'store']);
+        Route::post('/entregas/lote', [EntregaController::class, 'storeLote']);
     });
 
     Route::middleware('admin')->group(function (): void {
