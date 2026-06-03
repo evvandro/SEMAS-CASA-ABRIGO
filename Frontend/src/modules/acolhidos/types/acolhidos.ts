@@ -1,8 +1,8 @@
 export type AlertCategory = 'pcd' | 'gestante' | 'cronica' | 'idoso'
 
-export type AcolhidoAction = 'view' | 'edit' | 'editFull' | 'print' | 'label' | 'exit' | 'exitFamily'
+export type AcolhidoAction = 'view' | 'edit' | 'editFull' | 'print' | 'label' | 'deliver' | 'exit' | 'exitFamily'
 
-export type CadastroAction = Exclude<AcolhidoAction, 'view' | 'label' | 'editFull'>
+export type CadastroAction = Exclude<AcolhidoAction, 'view' | 'label' | 'deliver' | 'editFull'>
 
 export type AcolhidosFilters = Record<AlertCategory, boolean>
 

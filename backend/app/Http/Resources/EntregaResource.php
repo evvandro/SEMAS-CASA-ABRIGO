@@ -19,11 +19,13 @@ class EntregaResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'grupo_entrega' => $this->grupo_entrega,
             'material' => $this->whenLoaded('material', fn () => [
                 'id' => $this->material?->id,
                 'nome' => $this->material?->nome,
                 'unidade' => $this->material?->unidade,
                 'categoria' => $this->material?->categoria,
+                'estoque_atual' => $this->material?->estoque_atual,
             ]),
             'familia' => $this->whenLoaded('familia', fn () => $this->familia === null ? null : [
                 'id' => $this->familia->id,
@@ -35,9 +37,19 @@ class EntregaResource extends JsonResource
                 'codigo_pulseira' => $this->acolhido->codigo_pulseira,
                 'nome' => $this->acolhido->nome,
             ]),
+            'destino_tipo' => $this->destino_tipo,
+            'externo_nome' => $this->externo_nome,
+            'externo_documento' => $this->externo_documento,
+            'externo_contato' => $this->externo_contato,
+            'externo_instituicao' => $this->externo_instituicao,
             'quantidade' => $this->quantidade,
             'data_entrega' => $this->data_entrega?->toDateString(),
+            'finalidade' => $this->finalidade,
             'observacoes' => $this->observacoes,
+            'entregue_por' => $this->whenLoaded('entreguePor', fn () => $this->entreguePor === null ? null : [
+                'id' => $this->entreguePor->id,
+                'name' => $this->entreguePor->name,
+            ]),
         ];
     }
 }

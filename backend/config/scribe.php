@@ -9,6 +9,17 @@ use function Knuckles\Scribe\Config\removeStrategies;
 
 // Only the most common configs are shown. See the https://scribe.knuckles.wtf/laravel/reference/config for all.
 
+// Scribe is a dev-only dependency (declared under require-dev). Production images are
+// built with `composer install --no-dev`, so none of the Knuckles\Scribe symbols used
+// below exist there. Laravel loads every file in config/ on each boot, so without this
+// guard the calls below (AuthIn, Defaults, Strategies::withSettings, configureStrategy)
+// throw "Class not found" — failing `package:discover` during the deploy build and every
+// request at runtime. Return an empty config when Scribe is absent; it self-publishes its
+// full defaults whenever the package is installed (i.e. in local/dev).
+if (! class_exists(Strategies\StaticData::class)) {
+    return [];
+}
+
 return [
     // The HTML <title> for the generated documentation.
     'title' => config('app.name').' API Documentation',

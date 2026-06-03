@@ -10,11 +10,18 @@ class Entrega extends Model
     protected $table = 'entregas';
 
     protected $fillable = [
+        'grupo_entrega',
         'material_id',
         'familia_id',
         'acolhido_id',
+        'destino_tipo',
+        'externo_nome',
+        'externo_documento',
+        'externo_contato',
+        'externo_instituicao',
         'quantidade',
         'data_entrega',
+        'finalidade',
         'observacoes',
         'entregue_por',
     ];
