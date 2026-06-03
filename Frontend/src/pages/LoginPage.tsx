@@ -101,7 +101,7 @@ export function LoginPage() {
           },
         }}
       >
-        <Stack spacing={{ xs: 5, md: 10 }} sx={{ position: 'relative', zIndex: 1 }}>
+        <Stack spacing={{ xs: 4, md: 6 }} sx={{ position: 'relative', zIndex: 1 }}>
           <Stack direction="row" alignItems="center" spacing={2}>
             <Box
               sx={{
@@ -187,10 +187,11 @@ export function LoginPage() {
           display: 'grid',
           placeItems: 'center',
           px: { xs: 3, sm: 5 },
-          py: { xs: 6, md: 8 },
+          py: { xs: 4, md: 6 },
+          '@media (max-height:760px)': { py: 3 },
         }}
       >
-        <Stack spacing={3.5} component="form" onSubmit={handleSubmit} sx={{ width: '100%', maxWidth: 520 }}>
+        <Stack spacing={{ xs: 2.5, md: 3 }} component="form" onSubmit={handleSubmit} sx={{ width: '100%', maxWidth: 520 }}>
           <Stack spacing={1}>
             <Typography variant="h4" sx={{ fontWeight: 850, color: '#12313a' }}>
               Entrar no sistema
@@ -200,7 +201,7 @@ export function LoginPage() {
 
           {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
 
-          <Stack spacing={2.5}>
+          <Stack spacing={{ xs: 2, md: 2.5 }}>
             <TextField
               label="E-mail funcional"
               placeholder="nome@saobentodosul.sc.gov.br"
@@ -253,15 +254,10 @@ export function LoginPage() {
               sx={fieldSx}
             />
 
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-              <FormControlLabel
-                control={<Checkbox defaultChecked size="small" sx={{ color: '#1b7280', '&.Mui-checked': { color: '#1b7280' } }} />}
-                label={<Typography variant="body2" color="text.secondary">Manter conectado</Typography>}
-              />
-              <Link component="button" type="button" underline="none" sx={{ color: '#155d67', fontWeight: 700 }}>
-                Esqueci a senha
-              </Link>
-            </Stack>
+            <FormControlLabel
+              control={<Checkbox defaultChecked size="small" sx={{ color: '#1b7280', '&.Mui-checked': { color: '#1b7280' } }} />}
+              label={<Typography variant="body2" color="text.secondary">Manter conectado</Typography>}
+            />
           </Stack>
 
           <Button
@@ -278,6 +274,7 @@ export function LoginPage() {
               fontSize: 16,
               boxShadow: 'none',
               '&:hover': { bgcolor: '#125b66', boxShadow: 'none' },
+              '@media (max-height:760px)': { minHeight: 48 },
             }}
           >
             {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
@@ -307,7 +304,7 @@ export function LoginPage() {
               <br />
               ou pelo ramal{' '}
               <Box component="span" sx={{ color: 'text.primary', fontWeight: 800 }}>
-                (47) 3631-XXXX.
+                (47) 3631-6013.
               </Box>
             </Typography>
           </Box>
@@ -330,6 +327,7 @@ const fieldSx = {
     minHeight: 58,
     borderRadius: 2,
     bgcolor: 'common.white',
+    '@media (max-height:760px)': { minHeight: 50 },
   },
 }
 

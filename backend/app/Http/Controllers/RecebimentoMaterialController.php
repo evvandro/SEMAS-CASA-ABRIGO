@@ -40,9 +40,9 @@ class RecebimentoMaterialController extends Controller
             'doador_documento' => ['nullable', 'string', 'max:30'],
             'doador_contato' => ['nullable', 'string', 'max:80'],
             'conferido' => ['required', 'boolean'],
-            'motivo_nao_conferido' => ['nullable', 'string', 'max:255'],
+            'motivo_nao_conferido' => ['nullable', 'required_if:conferido,false', 'string', 'max:255'],
             'possui_restricao' => ['required', 'boolean'],
-            'restricao_descricao' => ['nullable', 'string'],
+            'restricao_descricao' => ['nullable', 'required_if:possui_restricao,true', 'string'],
             'destinacao_inicial' => ['required', Rule::in(['estoque', 'distribuicao_imediata', 'setor_especifico'])],
             'local_armazenamento' => ['nullable', 'string', 'max:255'],
             'recebido_por' => ['required', 'string', 'max:255'],
@@ -50,12 +50,15 @@ class RecebimentoMaterialController extends Controller
             'entregue_por' => ['nullable', 'string', 'max:255'],
             'observacoes_gerais' => ['nullable', 'string'],
             'itens' => ['required', 'array', 'min:1'],
-            'itens.*.categoria' => ['required', 'string', 'max:80'],
-            'itens.*.descricao' => ['required', 'string', 'max:255'],
+            'itens.*.material_id' => ['required', 'integer', 'exists:materiais,id'],
             'itens.*.quantidade' => ['required', 'integer', 'min:1'],
-            'itens.*.unidade' => ['required', 'string', 'max:30'],
             'itens.*.condicao' => ['required', Rule::in(['novo', 'usado'])],
             'itens.*.observacoes' => ['nullable', 'string'],
+        ], [
+            'motivo_nao_conferido.required_if' => 'Informe o motivo de o material não ter sido conferido.',
+            'restricao_descricao.required_if' => 'Descreva a restrição ou validade próxima do material.',
+            'itens.*.material_id.required' => 'Selecione um material do catálogo para cada item.',
+            'itens.*.material_id.exists' => 'O material selecionado não existe no catálogo.',
         ]);
 
         $recebimento = DB::transaction(function () use ($data) {
@@ -65,25 +68,26 @@ class RecebimentoMaterialController extends Controller
             /** @var RecebimentoMaterial $recebimento */
             $recebimento = RecebimentoMaterial::create($data);
 
+            $materiais = Material::query()
+                ->whereIn('id', collect($itens)->pluck('material_id')->map(fn ($id): int => (int) $id)->unique()->all())
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
             foreach ($itens as $item) {
                 /** @var Material $material */
-                $material = Material::query()->firstOrCreate(
-                    [
-                        'nome' => $item['descricao'],
-                        'unidade' => $item['unidade'],
-                        'categoria' => $item['categoria'],
-                    ],
-                    [
-                        'estoque_atual' => 0,
-                        'ativo' => true,
-                    ],
-                );
+                $material = $materiais->get((int) $item['material_id']);
 
                 $material->increment('estoque_atual', $item['quantidade']);
 
                 $recebimento->itens()->create([
-                    ...$item,
                     'material_id' => $material->id,
+                    'categoria' => $material->categoria ?? '',
+                    'descricao' => $material->nome,
+                    'quantidade' => $item['quantidade'],
+                    'unidade' => $material->unidade,
+                    'condicao' => $item['condicao'],
+                    'observacoes' => $item['observacoes'] ?? null,
                 ]);
             }
 
