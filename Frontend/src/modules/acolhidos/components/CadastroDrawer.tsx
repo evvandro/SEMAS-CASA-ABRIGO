@@ -4,10 +4,11 @@ import {
   FormControlLabel, Checkbox, FormControl, FormHelperText, InputLabel, MenuItem, Select,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import { toast } from 'sonner'
 import { cadastroSchema } from '../schemas/cadastroSchema'
 import type { Acolhido, CadastroPayload, Sector } from '../types'
 import { formatCpf, formatDateInput } from '../utils/formFormatters'
-import { buildBedOptions, getSectorCapacitySummary } from '../utils/sectorCapacity'
+import { scrollAppContentToTop } from '../../../utils/scrollAppContent'
 
 const empty: CadastroPayload = {
   name: '', cpf: '', birth: '',
@@ -108,6 +109,8 @@ export function CadastroDrawer({ open, onClose, onSave, sectors, rows, mode = 'c
       const errs: Record<string, string> = {}
       result.error.issues.forEach(i => { if (i.path[0]) errs[i.path[0] as string] = i.message })
       setErrors(errs)
+      scrollAppContentToTop()
+      toast.error('Corrija os campos obrigatórios antes de continuar.')
       return
     }
     setSubmitting(true)
@@ -143,7 +146,7 @@ export function CadastroDrawer({ open, onClose, onSave, sectors, rows, mode = 'c
           <IconButton onClick={handleClose}><CloseIcon /></IconButton>
         </Box>
 
-        <Box sx={{ flex: 1, overflowY: 'auto', p: 3 }}>
+        <Box data-drawer-scroll-area sx={{ flex: 1, overflowY: 'auto', p: 3 }}>
           <SectionLabel n={1} title="Identificação" />
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 1.5, mb: 3 }}>
             <Box sx={{ gridColumn: 'span 12' }}>

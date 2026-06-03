@@ -1,5 +1,6 @@
-import { Alert, Box, CircularProgress, Snackbar, Typography } from '@mui/material'
+import { Alert, Box, CircularProgress, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { useAuth } from '../../../auth/useAuth'
 import { registerAcolhidoSaida, updateAcolhidoRecord } from '../../../services/acolhidosService'
 import { fetchFamiliaDetail, registerFamiliaSaida, toIsoDate } from '../../../services/familiasService'
@@ -13,6 +14,7 @@ import { SectorHeatmap } from '../components/SectorHeatmap'
 import { useAcolhidosPageState } from '../hooks/useAcolhidosPageState'
 import type { Acolhido, AcolhidoAction, Familia, SaidaPayload } from '../types'
 import { useState } from 'react'
+import { scrollAppContentToTop } from '../../../utils/scrollAppContent'
 
 function getApiErrorMessage(error: unknown): string {
   const response = (error as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }).response
@@ -67,7 +69,7 @@ export function AcolhidosPage() {
         setSaidaFamilia(await fetchFamiliaDetail(row.familyId))
         setSaidaOpen(true)
       } catch {
-        state.setToast({ message: 'Nao foi possivel carregar a familia para saida.', severity: 'error' })
+        toast.error('Nao foi possivel carregar a familia para saida.')
       }
       return
     }
@@ -77,9 +79,9 @@ export function AcolhidosPage() {
         const detail = await state.getAcolhidoDetail(row)
         const { openAcolhidoFichaPdf } = await import('../utils/pdfDocuments')
         await openAcolhidoFichaPdf(detail, state.sectorMap[detail.sectorId], user?.name)
-        state.setToast({ message: 'PDF da ficha gerado com sucesso.', severity: 'success' })
+        toast.success('PDF da ficha gerado com sucesso.')
       } catch {
-        state.setToast({ message: 'Não foi possível gerar o PDF da ficha.', severity: 'error' })
+        toast.error('Nao foi possivel gerar o PDF da ficha.')
       }
       return
     }
@@ -99,7 +101,8 @@ export function AcolhidosPage() {
         setSaidaOpen(false)
         setSaidaFamilia(null)
         state.setFichaRow(null)
-        state.setToast({ message: 'Saida da familia registrada com sucesso.', severity: 'success' })
+        scrollAppContentToTop()
+        toast.success('Saida da familia registrada com sucesso.')
         return
       }
 
@@ -109,10 +112,12 @@ export function AcolhidosPage() {
         setSaidaOpen(false)
         setSaidaRow(null)
         state.setFichaRow(null)
-        state.setToast({ message: 'Saida registrada com sucesso.', severity: 'success' })
+        scrollAppContentToTop()
+        toast.success('Saida registrada com sucesso.')
       }
     } catch (error) {
-      state.setToast({ message: getApiErrorMessage(error), severity: 'error' })
+      scrollAppContentToTop()
+      toast.error(getApiErrorMessage(error))
     }
   }
 
@@ -127,7 +132,7 @@ export function AcolhidosPage() {
     const { openPertencesLabelPdf } = await import('../utils/pdfDocuments')
     await openPertencesLabelPdf(updated, state.sectorMap[updated.sectorId], shelterName, belongings)
     state.setLabelRow(null)
-    state.setToast({ message: 'Etiqueta de pertences gerada com sucesso.', severity: 'success' })
+    toast.success('Etiqueta de pertences gerada com sucesso.')
   }
 
   if (state.loading) {
@@ -216,12 +221,6 @@ export function AcolhidosPage() {
         initialFamily={saidaFamilia}
       />
 
-      <Snackbar open={!!state.toast} autoHideDuration={2800} onClose={() => state.setToast(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity={state.toast?.severity ?? 'success'} onClose={() => state.setToast(null)} variant="filled" sx={{ borderRadius: 1 }}>
-          {state.toast?.message}
-        </Alert>
-      </Snackbar>
     </Box>
   )
 }
