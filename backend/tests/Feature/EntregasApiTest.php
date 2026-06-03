@@ -160,4 +160,163 @@ class EntregasApiTest extends TestCase
             'estoque_atual' => 1,
         ]);
     }
+
+    public function test_can_create_entrega_lote_with_multiple_items(): void
+    {
+        $user = $this->actingAsUser();
+
+        $setor = Setor::create(['nome' => 'Teste', 'cor' => '#000000', 'capacidade' => 10, 'ativo' => true]);
+        $acolhido = Acolhido::create([
+            'codigo_pulseira' => Acolhido::gerarCodigoPulseira(),
+            'setor_id' => $setor->id,
+            'nome' => 'Pessoa',
+            'data_entrada' => now()->toDateString(),
+        ]);
+        $kit = Material::create(['nome' => 'Kit higiene', 'unidade' => 'kit', 'categoria' => 'Higiene', 'estoque_atual' => 10, 'ativo' => true]);
+        $coberta = Material::create(['nome' => 'Coberta', 'unidade' => 'unidade', 'categoria' => 'Cobertas', 'estoque_atual' => 4, 'ativo' => true]);
+
+        $response = $this->postJson('/api/entregas/lote', [
+            'destino_tipo' => 'acolhido',
+            'acolhido_id' => $acolhido->id,
+            'data_entrega' => now()->toDateString(),
+            'finalidade' => 'Acolhimento inicial',
+            'itens' => [
+                ['material_id' => $kit->id, 'quantidade' => 2],
+                ['material_id' => $coberta->id, 'quantidade' => 1],
+            ],
+        ]);
+
+        $response
+            ->assertCreated()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('data.0.acolhido.id', $acolhido->id)
+            ->assertJsonPath('data.0.entregue_por.id', $user->id);
+
+        $grupoEntrega = $response->json('data.0.grupo_entrega');
+
+        $this->assertNotEmpty($grupoEntrega);
+        $this->assertSame($grupoEntrega, $response->json('data.1.grupo_entrega'));
+        $this->assertDatabaseHas('materiais', ['id' => $kit->id, 'estoque_atual' => 8]);
+        $this->assertDatabaseHas('materiais', ['id' => $coberta->id, 'estoque_atual' => 3]);
+        $this->assertDatabaseHas('entregas', [
+            'grupo_entrega' => $grupoEntrega,
+            'destino_tipo' => 'acolhido',
+            'finalidade' => 'Acolhimento inicial',
+        ]);
+    }
+
+    public function test_entrega_lote_rolls_back_when_any_item_has_insufficient_stock(): void
+    {
+        $this->actingAsUser();
+
+        $setor = Setor::create(['nome' => 'Teste', 'cor' => '#000000', 'capacidade' => 10, 'ativo' => true]);
+        $familia = Familia::create([
+            'codigo' => Familia::gerarCodigo(),
+            'responsavel_nome' => 'Resp',
+            'setor_id' => $setor->id,
+            'observacoes' => null,
+            'data_entrada' => now()->toDateString(),
+            'data_saida' => null,
+            'tipo_saida' => null,
+        ]);
+        $kit = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 5, 'ativo' => true]);
+        $coberta = Material::create(['nome' => 'Coberta', 'unidade' => 'unidade', 'categoria' => 'Teste', 'estoque_atual' => 1, 'ativo' => true]);
+
+        $this->postJson('/api/entregas/lote', [
+            'destino_tipo' => 'familia',
+            'familia_id' => $familia->id,
+            'data_entrega' => now()->toDateString(),
+            'itens' => [
+                ['material_id' => $kit->id, 'quantidade' => 2],
+                ['material_id' => $coberta->id, 'quantidade' => 2],
+            ],
+        ])
+            ->assertStatus(422)
+            ->assertJsonPath('message', 'Estoque insuficiente para realizar a entrega.');
+
+        $this->assertDatabaseCount('entregas', 0);
+        $this->assertDatabaseHas('materiais', ['id' => $kit->id, 'estoque_atual' => 5]);
+        $this->assertDatabaseHas('materiais', ['id' => $coberta->id, 'estoque_atual' => 1]);
+    }
+
+    public function test_entrega_lote_externa_requires_external_fields_and_does_not_require_internal_destination(): void
+    {
+        $this->actingAsUser();
+
+        $material = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 3, 'ativo' => true]);
+
+        $this->postJson('/api/entregas/lote', [
+            'destino_tipo' => 'externo',
+            'data_entrega' => now()->toDateString(),
+            'itens' => [
+                ['material_id' => $material->id, 'quantidade' => 1],
+            ],
+        ])->assertJsonValidationErrors('externo_nome');
+
+        $response = $this->postJson('/api/entregas/lote', [
+            'destino_tipo' => 'externo',
+            'externo_nome' => 'Defesa Civil',
+            'externo_documento' => '123',
+            'externo_contato' => 'contato@exemplo.test',
+            'externo_instituicao' => 'Orgao publico',
+            'data_entrega' => now()->toDateString(),
+            'itens' => [
+                ['material_id' => $material->id, 'quantidade' => 1],
+            ],
+        ]);
+
+        $response
+            ->assertCreated()
+            ->assertJsonPath('data.0.destino_tipo', 'externo')
+            ->assertJsonPath('data.0.externo_nome', 'Defesa Civil')
+            ->assertJsonPath('data.0.familia', null)
+            ->assertJsonPath('data.0.acolhido', null);
+
+        $this->assertDatabaseHas('materiais', ['id' => $material->id, 'estoque_atual' => 2]);
+    }
+
+    public function test_cannot_create_entrega_lote_for_inactive_acolhido_or_familia(): void
+    {
+        $this->actingAsUser();
+
+        $setor = Setor::create(['nome' => 'Teste', 'cor' => '#000000', 'capacidade' => 10, 'ativo' => true]);
+        $acolhido = Acolhido::create([
+            'codigo_pulseira' => Acolhido::gerarCodigoPulseira(),
+            'setor_id' => $setor->id,
+            'nome' => 'Pessoa',
+            'data_entrada' => now()->toDateString(),
+            'data_saida' => now()->toDateString(),
+            'tipo_saida' => 'alta',
+        ]);
+        $familia = Familia::create([
+            'codigo' => Familia::gerarCodigo(),
+            'responsavel_nome' => 'Resp',
+            'setor_id' => $setor->id,
+            'observacoes' => null,
+            'data_entrada' => now()->toDateString(),
+            'data_saida' => now()->toDateString(),
+            'tipo_saida' => 'alta',
+        ]);
+        $material = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 3, 'ativo' => true]);
+
+        $this->postJson('/api/entregas/lote', [
+            'destino_tipo' => 'acolhido',
+            'acolhido_id' => $acolhido->id,
+            'data_entrega' => now()->toDateString(),
+            'itens' => [
+                ['material_id' => $material->id, 'quantidade' => 1],
+            ],
+        ])->assertJsonValidationErrors('acolhido_id');
+
+        $this->postJson('/api/entregas/lote', [
+            'destino_tipo' => 'familia',
+            'familia_id' => $familia->id,
+            'data_entrega' => now()->toDateString(),
+            'itens' => [
+                ['material_id' => $material->id, 'quantidade' => 1],
+            ],
+        ])->assertJsonValidationErrors('familia_id');
+
+        $this->assertDatabaseHas('materiais', ['id' => $material->id, 'estoque_atual' => 3]);
+    }
 }

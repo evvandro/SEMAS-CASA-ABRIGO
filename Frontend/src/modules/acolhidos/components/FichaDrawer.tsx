@@ -15,6 +15,7 @@ import BadgeIcon from '@mui/icons-material/Badge'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'
+import Inventory2Icon from '@mui/icons-material/Inventory2'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import LogoutIcon from '@mui/icons-material/Logout'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
@@ -272,6 +273,9 @@ export function FichaDrawer({
             </Button>
             <Button startIcon={<PictureAsPdfIcon />} onClick={() => onAction('print', row)}>
               PDF da ficha
+            </Button>
+            <Button startIcon={<Inventory2Icon />} onClick={() => onAction('deliver', row)}>
+              Entregar item
             </Button>
             <Button startIcon={<EditIcon />} onClick={() => onAction('edit', row)}>
               Editar rápido
