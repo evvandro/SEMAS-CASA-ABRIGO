@@ -12,7 +12,6 @@ import {
   Grid,
   IconButton,
   Paper,
-  Snackbar,
   Stack,
   Switch,
   TextField,
@@ -29,6 +28,7 @@ import GroupsIcon from '@mui/icons-material/Groups'
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../auth/useAuth'
 import { fetchAcolhidos } from '../services/acolhidosService'
+import { showErrorToast, showSuccessToast } from '../utils/notificationService'
 import {
   createSetor,
   deleteSetor,
@@ -37,6 +37,7 @@ import {
   type ApiSetor,
   type SetorPayload,
 } from '../services/setoresService'
+import { scrollAppContentToTop } from '../utils/scrollAppContent'
 import type { Acolhido } from '../modules/acolhidos/types'
 import { formatEntryDateTime } from '../modules/acolhidos/utils/date'
 
@@ -262,7 +263,6 @@ export function SetoresPage() {
   const [acolhidos, setAcolhidos] = useState<Acolhido[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<ApiSetor | null>(null)
@@ -365,17 +365,21 @@ export function SetoresPage() {
     try {
       if (editing) {
         const updated = await updateSetor(editing.id, payload)
-        syncSetor(updated)
-        setToast('Setor atualizado.')
+        setSetores(prev => prev.map(s => s.id === updated.id ? updated : s))
+        scrollAppContentToTop()
+        showSuccessToast('Setor atualizado', 'Alterações salvas com sucesso.')
       } else {
         const created = await createSetor(payload)
-        setSetores((prev) => [...prev, created])
-        setToast('Setor criado.')
+        setSetores(prev => [...prev, created])
+        scrollAppContentToTop()
+        showSuccessToast('Setor criado', 'Novo setor cadastrado com sucesso.')
       }
       setDialogOpen(false)
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
       setFormError(msg ?? 'Erro ao salvar setor.')
+      scrollAppContentToTop()
+      showErrorToast('Erro ao salvar setor', msg ?? 'Erro ao salvar setor.')
     } finally {
       setSaving(false)
     }
@@ -386,12 +390,15 @@ export function SetoresPage() {
     setDeleting(true)
     try {
       await deleteSetor(confirmDelete.id)
-      setSetores((prev) => prev.filter((setor) => setor.id !== confirmDelete.id))
-      setToast('Setor removido.')
+      setSetores(prev => prev.filter(s => s.id !== confirmDelete.id))
+      scrollAppContentToTop()
+      showSuccessToast('Setor removido', 'Setor excluído com sucesso.')
       setConfirmDelete(null)
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
       setError(msg ?? 'Erro ao remover setor.')
+      scrollAppContentToTop()
+      showErrorToast('Erro ao remover setor', msg ?? 'Erro ao remover setor.')
       setConfirmDelete(null)
     } finally {
       setDeleting(false)
@@ -403,7 +410,7 @@ export function SetoresPage() {
     try {
       const updated = await updateSetor(setor.id, { ativo: !blocked })
       syncSetor(updated)
-      setToast(blocked ? 'Setor interditado.' : 'Setor liberado.')
+      showSuccessToast('Status do setor alterado', blocked ? 'Setor interditado.' : 'Setor liberado.')
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
       setError(msg ?? 'Erro ao alterar status do setor.')
@@ -423,10 +430,11 @@ export function SetoresPage() {
     try {
       const updated = await updateSetor(setor.id, { leitos_interditados: next })
       syncSetor(updated)
-      setToast(next.includes(key) ? `${bedLabel(bedNumber)} interditado.` : `${bedLabel(bedNumber)} liberado.`)
+      showSuccessToast('Leito atualizado', next.includes(key) ? `${bedLabel(bedNumber)} interditado.` : `${bedLabel(bedNumber)} liberado.`)
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
       setError(msg ?? 'Erro ao alterar status do leito.')
+      showErrorToast('Erro ao alterar leito', msg ?? 'Erro ao alterar status do leito.')
     } finally {
       setUpdatingStatus(false)
     }
@@ -932,16 +940,6 @@ export function SetoresPage() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        open={!!toast}
-        autoHideDuration={2800}
-        onClose={() => setToast(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="success" onClose={() => setToast(null)} variant="filled" sx={{ borderRadius: 1 }}>
-          {toast}
-        </Alert>
-      </Snackbar>
     </Stack>
   )
 }
