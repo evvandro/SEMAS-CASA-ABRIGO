@@ -15,6 +15,8 @@ import {
   InputAdornment,
   MenuItem,
   Paper,
+  Select,
+  Snackbar,
   Stack,
   Table,
   TableBody,
@@ -43,6 +45,17 @@ import SendIcon from '@mui/icons-material/Send'
 import { TimeInput } from '../components/TimeInput'
 import { scrollAppContentToTop } from '../utils/scrollAppContent'
 import { showErrorToast, showSuccessToast } from '../utils/notificationService'
+import { fetchAcolhidos } from '../services/acolhidosService'
+import { fetchFamilias } from '../services/familiasService'
+import {
+  createEntregaLote,
+  createRecebimento,
+  fetchEntregas,
+  fetchMateriais,
+  fetchRecebimentos,
+} from '../services/estoqueService'
+import type { Entrega, EntregaDestinoTipo, Recebimento } from '../services/estoqueService'
+import type { Acolhido, Familia } from '../modules/acolhidos/types'
 
 interface Material {
   id: number
@@ -180,6 +193,7 @@ export function EstoquePage() {
   const [carrinho, setCarrinho] = useState<CartItem[]>([{ ...emptyCartItem }])
   const [recebimentoOpen, setRecebimentoOpen] = useState(false)
   const [distribuicaoOpen, setDistribuicaoOpen] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [categoriaFilter, setCategoriaFilter] = useState('')
   const [saldoFilter, setSaldoFilter] = useState<SaldoFilter>('todos')
@@ -393,7 +407,6 @@ export function EstoquePage() {
       setItens([{ ...emptyItem }])
       setRecebimentoOpen(false)
       await load()
-      setActiveView('listagem')
       scrollAppContentToTop()
       showSuccessToast('Recebimento registrado', 'Estoque atualizado com sucesso.')
     } catch {
@@ -700,6 +713,7 @@ export function EstoquePage() {
         cartTotal={cartTotal}
         loading={loading}
         distributing={distributing}
+        recebimentos={recebimentos}
         onClose={() => setDistribuicaoOpen(false)}
         onDestino={handleDestinoChange}
         onAcolhido={setSelectedAcolhido}
@@ -952,6 +966,7 @@ function DistribuicaoDrawer({
   readyCount,
   cartTotal,
   loading,
+  recebimentos,
   onClose,
   onDestino,
   onAcolhido,
@@ -973,6 +988,8 @@ function DistribuicaoDrawer({
   readyCount: number
   cartTotal: number
   loading: boolean
+  distributing: boolean
+  recebimentos: Recebimento[]
   onClose: () => void
   onDestino: (_: unknown, value: EntregaDestinoTipo | null) => void
   onAcolhido: (value: Acolhido | null) => void
