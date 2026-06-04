@@ -43,7 +43,6 @@ import SendIcon from '@mui/icons-material/Send'
 import { TimeInput } from '../components/TimeInput'
 import { scrollAppContentToTop } from '../utils/scrollAppContent'
 import { showErrorToast, showSuccessToast } from '../utils/notificationService'
-import { api } from '../services/api'
 
 interface Material {
   id: number
@@ -51,15 +50,6 @@ interface Material {
   unidade: string
   categoria: string
   estoque_atual: number
-}
-
-interface RecebimentoItem {
-  categoria: string
-  descricao: string
-  quantidade: number
-  unidade: string
-  condicao: 'novo' | 'usado'
-  observacoes: string
 }
 
 type SaldoFilter = 'todos' | 'disponivel' | 'baixo' | 'zerado'
@@ -962,7 +952,6 @@ function DistribuicaoDrawer({
   readyCount,
   cartTotal,
   loading,
-  distributing,
   onClose,
   onDestino,
   onAcolhido,
@@ -971,7 +960,6 @@ function DistribuicaoDrawer({
   onCartItem,
   onAddCartItem,
   onRemoveCartItem,
-  onSubmit,
 }: {
   open: boolean
   materiais: Material[]
@@ -985,7 +973,6 @@ function DistribuicaoDrawer({
   readyCount: number
   cartTotal: number
   loading: boolean
-  distributing: boolean
   onClose: () => void
   onDestino: (_: unknown, value: EntregaDestinoTipo | null) => void
   onAcolhido: (value: Acolhido | null) => void
@@ -1165,8 +1152,8 @@ function DistribuicaoDrawer({
             </TableBody>
           </Table>
         </TableContainer>
-      </Paper>
-    </Stack>
+      </Box>
+    </Drawer>
   )
 }
 
