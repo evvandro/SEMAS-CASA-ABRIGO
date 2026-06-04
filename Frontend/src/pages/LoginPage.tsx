@@ -76,7 +76,9 @@ export function LoginPage() {
     <Box
       sx={{
         minHeight: '100vh',
+        bottom : '',
         display: 'grid',
+        position: 'fixed',
         gridTemplateColumns: { xs: '1fr', md: '1.1fr 1fr' },
         bgcolor: 'background.paper',
       }}
@@ -89,7 +91,7 @@ export function LoginPage() {
           justifyContent: 'space-between',
           p: { xs: 3, sm: 5, lg: 8 },
           color: 'common.white',
-          bgcolor: '#0f4f58',
+          bgcolor: '#4F46E5',
           position: 'relative',
           overflow: 'hidden',
           '&::after': {
@@ -107,6 +109,7 @@ export function LoginPage() {
               sx={{
                 width: 88,
                 height: 72,
+                top: 'none',
                 borderRadius: 3,
                 bgcolor: 'common.white',
                 overflow: 'hidden',
@@ -169,16 +172,16 @@ export function LoginPage() {
             </Typography>
 
             <Stack spacing={2.25} sx={{ pt: 2 }}>
-              <Feature icon={<AddIcon />} label="Cadastro de acolhidos em segundos" />
-              <Feature icon={<AppsIcon />} label="Mapa de setores e ocupação em tempo real" />
-              <Feature icon={<FavoriteBorderIcon />} label="Atenção a perfis prioritários" />
+
+              <Typography variant="body2" sx={{ position: 'flex', bottom: '300px', zIndex: 1, color: 'rgba(255,255,255,0.48)', mt: 4 }}>
+          © 2026 SEMAS · Prefeitura de São Bento do Sul
+        </Typography>
+              
             </Stack>
           </Stack>
         </Stack>
 
-        <Typography variant="body2" sx={{ position: 'relative', zIndex: 1, color: 'rgba(255,255,255,0.48)', mt: 4 }}>
-          © 2026 SEMAS · Prefeitura de São Bento do Sul
-        </Typography>
+        
       </Box>
 
       <Box
@@ -255,7 +258,7 @@ export function LoginPage() {
             />
 
             <FormControlLabel
-              control={<Checkbox defaultChecked size="small" sx={{ color: '#1b7280', '&.Mui-checked': { color: '#1b7280' } }} />}
+              control={<Checkbox defaultChecked size="small" sx={{ color: '#4F46E5', '&.Mui-checked': { color: '#4F46E5' } }} />}
               label={<Typography variant="body2" color="text.secondary">Manter conectado</Typography>}
             />
           </Stack>
@@ -269,11 +272,11 @@ export function LoginPage() {
             sx={{
               minHeight: 56,
               borderRadius: 2,
-              bgcolor: '#176f7c',
+              bgcolor: '#4F46E5',
               fontWeight: 800,
               fontSize: 16,
               boxShadow: 'none',
-              '&:hover': { bgcolor: '#125b66', boxShadow: 'none' },
+              '&:hover': { bgcolor: '#4338CA', boxShadow: 'none' },
               '@media (max-height:760px)': { minHeight: 48 },
             }}
           >
