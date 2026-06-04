@@ -29,6 +29,9 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import SaveIcon from '@mui/icons-material/Save'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { TimeInput } from '../components/TimeInput'
+import { scrollAppContentToTop } from '../utils/scrollAppContent'
+import { showErrorToast, showSuccessToast } from '../utils/notificationService'
+import { notifyAcolhidosCountRefresh } from '../utils/acolhidosEvents'
 import {
   createAcolhidoRecord,
   fetchAcolhidos,
@@ -503,7 +506,10 @@ export function CadastrosPage() {
           })),
         })
 
-        setSubmitMessage(`Família ${saved.codigo} cadastrada com ${saved.acolhidosCount} membros.`)
+        setSubmitMessage(`Familia ${saved.codigo} cadastrada com ${saved.acolhidosCount} membros.`)
+        showSuccessToast('Cadastro concluído', `Familia ${saved.codigo} cadastrada com ${saved.acolhidosCount} membros.`)
+        notifyAcolhidosCountRefresh()
+        scrollAppContentToTop()
         setFormData(initialFormData)
         setBaselineFormData(initialFormData)
         setFamilyMembers([createFamilyMember(), createFamilyMember()])
@@ -533,6 +539,11 @@ export function CadastrosPage() {
         : await createAcolhidoRecord(payload)
 
       setSubmitMessage(`Ficha de ${saved.name} ${editId ? 'atualizada' : 'salva'} com sucesso.`)
+      showSuccessToast('Cadastro concluído', `Ficha de ${saved.name} ${editId ? 'atualizada' : 'salva'} com sucesso.`)
+      if (!editId) {
+        notifyAcolhidosCountRefresh()
+      }
+      scrollAppContentToTop()
       if (editId) {
         const nextFormData = toFormDataFromAcolhido(saved)
         setFormData(nextFormData)
@@ -543,7 +554,10 @@ export function CadastrosPage() {
       }
       setFieldErrors({})
     } catch (error) {
-      setSubmitError(getErrorMessage(error))
+      const errorMessage = getErrorMessage(error)
+      setSubmitError(errorMessage)
+      scrollAppContentToTop()
+      showErrorToast('Erro ao salvar cadastro', errorMessage)
     } finally {
       setSubmitting(false)
     }

@@ -43,6 +43,8 @@ import SaveIcon from '@mui/icons-material/Save'
 import SearchIcon from '@mui/icons-material/Search'
 import SendIcon from '@mui/icons-material/Send'
 import { TimeInput } from '../components/TimeInput'
+import { scrollAppContentToTop } from '../utils/scrollAppContent'
+import { showErrorToast, showSuccessToast } from '../utils/notificationService'
 import { fetchAcolhidos } from '../services/acolhidosService'
 import { fetchFamilias } from '../services/familiasService'
 import {
@@ -51,12 +53,17 @@ import {
   fetchEntregas,
   fetchMateriais,
   fetchRecebimentos,
-  type Entrega,
-  type EntregaDestinoTipo,
-  type Material,
-  type Recebimento,
 } from '../services/estoqueService'
+import type { Entrega, EntregaDestinoTipo, Recebimento } from '../services/estoqueService'
 import type { Acolhido, Familia } from '../modules/acolhidos/types'
+
+interface Material {
+  id: number
+  nome: string
+  unidade: string
+  categoria: string
+  estoque_atual: number
+}
 
 type SaldoFilter = 'todos' | 'disponivel' | 'baixo' | 'zerado'
 
@@ -186,6 +193,7 @@ export function EstoquePage() {
   const [carrinho, setCarrinho] = useState<CartItem[]>([{ ...emptyCartItem }])
   const [recebimentoOpen, setRecebimentoOpen] = useState(false)
   const [distribuicaoOpen, setDistribuicaoOpen] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [categoriaFilter, setCategoriaFilter] = useState('')
   const [saldoFilter, setSaldoFilter] = useState<SaldoFilter>('todos')
@@ -193,7 +201,6 @@ export function EstoquePage() {
   const [submitting, setSubmitting] = useState(false)
   const [distributing, setDistributing] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
 
   const load = async () => {
     setLoading(true)
@@ -396,13 +403,17 @@ export function EstoquePage() {
         })),
       })
 
-      setToast('Recebimento registrado e estoque atualizado.')
       setForm({ ...emptyForm, data_recebimento: today, hora_recebimento: now })
       setItens([{ ...emptyItem }])
       setRecebimentoOpen(false)
       await load()
-    } catch (err) {
-      setError(getApiErrorMessage(err, 'Não foi possível salvar o recebimento.'))
+      scrollAppContentToTop()
+      showSuccessToast('Recebimento registrado', 'Estoque atualizado com sucesso.')
+    } catch {
+      const failureMessage = 'Nao foi possivel salvar o recebimento.'
+      setError(failureMessage)
+      scrollAppContentToTop()
+      showErrorToast('Erro ao salvar recebimento', failureMessage)
     } finally {
       setSubmitting(false)
     }
@@ -702,6 +713,7 @@ export function EstoquePage() {
         cartTotal={cartTotal}
         loading={loading}
         distributing={distributing}
+        recebimentos={recebimentos}
         onClose={() => setDistribuicaoOpen(false)}
         onDestino={handleDestinoChange}
         onAcolhido={setSelectedAcolhido}
@@ -954,7 +966,7 @@ function DistribuicaoDrawer({
   readyCount,
   cartTotal,
   loading,
-  distributing,
+  recebimentos,
   onClose,
   onDestino,
   onAcolhido,
@@ -963,7 +975,6 @@ function DistribuicaoDrawer({
   onCartItem,
   onAddCartItem,
   onRemoveCartItem,
-  onSubmit,
 }: {
   open: boolean
   materiais: Material[]
@@ -978,6 +989,7 @@ function DistribuicaoDrawer({
   cartTotal: number
   loading: boolean
   distributing: boolean
+  recebimentos: Recebimento[]
   onClose: () => void
   onDestino: (_: unknown, value: EntregaDestinoTipo | null) => void
   onAcolhido: (value: Acolhido | null) => void
@@ -1126,13 +1138,37 @@ function DistribuicaoDrawer({
             </Section>
           </Stack>
         </Box>
-
-        <DrawerFooter>
-          <Button color="inherit" onClick={onClose}>Cancelar</Button>
-          <Button variant="contained" startIcon={<SendIcon />} onClick={onSubmit} disabled={distributing}>
-            {distributing ? 'Registrando...' : 'Registrar distribuição'}
-          </Button>
-        </DrawerFooter>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Data</TableCell>
+                <TableCell>Origem</TableCell>
+                <TableCell>Doador/instituicao</TableCell>
+                <TableCell>Recebido por</TableCell>
+                <TableCell align="right">Itens</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {recebimentos.map((recebimento) => (
+                <TableRow key={recebimento.id} hover>
+                  <TableCell>{new Date(`${recebimento.data_recebimento}T00:00:00`).toLocaleDateString('pt-BR')} {recebimento.hora_recebimento}</TableCell>
+                  <TableCell>{recebimento.origem}</TableCell>
+                  <TableCell>{recebimento.doador_nome}</TableCell>
+                  <TableCell>{recebimento.recebido_por}</TableCell>
+                  <TableCell align="right">{recebimento.itens.length}</TableCell>
+                </TableRow>
+              ))}
+              {!loading && recebimentos.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} sx={{ textAlign: 'center', py: 4 }}>
+                    <Typography color="text.secondary">Nenhum recebimento registrado.</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : null}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
     </Drawer>
   )

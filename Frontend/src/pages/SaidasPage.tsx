@@ -6,7 +6,6 @@ import {
   Button,
   Chip,
   Paper,
-  Snackbar,
   Stack,
   Tab,
   Table,
@@ -23,6 +22,9 @@ import { SaidaDialog } from '../modules/acolhidos/components/SaidaDialog'
 import type { Acolhido, Familia, SaidaPayload } from '../modules/acolhidos/types'
 import { fetchAcolhidos, registerAcolhidoSaida } from '../services/acolhidosService'
 import { fetchFamiliaDetail, fetchFamilias, registerFamiliaSaida, toIsoDate } from '../services/familiasService'
+import { scrollAppContentToTop } from '../utils/scrollAppContent'
+import { showErrorToast, showSuccessToast } from '../utils/notificationService'
+import { notifyAcolhidosCountRefresh } from '../utils/acolhidosEvents'
 
 type SaidasTab = 'pessoas' | 'familias'
 
@@ -44,7 +46,6 @@ export function SaidasPage() {
   const [selectedAcolhido, setSelectedAcolhido] = useState<Acolhido | null>(null)
   const [selectedFamilia, setSelectedFamilia] = useState<Familia | null>(null)
   const [loading, setLoading] = useState(false)
-  const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
@@ -73,13 +74,19 @@ export function SaidasPage() {
 
   const openDialog = async () => {
     if (tab === 'pessoas' && !selectedAcolhido) {
-      setErrorMsg('Selecione uma pessoa antes de abrir a ficha de saida.')
+      const message = 'Selecione uma pessoa antes de abrir a ficha de saida.'
+      setErrorMsg(message)
+      scrollAppContentToTop()
+      showErrorToast('Aviso', message)
       return
     }
 
     if (tab === 'familias') {
       if (!selectedFamilia) {
-        setErrorMsg('Selecione uma familia antes de abrir a ficha de saida.')
+        const message = 'Selecione uma familia antes de abrir a ficha de saida.'
+        setErrorMsg(message)
+        scrollAppContentToTop()
+        showErrorToast('Aviso', message)
         return
       }
 
@@ -112,18 +119,25 @@ export function SaidasPage() {
         })) ?? []
         setHistoricoAcolhidos(prev => [...membrosSaidos, ...prev])
         setSelectedFamilia(null)
-        setSuccessMsg('Saida da familia registrada com sucesso.')
+        showSuccessToast('Saída registrada', 'Saída da família registrada com sucesso.')
+        notifyAcolhidosCountRefresh()
+        scrollAppContentToTop()
       } else if (selectedAcolhido) {
         const pessoaSaida = await registerAcolhidoSaida(selectedAcolhido.apiId, toIsoDate(payload.data), tipoSaida, payload)
         setAcolhidos(prev => prev.filter(acolhido => acolhido.apiId !== selectedAcolhido.apiId))
         setHistoricoAcolhidos(prev => [pessoaSaida, ...prev])
         setSelectedAcolhido(null)
-        setSuccessMsg('Saida registrada com sucesso.')
+        showSuccessToast('Saída registrada', 'Saída registrada com sucesso.')
+        notifyAcolhidosCountRefresh()
+        scrollAppContentToTop()
       }
 
       setDialogOpen(false)
     } catch (error) {
-      setErrorMsg(getApiErrorMessage(error))
+      const message = getApiErrorMessage(error)
+      setErrorMsg(message)
+      scrollAppContentToTop()
+      showErrorToast('Erro ao registrar saída', message)
     }
   }
 
@@ -133,6 +147,11 @@ export function SaidasPage() {
         <Typography variant="h4" gutterBottom>Saidas</Typography>
         <Typography color="text.secondary">Registro operacional de saidas individuais e familiares.</Typography>
       </Box>
+      {errorMsg ? (
+        <Alert severity="error" onClose={() => setErrorMsg('')} sx={{ mb: 2 }}>
+          {errorMsg}
+        </Alert>
+      ) : null}
 
       <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider' }}>
         <Tabs value={tab} onChange={(_, value: SaidasTab) => setTab(value)} sx={{ px: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
@@ -246,17 +265,6 @@ export function SaidasPage() {
         initialFamily={tab === 'familias' ? selectedFamilia : null}
       />
 
-      <Snackbar open={!!successMsg} autoHideDuration={5000} onClose={() => setSuccessMsg('')}>
-        <Alert onClose={() => setSuccessMsg('')} severity="success" sx={{ width: '100%' }}>
-          {successMsg}
-        </Alert>
-      </Snackbar>
-
-      <Snackbar open={!!errorMsg} autoHideDuration={5000} onClose={() => setErrorMsg('')}>
-        <Alert onClose={() => setErrorMsg('')} severity="error" sx={{ width: '100%' }}>
-          {errorMsg}
-        </Alert>
-      </Snackbar>
     </Box>
   )
 }

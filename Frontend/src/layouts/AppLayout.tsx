@@ -12,6 +12,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../auth/useAuth'
 import { api } from '../services/api'
+import { ACOLHIDOS_COUNT_REFRESH_EVENT } from '../utils/acolhidosEvents'
 
 const SIDEBAR_W = 220
 const HEADER_H = { xs: 72, sm: 80 }
@@ -66,9 +67,23 @@ export function AppLayout() {
   const [acolhidosAtivos, setAcolhidosAtivos] = useState<number | null>(null)
 
   useEffect(() => {
-    api.get<{ data: { acolhidos_ativos: number } }>('/dashboard')
-      .then(res => setAcolhidosAtivos(res.data.data.acolhidos_ativos))
-      .catch(() => null)
+    const loadAcolhidosCount = async () => {
+      try {
+        const res = await api.get<{ data: { acolhidos_ativos: number } }>('/dashboard')
+        setAcolhidosAtivos(res.data.data.acolhidos_ativos)
+      } catch {
+        // Ignore dashboard count failures silently
+      }
+    }
+
+    void loadAcolhidosCount()
+
+    const handleRefresh = () => {
+      void loadAcolhidosCount()
+    }
+
+    window.addEventListener(ACOLHIDOS_COUNT_REFRESH_EVENT, handleRefresh)
+    return () => window.removeEventListener(ACOLHIDOS_COUNT_REFRESH_EVENT, handleRefresh)
   }, [])
 
   const handleLogout = async () => {
