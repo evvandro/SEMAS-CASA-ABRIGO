@@ -99,7 +99,7 @@ export function AcolhidosPage() {
         filters={state.filters} onFilters={state.setFilters}
         sectorId={state.sectorId} onSector={state.setSectorId}
         sectors={state.sectors}
-        count={state.filteredRows.length}
+        count={state.totalRows}
         onNew={() => { state.setEditRow(null); state.setCadastroOpen(true) }}
         onFullRegistration={() => navigate('/acolhidos/cadastros')}
       />
@@ -107,12 +107,17 @@ export function AcolhidosPage() {
       <AcolhidosTable
         rows={state.filteredRows}
         sectorMap={state.sectorMap}
+        page={state.page}
+        pageSize={state.pageSize}
+        totalRows={state.totalRows}
+        onPageChange={state.setPage}
+        onPageSizeChange={state.handlePageSizeChange}
         onRowClick={state.openFicha}
         onAction={handleAcolhidoAction}
       />
 
       <SectorHeatmap
-        rows={state.rows}
+        rows={state.heatmapRows}
         sectors={state.sectors}
         activeSectorId={state.sectorId}
         onSelectSector={state.setSectorId}

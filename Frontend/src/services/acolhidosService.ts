@@ -131,9 +131,38 @@ export function toCadastroPayload(payload: CadastroPayload) {
 
 // ── Chamadas API ──────────────────────────────────────────────────────────────
 
-export async function fetchAcolhidos(): Promise<Acolhido[]> {
-  const res = await api.get<{ data: ApiAcolhido[] }>('/acolhidos')
-  return res.data.data.map(toAcolhido)
+export interface AcolhidosListParams {
+  search?: string
+  setor_id?: number
+  pcd?: boolean
+  gestante?: boolean
+  cronica?: boolean
+  idoso?: boolean
+  page?: number
+  per_page?: number
+}
+
+export interface AcolhidosListMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+}
+
+export interface AcolhidosListResult {
+  data: Acolhido[]
+  meta?: AcolhidosListMeta
+}
+
+export async function fetchAcolhidos(params?: AcolhidosListParams): Promise<AcolhidosListResult> {
+  const res = await api.get<{ data: ApiAcolhido[]; meta?: AcolhidosListMeta }>('/acolhidos', {
+    params,
+  })
+
+  return {
+    data: res.data.data.map(toAcolhido),
+    meta: res.data.meta,
+  }
 }
 
 export async function fetchSetores(): Promise<ApiSetor[]> {

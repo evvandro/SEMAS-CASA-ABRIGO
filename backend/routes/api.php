@@ -52,13 +52,10 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::delete('/setores/{setor}', [SetorController::class, 'destroy']);
     });
 
-    // Rotas exclusivas do administrador
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
         Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
         Route::patch('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     });
-    // Rota para salvar a ficha de saída do acolhido
-    Route::post('/acolhidos/saida/{id}', [AcolhidoController::class, 'registrarSaida']);
 });

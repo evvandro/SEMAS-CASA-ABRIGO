@@ -110,7 +110,7 @@ export function ManagementPage() {
       setError(null)
 
       try {
-        const [dashboard, acolhidos, rawSetores] = await Promise.all([
+        const [dashboard, acolhidosResult, rawSetores] = await Promise.all([
           api.get<DashboardResponse>('/dashboard'),
           fetchAcolhidos(),
           fetchSetores(),
@@ -118,6 +118,7 @@ export function ManagementPage() {
 
         if (!active) return
 
+        const acolhidos = acolhidosResult.data
         const builtSectors = rawSetores.map((setor) =>
           toSector(setor, acolhidos.filter((acolhido) => acolhido.sectorId === String(setor.id)).length),
         )

@@ -21,14 +21,27 @@ type Sort = { by: SortKey; dir: 'asc' | 'desc' }
 interface Props {
   rows: Acolhido[]
   sectorMap: Record<string, Sector>
+  page: number
+  pageSize: number
+  totalRows: number
+  onPageChange: (page: number) => void
+  onPageSizeChange: (pageSize: number) => void
   onRowClick: (row: Acolhido) => void
   onAction: (action: AcolhidoAction, row: Acolhido) => void
 }
 
-export function AcolhidosTable({ rows, sectorMap, onRowClick, onAction }: Props) {
+export function AcolhidosTable({
+  rows,
+  sectorMap,
+  page,
+  pageSize,
+  totalRows,
+  onPageChange,
+  onPageSizeChange,
+  onRowClick,
+  onAction,
+}: Props) {
   const [sort, setSort] = useState<Sort>({ by: 'entry', dir: 'desc' })
-  const [page, setPage] = useState(0)
-  const [pageSize, setPageSize] = useState(10)
 
   const sorted = useMemo(() => {
     const out = [...rows]
@@ -52,7 +65,7 @@ export function AcolhidosTable({ rows, sectorMap, onRowClick, onAction }: Props)
     return out
   }, [rows, sort, sectorMap])
 
-  const pageRows = sorted.slice(page * pageSize, page * pageSize + pageSize)
+  const pageRows = sorted
 
   const toggleSort = (by: SortKey) => {
     setSort(s => (s.by === by ? { by, dir: s.dir === 'asc' ? 'desc' : 'asc' } : { by, dir: 'asc' }))
@@ -109,11 +122,11 @@ export function AcolhidosTable({ rows, sectorMap, onRowClick, onAction }: Props)
       </Table>
       <TablePagination
         component="div"
-        count={sorted.length}
+        count={totalRows}
         page={page}
-        onPageChange={(_, p) => setPage(p)}
+        onPageChange={(_, p) => onPageChange(p)}
         rowsPerPage={pageSize}
-        onRowsPerPageChange={e => { setPageSize(parseInt(e.target.value, 10)); setPage(0) }}
+        onRowsPerPageChange={e => onPageSizeChange(parseInt(e.target.value, 10))}
         rowsPerPageOptions={[10, 25, 50]}
         labelRowsPerPage="Por página"
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
