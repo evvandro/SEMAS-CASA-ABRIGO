@@ -9,8 +9,10 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { SetoresPage } from './pages/SetoresPage';
 import { EstoquePage } from './pages/EstoquePage';
 import { SaidasPage } from './pages/SaidasPage';
+import { AdminPage } from './pages/AdminPage';
 import { GuestRoute } from './routes/GuestRoute';
 import { ProtectedRoute } from './routes/ProtectedRoute';
+import { AdminRoute } from './routes/AdminRoute';
 
 function App() {
   return (
@@ -36,6 +38,12 @@ function App() {
             path="/cadastros"
             element={<Navigate to="/acolhidos/cadastros" replace />}
           />
+        </Route>
+      </Route>
+
+      <Route element={<AdminRoute />}>
+        <Route element={<AppLayout />}>
+          <Route path="/admin" element={<AdminPage />} />
         </Route>
       </Route>
 
