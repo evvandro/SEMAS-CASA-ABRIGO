@@ -31,6 +31,19 @@ class Acolhido extends Model
         'hora_entrada',
         'data_saida',
         'tipo_saida',
+        'detalhes_saida',
+        'parentesco',
+        'hora_saida',
+        'destino_informado',
+        'endereco_destino',
+        'municipio_destino',
+        'telefone_destino',
+        'encaminhamentos_rede',
+        'resumo_encaminhamento',
+        'condicao_saida',
+        'observacoes_tecnicas',
+        'responsavel_desligamento',
+        'cargo_responsavel',
     ];
 
     protected function casts(): array
@@ -43,6 +56,8 @@ class Acolhido extends Model
             'gestante' => 'boolean',
             'cronica' => 'boolean',
             'idoso' => 'boolean',
+            'detalhes_saida' => 'array',
+            'encaminhamentos_rede' => 'array',
         ];
     }
 

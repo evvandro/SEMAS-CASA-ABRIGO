@@ -23,6 +23,12 @@ class FamiliaResource extends JsonResource
             'acolhidos_count' => $this->when(isset($this->acolhidos_count), fn () => (int) $this->acolhidos_count),
             'data_entrada' => $this->data_entrada?->toDateString(),
             'data_saida' => $this->data_saida?->toDateString(),
+            'hora_saida' => $this->hora_saida ? substr((string) $this->hora_saida, 0, 5) : null,
+            'tipo_saida' => $this->tipo_saida,
+            'destino_informado' => $this->destino_informado,
+            'municipio_destino' => $this->municipio_destino,
+            'condicao_saida' => $this->condicao_saida,
+            'responsavel_desligamento' => $this->responsavel_desligamento,
             'ativo' => $this->data_saida === null,
         ];
     }

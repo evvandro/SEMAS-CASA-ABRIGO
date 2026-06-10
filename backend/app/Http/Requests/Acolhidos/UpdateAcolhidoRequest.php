@@ -26,8 +26,9 @@ class UpdateAcolhidoRequest extends FormRequest
             'familia_id' => ['sometimes', 'integer', 'exists:familias,id'],
             'setor_id' => ['sometimes', 'integer', 'exists:setores,id'],
             'nome' => ['sometimes', 'string', 'max:255'],
-            'data_nascimento' => ['sometimes', 'date'],
-            'cpf' => ['sometimes', 'string', 'max:20'],
+            'data_nascimento' => ['sometimes', 'nullable', 'date'],
+            'cpf' => ['sometimes', 'nullable', 'regex:/^\d{11}$/'],
+            'parentesco' => ['sometimes', 'nullable', 'string', 'max:100'],
             'telefone' => ['sometimes', 'nullable', 'string', 'max:20'],
             'genero' => ['sometimes', 'nullable', 'string', 'max:30'],
             'leito' => ['sometimes', 'nullable', 'string', 'max:30'],
@@ -40,5 +41,13 @@ class UpdateAcolhidoRequest extends FormRequest
             'cronica' => ['sometimes', 'boolean'],
             'idoso' => ['sometimes', 'boolean'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('cpf')) {
+            $digits = preg_replace('/\D+/', '', (string) $this->input('cpf'));
+            $this->merge(['cpf' => $digits ?: null]);
+        }
     }
 }

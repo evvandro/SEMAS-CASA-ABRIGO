@@ -1,5 +1,5 @@
 import { api } from './api'
-import type { Acolhido, AlertCategory, CadastroPayload, Sector } from '../modules/acolhidos/types'
+import type { Acolhido, AlertCategory, CadastroPayload, Sector, SaidaPayload } from '../modules/acolhidos/types'
 import { calculateAgeFromIsoDate } from '../modules/acolhidos/utils/date'
 
 // ── Tipos da API ──────────────────────────────────────────────────────────────
@@ -10,6 +10,7 @@ export interface ApiSetor {
   cor: string
   capacidade: number | null
   ativo: boolean
+  leitos_interditados?: string[]
 }
 
 export interface ApiAcolhido {
@@ -21,6 +22,7 @@ export interface ApiAcolhido {
   telefone: string | null
   genero: string | null
   leito: string | null
+  parentesco: string | null
   observacoes: string | null
   pertences_registrados: string | null
   pcd: boolean
@@ -31,18 +33,25 @@ export interface ApiAcolhido {
     id: number
     codigo: string
     responsavel_nome: string
+    acolhidos_count?: number
   } | null
   setor: ApiSetor | null
   data_entrada: string
   hora_entrada: string | null
   data_saida: string | null
+  hora_saida: string | null
+  tipo_saida: string | null
+  destino_informado: string | null
+  municipio_destino: string | null
+  condicao_saida: string | null
+  responsavel_desligamento: string | null
   ativo: boolean
 }
 
 export interface AcolhidoRequestPayload {
   nome: string
-  cpf: string
-  data_nascimento: string
+  cpf?: string | null
+  data_nascimento?: string | null
   setor_id: number
   telefone?: string | null
   genero?: string | null
@@ -51,6 +60,8 @@ export interface AcolhidoRequestPayload {
   pertences_registrados?: string | null
   data_entrada?: string
   hora_entrada?: string | null
+  familia_id?: number | null
+  parentesco?: string | null
   pcd?: boolean
   gestante?: boolean
   cronica?: boolean
@@ -92,6 +103,13 @@ export function toAcolhido(api: ApiAcolhido): Acolhido {
     alerts,
     entry: api.data_entrada,
     entryTime: normalizeTime(api.hora_entrada) ?? normalizeTime(getObservationValue(api.observacoes, 'Hora da entrada')),
+    exitDate: api.data_saida,
+    exitTime: normalizeTime(api.hora_saida),
+    exitType: api.tipo_saida,
+    exitDestination: api.destino_informado,
+    exitCity: api.municipio_destino,
+    exitCondition: api.condicao_saida,
+    exitResponsible: api.responsavel_desligamento,
     birthDate: api.data_nascimento,
     phone: api.telefone,
     gender: api.genero,
@@ -100,6 +118,9 @@ export function toAcolhido(api: ApiAcolhido): Acolhido {
     belongings: api.pertences_registrados,
     familyCode: api.familia?.codigo ?? null,
     familyResponsible: api.familia?.responsavel_nome ?? null,
+    familyId: api.familia?.id ?? null,
+    familyMembersCount: api.familia?.acolhidos_count ?? null,
+    kinship: api.parentesco ?? null,
   }
 }
 
@@ -111,6 +132,8 @@ export function toSector(api: ApiSetor, occupied = 0): Sector {
     color: api.cor,
     capacity: api.capacidade ?? 0,
     occupied,
+    active: api.ativo,
+    blockedBeds: api.leitos_interditados ?? [],
   }
 }
 
@@ -118,9 +141,10 @@ export function toCadastroPayload(payload: CadastroPayload) {
   const [day, month, year] = payload.birth.split('/')
   return {
     nome: payload.name,
-    cpf: payload.cpf.replace(/\D/g, ''),
-    data_nascimento: `${year}-${month}-${day}`,
+    cpf: payload.cpf.replace(/\D/g, '') || null,
+    data_nascimento: day && month && year ? `${year}-${month}-${day}` : null,
     setor_id: Number(payload.sectorId),
+    leito: payload.bed?.trim() || null,
     pcd: payload.pcd,
     gestante: payload.gestante,
     cronica: payload.cronica,
@@ -163,6 +187,15 @@ export async function fetchAcolhidos(params?: AcolhidosListParams): Promise<Acol
     data: res.data.data.map(toAcolhido),
     meta: res.data.meta,
   }
+export async function fetchAcolhidos(params?: { status?: 'ativos' | 'saida'; search?: string; setorId?: string }): Promise<Acolhido[]> {
+  const res = await api.get<{ data: ApiAcolhido[] }>('/acolhidos', {
+    params: {
+      status: params?.status === 'saida' ? 'saida' : undefined,
+      search: params?.search || undefined,
+      setor_id: params?.setorId || undefined,
+    },
+  })
+  return res.data.data.map(toAcolhido)
 }
 
 export async function fetchSetores(): Promise<ApiSetor[]> {
@@ -190,4 +223,32 @@ export async function updateAcolhidoRecord(
 ): Promise<Acolhido> {
   const res = await api.patch<{ data: ApiAcolhido }>(`/acolhidos/${apiId}`, payload)
   return toAcolhido(res.data.data)
+}
+
+export async function registerAcolhidoSaida(apiId: number, dataSaida: string, tipoSaida: string, detalhesSaida: SaidaPayload): Promise<Acolhido> {
+  const res = await api.post<{ data: ApiAcolhido }>(`/acolhidos/${apiId}/saida`, toSaidaRequestPayload(dataSaida, tipoSaida, detalhesSaida))
+  return toAcolhido(res.data.data)
+}
+
+export function toSaidaRequestPayload(dataSaida: string, tipoSaida: string, detalhesSaida: SaidaPayload) {
+  const encaminhamentos = detalhesSaida.encaminhamentos.includes('Outro servico') && detalhesSaida.encaminhamentoOutro
+    ? [...detalhesSaida.encaminhamentos, detalhesSaida.encaminhamentoOutro]
+    : detalhesSaida.encaminhamentos
+
+  return {
+    data_saida: dataSaida,
+    hora_saida: detalhesSaida.hora || null,
+    tipo_saida: tipoSaida,
+    detalhes_saida: detalhesSaida,
+    destino_informado: detalhesSaida.destinoInformado || null,
+    endereco_destino: detalhesSaida.destinoEndereco || null,
+    municipio_destino: detalhesSaida.destinoMunicipio || null,
+    telefone_destino: detalhesSaida.destinoTelefone || null,
+    encaminhamentos_rede: encaminhamentos,
+    resumo_encaminhamento: detalhesSaida.encaminhamentoResumo || null,
+    condicao_saida: detalhesSaida.condicoesNaSaida || null,
+    observacoes_tecnicas: detalhesSaida.condicoesObservacoes || null,
+    responsavel_desligamento: detalhesSaida.responsavelNome || null,
+    cargo_responsavel: detalhesSaida.responsavelCargo || null,
+  }
 }

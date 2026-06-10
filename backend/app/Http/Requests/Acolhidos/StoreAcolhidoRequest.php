@@ -23,8 +23,9 @@ class StoreAcolhidoRequest extends FormRequest
             'familia_id' => ['nullable', 'integer', 'exists:familias,id'],
             'setor_id' => ['required', 'integer', 'exists:setores,id'],
             'nome' => ['required', 'string', 'max:255'],
-            'data_nascimento' => ['required', 'date'],
-            'cpf' => ['required', 'string', 'max:20'],
+            'data_nascimento' => ['nullable', 'date'],
+            'cpf' => ['nullable', 'regex:/^\d{11}$/'],
+            'parentesco' => ['nullable', 'string', 'max:100'],
             'telefone' => ['nullable', 'string', 'max:20'],
             'genero' => ['nullable', 'string', 'max:30'],
             'leito' => ['nullable', 'string', 'max:30'],
@@ -37,6 +38,14 @@ class StoreAcolhidoRequest extends FormRequest
             'cronica' => ['nullable', 'boolean'],
             'idoso' => ['nullable', 'boolean'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('cpf')) {
+            $digits = preg_replace('/\D+/', '', (string) $this->input('cpf'));
+            $this->merge(['cpf' => $digits ?: null]);
+        }
     }
 
     /**

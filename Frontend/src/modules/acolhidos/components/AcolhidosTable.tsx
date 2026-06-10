@@ -1,7 +1,7 @@
 import { useState, useMemo, type ReactNode } from 'react'
 import {
   Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel,
-  TablePagination, Paper, Box, IconButton, Menu, MenuItem, Divider, ListItemIcon, ListItemText,
+  TablePagination, Paper, Box, IconButton, Menu, MenuItem, Divider, ListItemIcon, ListItemText, Chip,
 } from '@mui/material'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -99,6 +99,9 @@ export function AcolhidosTable({
                 <Box sx={{ fontSize: 11.5, color: 'text.secondary' }}>
                   CPF {r.cpf}
                 </Box>
+                {r.familyCode ? (
+                  <Chip size="small" label={`${r.familyCode} | ${r.familyResponsible ?? 'Familia'}`} sx={{ mt: 0.75 }} />
+                ) : null}
               </TableCell>
               <TableCell>{r.age} anos</TableCell>
               <TableCell><SectorPill sectorId={r.sectorId} sectorMap={sectorMap} /></TableCell>

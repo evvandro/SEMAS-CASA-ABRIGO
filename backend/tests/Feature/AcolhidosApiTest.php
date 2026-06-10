@@ -119,6 +119,71 @@ class AcolhidosApiTest extends TestCase
             ->assertUnprocessable();
     }
 
+    public function test_can_create_individual_without_cpf_or_family(): void
+    {
+        $this->actingAsUser();
+
+        $setor = Setor::create(['nome' => 'Individual', 'cor' => '#111111', 'capacidade' => 10, 'ativo' => true]);
+
+        $response = $this->postJson('/api/acolhidos', [
+            'setor_id' => $setor->id,
+            'nome' => 'Maria Sem CPF',
+            'data_entrada' => now()->toDateString(),
+        ]);
+
+        $response
+            ->assertCreated()
+            ->assertJsonPath('data.nome', 'Maria Sem CPF')
+            ->assertJsonPath('data.cpf', null);
+
+        $this->assertDatabaseHas('acolhidos', [
+            'id' => $response->json('data.id'),
+            'familia_id' => null,
+            'cpf' => null,
+        ]);
+    }
+
+    public function test_rejects_invalid_cpf_when_present(): void
+    {
+        $this->actingAsUser();
+
+        $setor = Setor::create(['nome' => 'CPF', 'cor' => '#222222', 'capacidade' => 10, 'ativo' => true]);
+
+        $this->postJson('/api/acolhidos', [
+            'setor_id' => $setor->id,
+            'nome' => 'CPF Invalido',
+            'cpf' => '123',
+            'data_entrada' => now()->toDateString(),
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('cpf');
+    }
+
+    public function test_saida_accepts_form_date_and_legacy_tipo_field(): void
+    {
+        $this->actingAsUser();
+
+        $setor = Setor::create(['nome' => 'Saida', 'cor' => '#333333', 'capacidade' => 10, 'ativo' => true]);
+        $acolhido = $this->postJson('/api/acolhidos', [
+            'setor_id' => $setor->id,
+            'nome' => 'Pessoa Saida',
+            'data_entrada' => now()->toDateString(),
+        ])->json('data');
+
+        $this->postJson("/api/acolhidos/{$acolhido['id']}/saida", [
+            'data_saida' => now()->format('d/m/Y'),
+            'hora_saida' => '',
+            'tipo_desligamento' => 'Retorno para residencia',
+        ])
+            ->assertOk()
+            ->assertJsonPath('data.ativo', false);
+
+        $this->assertDatabaseHas('acolhidos', [
+            'id' => $acolhido['id'],
+            'tipo_saida' => 'Retorno para residencia',
+        ]);
+    }
+
     public function test_unauthenticated_cannot_access_acolhidos(): void
     {
         $this->getJson('/api/acolhidos')->assertUnauthorized();

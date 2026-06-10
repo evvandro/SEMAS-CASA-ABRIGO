@@ -32,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
         Route::get('/acolhidos', [AcolhidoController::class, 'index']);
         Route::post('/acolhidos', [AcolhidoController::class, 'store']);
+        Route::post('/acolhidos/saida/{acolhido}', [AcolhidoController::class, 'registrarSaida']);
         Route::get('/acolhidos/{acolhido}', [AcolhidoController::class, 'show']);
         Route::patch('/acolhidos/{acolhido}', [AcolhidoController::class, 'update']);
         Route::post('/acolhidos/{acolhido}/saida', [AcolhidoController::class, 'saida']);
@@ -44,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
 
         Route::get('/entregas', [EntregaController::class, 'index']);
         Route::post('/entregas', [EntregaController::class, 'store']);
+        Route::post('/entregas/lote', [EntregaController::class, 'storeLote']);
     });
 
     Route::middleware('admin')->group(function (): void {
@@ -58,4 +60,5 @@ Route::middleware('auth:sanctum')->group(function (): void {
         Route::patch('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
     });
+
 });
