@@ -12,65 +12,66 @@ import {
   Stack,
   TextField,
   Typography,
-} from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
-import AppsIcon from '@mui/icons-material/Apps'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import MailOutlineIcon from '@mui/icons-material/MailOutline'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
-import { useState } from 'react'
-import type { FormEvent, ReactNode } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../auth/useAuth'
-import { parseApiError } from '../auth/parseApiError'
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import AppsIcon from '@mui/icons-material/Apps';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { useState } from 'react';
+import type { FormEvent, ReactNode } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/useAuth';
+import { parseApiError } from '../auth/parseApiError';
 
 interface LocationState {
   from?: {
-    pathname: string
-  }
+    pathname: string;
+  };
 }
 
 export function LoginPage() {
-  const { login } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const from = (location.state as LocationState | null)?.from?.pathname ?? '/dashboard'
+  const from =
+    (location.state as LocationState | null)?.from?.pathname ?? '/dashboard';
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setErrorMessage(null)
+    event.preventDefault();
+    setErrorMessage(null);
 
     if (!email || !password) {
-      setErrorMessage('Informe e-mail e senha para continuar.')
-      return
+      setErrorMessage('Informe e-mail e senha para continuar.');
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
       await login({
         email,
         password,
         device_name: 'frontend-web',
-      })
+      });
 
-      navigate(from, { replace: true })
+      navigate(from, { replace: true });
     } catch (error: unknown) {
-      setErrorMessage(parseApiError(error))
+      setErrorMessage(parseApiError(error));
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <Box
@@ -101,7 +102,10 @@ export function LoginPage() {
           },
         }}
       >
-        <Stack spacing={{ xs: 4, md: 6 }} sx={{ position: 'relative', zIndex: 1 }}>
+        <Stack
+          spacing={{ xs: 4, md: 6 }}
+          sx={{ position: 'relative', zIndex: 1 }}
+        >
           <Stack direction="row" alignItems="center" spacing={2}>
             <Box
               sx={{
@@ -127,7 +131,10 @@ export function LoginPage() {
               />
             </Box>
             <Box>
-              <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1.1 }}>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: 800, lineHeight: 1.1 }}
+              >
                 Sistema Casa Abrigo
               </Typography>
               <Typography sx={{ color: 'rgba(255,255,255,0.72)', mt: 0.5 }}>
@@ -138,10 +145,16 @@ export function LoginPage() {
 
           <Stack spacing={3} sx={{ maxWidth: 620 }}>
             <Stack direction="row" alignItems="center" spacing={1.5}>
-              <Box sx={{ width: 28, height: 2, bgcolor: 'rgba(255,255,255,0.55)' }} />
+              <Box
+                sx={{ width: 28, height: 2, bgcolor: 'rgba(255,255,255,0.55)' }}
+              />
               <Typography
                 variant="overline"
-                sx={{ color: 'rgba(255,255,255,0.68)', fontWeight: 800, letterSpacing: '0.12em' }}
+                sx={{
+                  color: 'rgba(255,255,255,0.68)',
+                  fontWeight: 800,
+                  letterSpacing: '0.12em',
+                }}
               >
                 SEMAS · Gestão de acolhimento
               </Typography>
@@ -163,20 +176,45 @@ export function LoginPage() {
               e agilidade.
             </Typography>
 
-            <Typography sx={{ maxWidth: 560, color: 'rgba(255,255,255,0.74)', fontSize: 18, lineHeight: 1.7 }}>
-              Plataforma de gestão da Casa Abrigo Temporário: cadastro rápido, controle de setores e acompanhamento de
-              famílias, pronta para operar mesmo em situações de calamidade.
+            <Typography
+              sx={{
+                maxWidth: 560,
+                color: 'rgba(255,255,255,0.74)',
+                fontSize: 18,
+                lineHeight: 1.7,
+              }}
+            >
+              Plataforma de gestão da Casa Abrigo Temporário: cadastro rápido,
+              controle de setores e acompanhamento de famílias, pronta para
+              operar mesmo em situações de calamidade.
             </Typography>
 
             <Stack spacing={2.25} sx={{ pt: 2 }}>
-              <Feature icon={<AddIcon />} label="Cadastro de acolhidos em segundos" />
-              <Feature icon={<AppsIcon />} label="Mapa de setores e ocupação em tempo real" />
-              <Feature icon={<FavoriteBorderIcon />} label="Atenção a perfis prioritários" />
+              <Feature
+                icon={<AddIcon />}
+                label="Cadastro de acolhidos em segundos"
+              />
+              <Feature
+                icon={<AppsIcon />}
+                label="Mapa de setores e ocupação em tempo real"
+              />
+              <Feature
+                icon={<FavoriteBorderIcon />}
+                label="Atenção a perfis prioritários"
+              />
             </Stack>
           </Stack>
         </Stack>
 
-        <Typography variant="body2" sx={{ position: 'relative', zIndex: 1, color: 'rgba(255,255,255,0.48)', mt: 4 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            position: 'relative',
+            zIndex: 1,
+            color: 'rgba(255,255,255,0.48)',
+            mt: 4,
+          }}
+        >
           © 2026 SEMAS · Prefeitura de São Bento do Sul
         </Typography>
       </Box>
@@ -191,12 +229,19 @@ export function LoginPage() {
           '@media (max-height:760px)': { py: 3 },
         }}
       >
-        <Stack spacing={{ xs: 2.5, md: 3 }} component="form" onSubmit={handleSubmit} sx={{ width: '100%', maxWidth: 520 }}>
+        <Stack
+          spacing={{ xs: 2.5, md: 3 }}
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ width: '100%', maxWidth: 520 }}
+        >
           <Stack spacing={1}>
             <Typography variant="h4" sx={{ fontWeight: 850, color: '#12313a' }}>
               Entrar no sistema
             </Typography>
-            <Typography color="text.secondary">Acesso restrito à equipe da Casa Abrigo.</Typography>
+            <Typography color="text.secondary">
+              Acesso restrito à equipe da Casa Abrigo.
+            </Typography>
           </Stack>
 
           {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
@@ -241,11 +286,17 @@ export function LoginPage() {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        aria-label={showPassword ? 'Ocultar senha' : 'Visualizar senha'}
+                        aria-label={
+                          showPassword ? 'Ocultar senha' : 'Visualizar senha'
+                        }
                         onClick={() => setShowPassword((prev) => !prev)}
                         edge="end"
                       >
-                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        {showPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -255,8 +306,21 @@ export function LoginPage() {
             />
 
             <FormControlLabel
-              control={<Checkbox defaultChecked size="small" sx={{ color: '#1b7280', '&.Mui-checked': { color: '#1b7280' } }} />}
-              label={<Typography variant="body2" color="text.secondary">Manter conectado</Typography>}
+              control={
+                <Checkbox
+                  defaultChecked
+                  size="small"
+                  sx={{
+                    color: '#1b7280',
+                    '&.Mui-checked': { color: '#1b7280' },
+                  }}
+                />
+              }
+              label={
+                <Typography variant="body2" color="text.secondary">
+                  Manter conectado
+                </Typography>
+              }
             />
           </Stack>
 
@@ -277,12 +341,18 @@ export function LoginPage() {
               '@media (max-height:760px)': { minHeight: 48 },
             }}
           >
-            {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
+            {isSubmitting ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              'Entrar'
+            )}
           </Button>
 
           <Stack direction="row" alignItems="center" spacing={2}>
             <Divider sx={{ flex: 1 }} />
-            <Typography variant="body2" color="text.disabled">acesso seguro</Typography>
+            <Typography variant="body2" color="text.disabled">
+              acesso seguro
+            </Typography>
             <Divider sx={{ flex: 1 }} />
           </Stack>
 
@@ -298,18 +368,28 @@ export function LoginPage() {
           >
             <Typography color="text.secondary">
               Sem acesso? Solicite credenciais à{' '}
-              <Box component="span" sx={{ color: 'text.primary', fontWeight: 800 }}>
+              <Box
+                component="span"
+                sx={{ color: 'text.primary', fontWeight: 800 }}
+              >
                 Coordenação da SEMAS
               </Box>
               <br />
               ou pelo ramal{' '}
-              <Box component="span" sx={{ color: 'text.primary', fontWeight: 800 }}>
+              <Box
+                component="span"
+                sx={{ color: 'text.primary', fontWeight: 800 }}
+              >
                 (47) 3631-6013.
               </Box>
             </Typography>
           </Box>
 
-          <Typography variant="body2" color="text.disabled" sx={{ textAlign: 'center' }}>
+          <Typography
+            variant="body2"
+            color="text.disabled"
+            sx={{ textAlign: 'center' }}
+          >
             Ao entrar você concorda com a{' '}
             <Link component="button" type="button" color="inherit">
               política de uso
@@ -319,7 +399,7 @@ export function LoginPage() {
         </Stack>
       </Box>
     </Box>
-  )
+  );
 }
 
 const fieldSx = {
@@ -329,7 +409,7 @@ const fieldSx = {
     bgcolor: 'common.white',
     '@media (max-height:760px)': { minHeight: 50 },
   },
-}
+};
 
 function Feature({ icon, label }: { icon: ReactNode; label: string }) {
   return (
@@ -349,7 +429,9 @@ function Feature({ icon, label }: { icon: ReactNode; label: string }) {
       >
         {icon}
       </Box>
-      <Typography sx={{ color: 'rgba(255,255,255,0.88)', fontSize: 17 }}>{label}</Typography>
+      <Typography sx={{ color: 'rgba(255,255,255,0.88)', fontSize: 17 }}>
+        {label}
+      </Typography>
     </Stack>
-  )
+  );
 }

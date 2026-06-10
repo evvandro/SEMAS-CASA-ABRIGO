@@ -1,34 +1,34 @@
-export type UserRole = 'admin' | 'tecnico' | 'logistica' | 'saude'
+export type UserRole = 'admin' | 'tecnico' | 'logistica' | 'saude';
 
 export interface AuthUser {
-  id: number
-  name: string
-  email: string
-  role: UserRole
-  is_active: boolean
-  phone: string | null
-  documento: string | null
-  created_at: string | null
+  id: number;
+  name: string;
+  email: string;
+  role: UserRole;
+  is_active: boolean;
+  phone: string | null;
+  documento: string | null;
+  created_at: string | null;
 }
 
 export interface LoginPayload {
-  email: string
-  password: string
-  device_name?: string
+  email: string;
+  password: string;
+  device_name?: string;
 }
 
 export interface LoginSuccessResponse {
-  message: string
+  message: string;
   data: {
-    token: string
-    token_type: 'Bearer'
-    user: AuthUser
-  }
+    token: string;
+    token_type: 'Bearer';
+    user: AuthUser;
+  };
 }
 
 export interface MeResponse {
-  message: string
+  message: string;
   data: {
-    user: AuthUser
-  }
+    user: AuthUser;
+  };
 }

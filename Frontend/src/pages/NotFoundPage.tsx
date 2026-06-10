@@ -1,6 +1,6 @@
-import { Box, Button, Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
-import HomeIcon from '@mui/icons-material/Home'
+import { Box, Button, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
 
 export function NotFoundPage() {
   return (
@@ -13,7 +13,8 @@ export function NotFoundPage() {
         justifyContent: 'center',
         gap: 2,
         p: 4,
-        background: 'radial-gradient(circle at top, #ffe9c7 0%, #f4f6f8 45%, #e8eef2 100%)',
+        background:
+          'radial-gradient(circle at top, #ffe9c7 0%, #f4f6f8 45%, #e8eef2 100%)',
       }}
     >
       <Typography
@@ -35,7 +36,8 @@ export function NotFoundPage() {
           Página não encontrada
         </Typography>
         <Typography color="text.secondary" sx={{ maxWidth: 360 }}>
-          A rota solicitada não existe neste sistema. Verifique o endereço ou retorne ao painel.
+          A rota solicitada não existe neste sistema. Verifique o endereço ou
+          retorne ao painel.
         </Typography>
       </Box>
 
@@ -49,5 +51,5 @@ export function NotFoundPage() {
         Voltar ao painel
       </Button>
     </Box>
-  )
+  );
 }

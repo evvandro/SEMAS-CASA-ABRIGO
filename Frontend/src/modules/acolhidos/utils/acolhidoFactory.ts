@@ -1,14 +1,16 @@
-import type { Acolhido, AlertCategory, CadastroPayload } from '../types'
-import { calculateAgeFromBrazilianDate } from './date'
+import type { Acolhido, AlertCategory, CadastroPayload } from '../types';
+import { calculateAgeFromBrazilianDate } from './date';
 
-export const createAcolhidoFromCadastro = (payload: CadastroPayload): Acolhido => {
-  const age = calculateAgeFromBrazilianDate(payload.birth)
-  const alerts: AlertCategory[] = []
+export const createAcolhidoFromCadastro = (
+  payload: CadastroPayload,
+): Acolhido => {
+  const age = calculateAgeFromBrazilianDate(payload.birth);
+  const alerts: AlertCategory[] = [];
 
-  if (payload.pcd) alerts.push('pcd')
-  if (payload.gestante) alerts.push('gestante')
-  if (payload.cronica) alerts.push('cronica')
-  if (payload.idoso || age >= 60) alerts.push('idoso')
+  if (payload.pcd) alerts.push('pcd');
+  if (payload.gestante) alerts.push('gestante');
+  if (payload.cronica) alerts.push('cronica');
+  if (payload.idoso || age >= 60) alerts.push('idoso');
 
   return {
     apiId: Date.now(),
@@ -21,5 +23,5 @@ export const createAcolhidoFromCadastro = (payload: CadastroPayload): Acolhido =
     alerts,
     entry: new Date().toISOString(),
     family: 1,
-  }
-}
+  };
+};

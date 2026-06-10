@@ -1,1 +1,1 @@
-export { SaidaDrawer as SaidaDialog } from './SaidaDrawer'
+export { SaidaDrawer as SaidaDialog } from './SaidaDrawer';
