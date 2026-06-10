@@ -70,6 +70,12 @@ class AcolhidosApiTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(['message', 'data']);
 
+        $this->getJson('/api/acolhidos?per_page=1&pcd=1&search=Jo')
+            ->assertOk()
+            ->assertJsonPath('meta.per_page', 1)
+            ->assertJsonPath('meta.total', 1)
+            ->assertJsonPath('data.0.id', $acolhidoId);
+
         $this->getJson("/api/acolhidos/{$acolhidoId}")
             ->assertOk()
             ->assertJsonPath('data.id', $acolhidoId)

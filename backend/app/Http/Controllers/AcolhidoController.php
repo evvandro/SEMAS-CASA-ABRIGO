@@ -16,7 +16,7 @@ class AcolhidoController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $acolhidos = Acolhido::query()
+        $query = Acolhido::query()
             ->select([
                 'id', 'codigo_pulseira', 'nome', 'cpf', 'data_nascimento',
                 'telefone', 'genero', 'leito', 'observacoes', 'pertences_registrados',
@@ -32,9 +32,14 @@ class AcolhidoController extends Controller
                     ->withCount(['acolhidos as acolhidos_count' => fn ($sub) => $sub->whereNull('data_saida')]),
                 'setor:id,nome,cor,capacidade,ativo',
             ])
-            ->when($request->filled('setor_id'), fn ($q) => $q->where('setor_id', (int) $request->get('setor_id')))
+            ->when($request->filled('setor_id'), fn ($q) => $q->where('setor_id', $request->integer('setor_id')))
+            ->when($request->boolean('pcd'), fn ($q) => $q->where('pcd', true))
+            ->when($request->boolean('gestante'), fn ($q) => $q->where('gestante', true))
+            ->when($request->boolean('cronica'), fn ($q) => $q->where('cronica', true))
+            ->when($request->boolean('idoso'), fn ($q) => $q->where('idoso', true))
             ->when($request->filled('search'), function ($q) use ($request) {
-                $search = (string) $request->get('search');
+                $search = trim((string) $request->get('search'));
+
                 $q->where(function ($sub) use ($search) {
                     $sub->where('nome', 'like', "%{$search}%")
                         ->orWhere('codigo_pulseira', 'like', "%{$search}%")
@@ -45,6 +50,25 @@ class AcolhidoController extends Controller
                         });
                 });
             })
+            ->orderBy('nome');
+
+        if ($request->filled('per_page')) {
+            $perPage = min(max($request->integer('per_page', 25), 1), 100);
+            $acolhidos = $query->paginate($perPage);
+
+            return response()->json([
+                'message' => 'Acolhidos listados com sucesso.',
+                'data' => AcolhidoResource::collection($acolhidos->items()),
+                'meta' => [
+                    'current_page' => $acolhidos->currentPage(),
+                    'last_page' => $acolhidos->lastPage(),
+                    'per_page' => $acolhidos->perPage(),
+                    'total' => $acolhidos->total(),
+                ],
+            ]);
+        }
+
+        $acolhidos = $query->get();
             ->when(
                 $request->get('status') === 'saida',
                 fn ($q) => $q->orderByDesc('data_saida')->orderByDesc('hora_saida')->orderBy('nome'),
@@ -87,8 +111,6 @@ class AcolhidoController extends Controller
     {
         $acolhido->update($request->validated());
 
-        $acolhido->load(['familia', 'setor']);
-
         return response()->json([
             'message' => 'Acolhido atualizado com sucesso.',
             'data' => new AcolhidoDetalheResource($acolhido->fresh()->load(['familia', 'setor'])),
@@ -97,6 +119,12 @@ class AcolhidoController extends Controller
 
     public function saida(RegistrarSaidaAcolhidoRequest $request, Acolhido $acolhido): JsonResponse
     {
+        $acolhido->update($request->validated());
+
+        return response()->json([
+            'message' => 'Saida registrada com sucesso.',
+            'data' => new AcolhidoDetalheResource($acolhido->fresh()->load(['familia', 'setor'])),
+        ]);
         return DB::transaction(function () use ($request, $acolhido) {
             $validated = $request->validated();
 
