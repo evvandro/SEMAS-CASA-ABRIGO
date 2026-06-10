@@ -123,7 +123,7 @@ export function ManagementPage() {
         )
 
         setSummary(dashboard.data.data)
-        setRows(acolhidos)
+        setRows(acolhidosResult.data)
         setSectors(builtSectors)
       } catch {
         if (active) setError('Não foi possível carregar os indicadores de gestão.')

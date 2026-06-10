@@ -146,6 +146,43 @@ useEffect(() => {
     }
   }
 
+  const removeRow = (acolhidoId: number) => {
+    const removedRow = rows.find(row => row.apiId === acolhidoId)
+    setRows(prev => prev.filter(row => row.apiId !== acolhidoId))
+
+    if (removedRow && removedRow.sectorId) {
+      setSectors(prev => prev.map(sector =>
+        sector.id === removedRow.sectorId
+          ? { ...sector, occupied: Math.max(sector.occupied - 1, 0) }
+          : sector,
+      ))
+    }
+
+    setFichaRow(prev => prev?.apiId === acolhidoId ? null : prev)
+    setLabelRow(prev => prev?.apiId === acolhidoId ? null : prev)
+    setEditRow(prev => prev?.apiId === acolhidoId ? null : prev)
+  }
+
+  const removeRowsByFamily = (familiaId: number) => {
+    const removedRows = rows.filter(row => row.familyId === familiaId)
+    setRows(prev => prev.filter(row => row.familyId !== familiaId))
+
+    // Atualizar ocupação dos setores
+    removedRows.forEach(row => {
+      if (row.sectorId) {
+        setSectors(prev => prev.map(sector =>
+          sector.id === row.sectorId
+            ? { ...sector, occupied: Math.max(sector.occupied - 1, 0) }
+            : sector,
+        ))
+      }
+    })
+
+    setFichaRow(prev => prev?.familyId === familiaId ? null : prev)
+    setLabelRow(prev => prev?.familyId === familiaId ? null : prev)
+    setEditRow(prev => prev?.familyId === familiaId ? null : prev)
+  }
+
   const getAcolhidoDetail = async (row: Acolhido) => {
     const detail = await fetchAcolhidoDetail(row.apiId)
     applyAcolhidoUpdate(detail)
@@ -236,6 +273,8 @@ useEffect(() => {
     toast,
     setToast,
     applyAcolhidoUpdate,
+    removeRow,
+    removeRowsByFamily,
     getAcolhidoDetail,
     openFicha,
     openLabel,
