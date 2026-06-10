@@ -1,4 +1,4 @@
-export { AcolhidosPage } from './pages/AcolhidosPage'
+export { AcolhidosPage } from './pages/AcolhidosPage';
 export type {
   Acolhido,
   AcolhidoAction,
@@ -7,4 +7,4 @@ export type {
   CadastroAction,
   CadastroPayload,
   Sector,
-} from './types'
+} from './types';

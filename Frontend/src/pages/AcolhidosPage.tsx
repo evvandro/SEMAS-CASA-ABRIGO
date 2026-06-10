@@ -1,1 +1,1 @@
-export { AcolhidosPage } from '../modules/acolhidos/pages/AcolhidosPage'
+export { AcolhidosPage } from '../modules/acolhidos/pages/AcolhidosPage';

@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import type { ReactNode } from 'react'
+import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import {
   Alert,
   Box,
@@ -13,35 +13,35 @@ import {
   Paper,
   Stack,
   Typography,
-} from '@mui/material'
-import { alpha } from '@mui/material/styles'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom'
-import GridViewIcon from '@mui/icons-material/GridView'
-import GroupIcon from '@mui/icons-material/Group'
-import Inventory2Icon from '@mui/icons-material/Inventory2'
-import { Link as RouterLink } from 'react-router-dom'
-import { useAuth } from '../auth/useAuth'
-import { api } from '../services/api'
+} from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
+import GridViewIcon from '@mui/icons-material/GridView';
+import GroupIcon from '@mui/icons-material/Group';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import { Link as RouterLink } from 'react-router-dom';
+import { useAuth } from '../auth/useAuth';
+import { api } from '../services/api';
 
 interface DashboardSetor {
-  id: number
-  nome: string
-  cor: string
-  capacidade: number
-  familias_ativas_count: number
-  acolhidos_ativos_count: number
+  id: number;
+  nome: string;
+  cor: string;
+  capacidade: number;
+  familias_ativas_count: number;
+  acolhidos_ativos_count: number;
 }
 
 interface DashboardData {
-  familias_ativas: number
-  acolhidos_ativos: number
-  entregas_hoje: number
-  setores: DashboardSetor[]
+  familias_ativas: number;
+  acolhidos_ativos: number;
+  entregas_hoje: number;
+  setores: DashboardSetor[];
 }
 
 interface DashboardResponse {
-  data: DashboardData
+  data: DashboardData;
 }
 
 function StatCard({
@@ -50,15 +50,23 @@ function StatCard({
   helper,
   icon,
 }: {
-  title: string
-  value: number | string
-  helper: string
-  icon: ReactNode
+  title: string;
+  value: number | string;
+  helper: string;
+  icon: ReactNode;
 }) {
   return (
-    <Card elevation={0} sx={{ height: '100%', border: '1px solid', borderColor: 'divider' }}>
+    <Card
+      elevation={0}
+      sx={{ height: '100%', border: '1px solid', borderColor: 'divider' }}
+    >
       <CardContent>
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-start"
+          gap={2}
+        >
           <Box>
             <Typography variant="body2" color="text.secondary">
               {title}
@@ -87,57 +95,69 @@ function StatCard({
         </Typography>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export function DashboardPage() {
-  const { user } = useAuth()
-  const [dashboard, setDashboard] = useState<DashboardData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { user } = useAuth();
+  const [dashboard, setDashboard] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let active = true
+    let active = true;
 
     const loadDashboard = async () => {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
       try {
-        const response = await api.get<DashboardResponse>('/dashboard')
-        if (active) setDashboard(response.data.data)
+        const response = await api.get<DashboardResponse>('/dashboard');
+        if (active) setDashboard(response.data.data);
       } catch {
-        if (active) setError('Nao foi possivel carregar os dados do painel.')
+        if (active) setError('Nao foi possivel carregar os dados do painel.');
       } finally {
-        if (active) setLoading(false)
+        if (active) setLoading(false);
       }
-    }
+    };
 
-    void loadDashboard()
+    void loadDashboard();
 
     return () => {
-      active = false
-    }
-  }, [])
+      active = false;
+    };
+  }, []);
 
-  const setores = dashboard?.setores ?? []
-  const totalCapacity = setores.reduce((acc, setor) => acc + (setor.capacidade ?? 0), 0)
-  const occupiedCapacity = setores.reduce((acc, setor) => acc + (setor.acolhidos_ativos_count ?? 0), 0)
-  const occupancyPercent = totalCapacity > 0 ? Math.round((occupiedCapacity / totalCapacity) * 100) : 0
+  const setores = dashboard?.setores ?? [];
+  const totalCapacity = setores.reduce(
+    (acc, setor) => acc + (setor.capacidade ?? 0),
+    0,
+  );
+  const occupiedCapacity = setores.reduce(
+    (acc, setor) => acc + (setor.acolhidos_ativos_count ?? 0),
+    0,
+  );
+  const occupancyPercent =
+    totalCapacity > 0
+      ? Math.round((occupiedCapacity / totalCapacity) * 100)
+      : 0;
 
-  const dashboardSetores = dashboard?.setores
+  const dashboardSetores = dashboard?.setores;
 
   const orderedSetores = useMemo(
-    () => [...(dashboardSetores ?? [])].sort((a, b) => b.acolhidos_ativos_count - a.acolhidos_ativos_count),
+    () =>
+      [...(dashboardSetores ?? [])].sort(
+        (a, b) => b.acolhidos_ativos_count - a.acolhidos_ativos_count,
+      ),
     [dashboardSetores],
-  )
+  );
 
   if (loading) {
     return (
       <Box sx={{ display: 'grid', placeItems: 'center', height: 300 }}>
         <CircularProgress />
       </Box>
-    )
+    );
   }
 
   return (
@@ -155,8 +175,15 @@ export function DashboardPage() {
           </Typography>
         </Box>
 
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} sx={{ width: { xs: '100%', sm: 'auto' } }}>
-          <Chip label={`Perfil: ${user?.role ?? 'nao definido'}`} sx={{ width: 'fit-content' }} />
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          gap={1}
+          sx={{ width: { xs: '100%', sm: 'auto' } }}
+        >
+          <Chip
+            label={`Perfil: ${user?.role ?? 'nao definido'}`}
+            sx={{ width: 'fit-content' }}
+          />
           <Button
             component={RouterLink}
             to="/acolhidos"
@@ -192,7 +219,11 @@ export function DashboardPage() {
           <StatCard
             title="Ocupacao geral"
             value={totalCapacity > 0 ? `${occupancyPercent}%` : '-'}
-            helper={totalCapacity > 0 ? `${occupiedCapacity} de ${totalCapacity} vagas` : 'Capacidade nao cadastrada'}
+            helper={
+              totalCapacity > 0
+                ? `${occupiedCapacity} de ${totalCapacity} vagas`
+                : 'Capacidade nao cadastrada'
+            }
             icon={<GridViewIcon />}
           />
         </Grid>
@@ -206,33 +237,74 @@ export function DashboardPage() {
         </Grid>
       </Grid>
 
-      <Paper elevation={0} sx={{ p: 2.5, border: '1px solid', borderColor: 'divider' }}>
+      <Paper
+        elevation={0}
+        sx={{ p: 2.5, border: '1px solid', borderColor: 'divider' }}
+      >
         <Stack spacing={2}>
           <Box>
             <Typography variant="h6">Acolhimentos por setor</Typography>
             <Typography variant="body2" color="text.secondary">
-              Mostra quantas pessoas ativas estao em cada setor e quanto da capacidade ja foi ocupada.
+              Mostra quantas pessoas ativas estao em cada setor e quanto da
+              capacidade ja foi ocupada.
             </Typography>
           </Box>
 
           {orderedSetores.length > 0 ? (
             <Grid container spacing={2}>
               {orderedSetores.map((setor) => {
-                const percent = setor.capacidade > 0
-                  ? Math.min(Math.round((setor.acolhidos_ativos_count / setor.capacidade) * 100), 100)
-                  : 0
+                const percent =
+                  setor.capacidade > 0
+                    ? Math.min(
+                        Math.round(
+                          (setor.acolhidos_ativos_count / setor.capacidade) *
+                            100,
+                        ),
+                        100,
+                      )
+                    : 0;
 
                 return (
                   <Grid key={setor.id} size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2} sx={{ mb: 1 }}>
-                        <Stack direction="row" alignItems="center" gap={1} minWidth={0}>
-                          <Box sx={{ width: 10, height: 10, borderRadius: 0.5, bgcolor: setor.cor, flexShrink: 0 }} />
+                    <Box
+                      sx={{
+                        p: 1.5,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        borderRadius: 1,
+                      }}
+                    >
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        gap={2}
+                        sx={{ mb: 1 }}
+                      >
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          gap={1}
+                          minWidth={0}
+                        >
+                          <Box
+                            sx={{
+                              width: 10,
+                              height: 10,
+                              borderRadius: 0.5,
+                              bgcolor: setor.cor,
+                              flexShrink: 0,
+                            }}
+                          />
                           <Typography variant="body2" fontWeight={600} noWrap>
                             {setor.nome}
                           </Typography>
                         </Stack>
-                        <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ flexShrink: 0 }}
+                        >
                           {setor.acolhidos_ativos_count}/{setor.capacidade || 0}
                         </Typography>
                       </Stack>
@@ -246,19 +318,26 @@ export function DashboardPage() {
                           '& .MuiLinearProgress-bar': { bgcolor: setor.cor },
                         }}
                       />
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-                        {setor.familias_ativas_count} familias ativas neste setor
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', mt: 1 }}
+                      >
+                        {setor.familias_ativas_count} familias ativas neste
+                        setor
                       </Typography>
                     </Box>
                   </Grid>
-                )
+                );
               })}
             </Grid>
           ) : (
-            <Typography color="text.secondary">Nenhum setor ativo encontrado.</Typography>
+            <Typography color="text.secondary">
+              Nenhum setor ativo encontrado.
+            </Typography>
           )}
         </Stack>
       </Paper>
     </Stack>
-  )
+  );
 }

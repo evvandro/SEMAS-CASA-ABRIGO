@@ -1,16 +1,23 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Document, Page, StyleSheet, Text, View, pdf } from '@react-pdf/renderer'
-import type { DocumentProps } from '@react-pdf/renderer'
-import type { ReactElement, ReactNode } from 'react'
-import type { Acolhido, AlertCategory, Sector } from '../types'
-import { formatDateOnly, formatEntryDateTime } from './date'
+import {
+  Document,
+  Page,
+  StyleSheet,
+  Text,
+  View,
+  pdf,
+} from '@react-pdf/renderer';
+import type { DocumentProps } from '@react-pdf/renderer';
+import type { ReactElement, ReactNode } from 'react';
+import type { Acolhido, AlertCategory, Sector } from '../types';
+import { formatDateOnly, formatEntryDateTime } from './date';
 
 const alertLabels: Record<AlertCategory, string> = {
   pcd: 'Pessoa com deficiencia',
   gestante: 'Gestante',
   cronica: 'Doenca cronica',
   idoso: 'Idoso 60+',
-}
+};
 
 const styles = StyleSheet.create({
   page: {
@@ -120,21 +127,21 @@ const styles = StyleSheet.create({
     marginTop: 2,
     minHeight: 34,
   },
-})
+});
 
 function valueOrFallback(value?: string | number | null) {
-  const normalized = value == null ? '' : String(value).trim()
-  return normalized || 'Nao informado'
+  const normalized = value == null ? '' : String(value).trim();
+  return normalized || 'Nao informado';
 }
 
 function sectorLabel(sector?: Sector) {
-  if (!sector) return 'Nao informado'
-  return sector.sub ? `${sector.name} - ${sector.sub}` : sector.name
+  if (!sector) return 'Nao informado';
+  return sector.sub ? `${sector.name} - ${sector.sub}` : sector.name;
 }
 
 function alertsLabel(row: Acolhido) {
-  if (!row.alerts.length) return 'Nenhuma condicao prioritaria registrada'
-  return row.alerts.map(alert => alertLabels[alert]).join(', ')
+  if (!row.alerts.length) return 'Nenhuma condicao prioritaria registrada';
+  return row.alerts.map((alert) => alertLabels[alert]).join(', ');
 }
 
 function sanitizeFilePart(value: string) {
@@ -143,16 +150,22 @@ function sanitizeFilePart(value: string) {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-zA-Z0-9-]+/g, '-')
     .replace(/^-|-$/g, '')
-    .toLowerCase()
+    .toLowerCase();
 }
 
-function Field({ label, value }: { label: string; value?: string | number | null }) {
+function Field({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string | number | null;
+}) {
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.value}>{valueOrFallback(value)}</Text>
     </View>
-  )
+  );
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -161,7 +174,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
       <Text style={styles.sectionTitle}>{title}</Text>
       {children}
     </View>
-  )
+  );
 }
 
 function AcolhidoFichaDocument({
@@ -169,22 +182,27 @@ function AcolhidoFichaDocument({
   sector,
   operatorName,
 }: {
-  row: Acolhido
-  sector?: Sector
-  operatorName?: string | null
+  row: Acolhido;
+  sector?: Sector;
+  operatorName?: string | null;
 }) {
   return (
     <Document title={`Ficha do acolhido ${row.id}`}>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>Ficha do acolhido</Text>
-        <Text style={styles.subtitle}>Documento gerado pelo sistema SEMAS Casa Abrigo Temporario.</Text>
+        <Text style={styles.subtitle}>
+          Documento gerado pelo sistema SEMAS Casa Abrigo Temporario.
+        </Text>
 
         <Section title="Identificacao">
           <View style={styles.grid}>
             <Field label="Prontuario / pulseira" value={row.id} />
             <Field label="Nome completo" value={row.name} />
             <Field label="CPF" value={row.cpf} />
-            <Field label="Data de nascimento" value={formatDateOnly(row.birthDate, 'Nao informado')} />
+            <Field
+              label="Data de nascimento"
+              value={formatDateOnly(row.birthDate, 'Nao informado')}
+            />
             <Field label="Idade" value={`${row.age} anos`} />
             <Field label="Genero" value={row.gender} />
             <Field label="Telefone" value={row.phone} />
@@ -194,7 +212,14 @@ function AcolhidoFichaDocument({
 
         <Section title="Acolhimento">
           <View style={styles.grid}>
-            <Field label="Data e hora de entrada" value={formatEntryDateTime(row.entry, row.entryTime, 'Nao informado')} />
+            <Field
+              label="Data e hora de entrada"
+              value={formatEntryDateTime(
+                row.entry,
+                row.entryTime,
+                'Nao informado',
+              )}
+            />
             <Field label="Setor" value={sectorLabel(sector)} />
             <Field label="Leito" value={row.bed} />
             <Field label="Responsavel familiar" value={row.familyResponsible} />
@@ -219,11 +244,12 @@ function AcolhidoFichaDocument({
         </Section>
 
         <Text style={styles.footer}>
-          Emitido por {valueOrFallback(operatorName)} em {new Date().toLocaleString('pt-BR')}.
+          Emitido por {valueOrFallback(operatorName)} em{' '}
+          {new Date().toLocaleString('pt-BR')}.
         </Text>
       </Page>
     </Document>
-  )
+  );
 }
 
 function PertencesLabelDocument({
@@ -232,12 +258,14 @@ function PertencesLabelDocument({
   shelterName,
   belongings,
 }: {
-  row: Acolhido
-  sector?: Sector
-  shelterName: string
-  belongings: string
+  row: Acolhido;
+  sector?: Sector;
+  shelterName: string;
+  belongings: string;
 }) {
-  const location = [row.bed, sectorLabel(sector)].filter(item => item && item !== 'Nao informado').join(' / ')
+  const location = [row.bed, sectorLabel(sector)]
+    .filter((item) => item && item !== 'Nao informado')
+    .join(' / ');
 
   return (
     <Document title={`Etiqueta de pertences ${row.id}`}>
@@ -246,19 +274,27 @@ function PertencesLabelDocument({
           <Text style={styles.labelTitle}>Etiqueta de pertences</Text>
           <View style={styles.labelRow}>
             <Text style={styles.labelRowName}>Abrigo</Text>
-            <Text style={styles.labelRowValue}>{valueOrFallback(shelterName)}</Text>
+            <Text style={styles.labelRowValue}>
+              {valueOrFallback(shelterName)}
+            </Text>
           </View>
           <View style={styles.labelRow}>
             <Text style={styles.labelRowName}>Data de entrada</Text>
-            <Text style={styles.labelRowValue}>{formatEntryDateTime(row.entry, row.entryTime, 'Nao informado')}</Text>
+            <Text style={styles.labelRowValue}>
+              {formatEntryDateTime(row.entry, row.entryTime, 'Nao informado')}
+            </Text>
           </View>
           <View style={styles.labelRow}>
             <Text style={styles.labelRowName}>Nome</Text>
-            <Text style={styles.labelRowValue}>{valueOrFallback(row.name)}</Text>
+            <Text style={styles.labelRowValue}>
+              {valueOrFallback(row.name)}
+            </Text>
           </View>
           <View style={styles.labelRow}>
             <Text style={styles.labelRowName}>Leito / setor</Text>
-            <Text style={styles.labelRowValue}>{valueOrFallback(location)}</Text>
+            <Text style={styles.labelRowValue}>
+              {valueOrFallback(location)}
+            </Text>
           </View>
           <View style={styles.labelRow}>
             <Text style={styles.labelRowName}>Item</Text>
@@ -269,29 +305,40 @@ function PertencesLabelDocument({
         </View>
       </Page>
     </Document>
-  )
+  );
 }
 
-async function openPdf(pdfDocument: ReactElement<DocumentProps>, filename: string) {
-  const blob = await pdf(pdfDocument).toBlob()
-  const url = URL.createObjectURL(blob)
-  const opened = window.open(url, '_blank', 'noopener,noreferrer')
+async function openPdf(
+  pdfDocument: ReactElement<DocumentProps>,
+  filename: string,
+) {
+  const blob = await pdf(pdfDocument).toBlob();
+  const url = URL.createObjectURL(blob);
+  const opened = window.open(url, '_blank', 'noopener,noreferrer');
 
   if (!opened) {
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    link.click()
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
   }
 
-  window.setTimeout(() => URL.revokeObjectURL(url), 60000)
+  window.setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 
-export function openAcolhidoFichaPdf(row: Acolhido, sector?: Sector, operatorName?: string | null) {
+export function openAcolhidoFichaPdf(
+  row: Acolhido,
+  sector?: Sector,
+  operatorName?: string | null,
+) {
   return openPdf(
-    <AcolhidoFichaDocument row={row} sector={sector} operatorName={operatorName} />,
+    <AcolhidoFichaDocument
+      row={row}
+      sector={sector}
+      operatorName={operatorName}
+    />,
     `ficha-${sanitizeFilePart(row.id)}.pdf`,
-  )
+  );
 }
 
 export function openPertencesLabelPdf(
@@ -301,7 +348,12 @@ export function openPertencesLabelPdf(
   belongings: string,
 ) {
   return openPdf(
-    <PertencesLabelDocument row={row} sector={sector} shelterName={shelterName} belongings={belongings} />,
+    <PertencesLabelDocument
+      row={row}
+      sector={sector}
+      shelterName={shelterName}
+      belongings={belongings}
+    />,
     `etiqueta-pertences-${sanitizeFilePart(row.id)}.pdf`,
-  )
+  );
 }

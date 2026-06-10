@@ -1,32 +1,42 @@
 import {
-  Paper, Box, TextField, InputAdornment, Chip, Select, MenuItem,
-  Button, Typography, Menu, ListItemIcon, ListItemText,
-} from '@mui/material'
-import { useState } from 'react'
-import SearchIcon from '@mui/icons-material/Search'
-import AddIcon from '@mui/icons-material/Add'
-import CloseIcon from '@mui/icons-material/Close'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import AssignmentIcon from '@mui/icons-material/Assignment'
-import AccessibleIcon from '@mui/icons-material/Accessible'
-import PregnantWomanIcon from '@mui/icons-material/PregnantWoman'
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import ElderlyIcon from '@mui/icons-material/Elderly'
-import type { AcolhidosFilters, Sector } from '../types'
+  Paper,
+  Box,
+  TextField,
+  InputAdornment,
+  Chip,
+  Select,
+  MenuItem,
+  Button,
+  Typography,
+  Menu,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
+import { useState } from 'react';
+import SearchIcon from '@mui/icons-material/Search';
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AccessibleIcon from '@mui/icons-material/Accessible';
+import PregnantWomanIcon from '@mui/icons-material/PregnantWoman';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ElderlyIcon from '@mui/icons-material/Elderly';
+import type { AcolhidosFilters, Sector } from '../types';
 
-export type Filters = AcolhidosFilters
+export type Filters = AcolhidosFilters;
 
 interface Props {
-  search: string
-  onSearch: (v: string) => void
-  filters: Filters
-  onFilters: (f: Filters) => void
-  sectorId: string
-  onSector: (id: string) => void
-  sectors: Sector[]
-  count: number
-  onNew: () => void
-  onFullRegistration: () => void
+  search: string;
+  onSearch: (v: string) => void;
+  filters: Filters;
+  onFilters: (f: Filters) => void;
+  sectorId: string;
+  onSector: (id: string) => void;
+  sectors: Sector[];
+  count: number;
+  onNew: () => void;
+  onFullRegistration: () => void;
 }
 
 export function AcolhidosToolbar({
@@ -41,28 +51,45 @@ export function AcolhidosToolbar({
   onNew,
   onFullRegistration,
 }: Props) {
-  const [newMenuAnchor, setNewMenuAnchor] = useState<null | HTMLElement>(null)
-  const toggle = (k: keyof Filters) => onFilters({ ...filters, [k]: !filters[k] })
-  const hasFilters = Object.values(filters).some(Boolean) || !!sectorId || !!search
-  const clear = () => { onSearch(''); onFilters({ gestante: false, pcd: false, cronica: false, idoso: false }); onSector('') }
-  const closeNewMenu = () => setNewMenuAnchor(null)
+  const [newMenuAnchor, setNewMenuAnchor] = useState<null | HTMLElement>(null);
+  const toggle = (k: keyof Filters) =>
+    onFilters({ ...filters, [k]: !filters[k] });
+  const hasFilters =
+    Object.values(filters).some(Boolean) || !!sectorId || !!search;
+  const clear = () => {
+    onSearch('');
+    onFilters({ gestante: false, pcd: false, cronica: false, idoso: false });
+    onSector('');
+  };
+  const closeNewMenu = () => setNewMenuAnchor(null);
 
   const handleQuickRegistration = () => {
-    closeNewMenu()
-    onNew()
-  }
+    closeNewMenu();
+    onNew();
+  };
 
   const handleFullRegistration = () => {
-    closeNewMenu()
-    onFullRegistration()
-  }
+    closeNewMenu();
+    onFullRegistration();
+  };
 
   return (
-    <Paper variant="outlined" sx={{ p: 1.5, mb: 2, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', borderRadius: 2 }}>
+    <Paper
+      variant="outlined"
+      sx={{
+        p: 1.5,
+        mb: 2,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1,
+        flexWrap: 'wrap',
+        borderRadius: 2,
+      }}
+    >
       <TextField
         placeholder="Buscar por nome, CPF ou prontuário…"
         value={search}
-        onChange={e => onSearch(e.target.value)}
+        onChange={(e) => onSearch(e.target.value)}
         size="small"
         sx={{ flex: 1, minWidth: 240, maxWidth: 420 }}
         slotProps={{
@@ -120,17 +147,28 @@ export function AcolhidosToolbar({
         size="small"
         value={sectorId}
         displayEmpty
-        onChange={e => onSector(e.target.value)}
-        sx={{ minWidth: 200, borderRadius: 999, '& .MuiSelect-select': { py: 0.6 } }}
+        onChange={(e) => onSector(e.target.value)}
+        sx={{
+          minWidth: 200,
+          borderRadius: 999,
+          '& .MuiSelect-select': { py: 0.6 },
+        }}
       >
         <MenuItem value="">Todos os setores</MenuItem>
-        {sectors.map(s => (
-          <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>
+        {sectors.map((s) => (
+          <MenuItem key={s.id} value={s.id}>
+            {s.name}
+          </MenuItem>
         ))}
       </Select>
 
       {hasFilters && (
-        <Button size="small" onClick={clear} startIcon={<CloseIcon sx={{ fontSize: 14 }} />} color="inherit">
+        <Button
+          size="small"
+          onClick={clear}
+          startIcon={<CloseIcon sx={{ fontSize: 14 }} />}
+          color="inherit"
+        >
           Limpar
         </Button>
       )}
@@ -143,7 +181,7 @@ export function AcolhidosToolbar({
           variant="contained"
           startIcon={<AddIcon />}
           endIcon={<KeyboardArrowDownIcon />}
-          onClick={event => setNewMenuAnchor(event.currentTarget)}
+          onClick={(event) => setNewMenuAnchor(event.currentTarget)}
           aria-haspopup="menu"
           aria-expanded={newMenuAnchor ? 'true' : undefined}
         >
@@ -160,16 +198,22 @@ export function AcolhidosToolbar({
             <ListItemIcon>
               <AddIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="Cadastro rapido" secondary="Ficha essencial em drawer" />
+            <ListItemText
+              primary="Cadastro rapido"
+              secondary="Ficha essencial em drawer"
+            />
           </MenuItem>
           <MenuItem onClick={handleFullRegistration}>
             <ListItemIcon>
               <AssignmentIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="Cadastro completo" secondary="Abrir aba de cadastros" />
+            <ListItemText
+              primary="Cadastro completo"
+              secondary="Abrir aba de cadastros"
+            />
           </MenuItem>
         </Menu>
       </Box>
     </Paper>
-  )
+  );
 }

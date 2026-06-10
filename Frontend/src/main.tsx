@@ -1,15 +1,15 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import { CssBaseline, ThemeProvider } from '@mui/material'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { Toaster } from 'sonner'
-import './index.css'
-import App from './App.tsx'
-import { appTheme } from './theme.ts'
-import { AuthProvider } from './auth/AuthContext.tsx'
-import { ErrorBoundary } from './components/ErrorBoundary.tsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { Toaster } from 'sonner';
+import './index.css';
+import App from './App.tsx';
+import { appTheme } from './theme.ts';
+import { AuthProvider } from './auth/AuthContext.tsx';
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -27,4 +27,4 @@ createRoot(document.getElementById('root')!).render(
       </LocalizationProvider>
     </ThemeProvider>
   </StrictMode>,
-)
+);

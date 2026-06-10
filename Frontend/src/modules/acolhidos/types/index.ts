@@ -9,4 +9,4 @@ export type {
   FamiliaMembro,
   SaidaPayload,
   Sector,
-} from './acolhidos'
+} from './acolhidos';

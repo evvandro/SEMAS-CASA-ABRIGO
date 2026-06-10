@@ -1,22 +1,33 @@
 import {
-  Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText,
-  Toolbar, Typography, Avatar, Divider, IconButton, Button,
-} from '@mui/material'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import HomeIcon from '@mui/icons-material/Home'
-import GroupIcon from '@mui/icons-material/Group'
-import GridViewIcon from '@mui/icons-material/GridView'
-import Inventory2Icon from '@mui/icons-material/Inventory2'
-import LogoutIcon from '@mui/icons-material/Logout'
-import ExitToAppIcon from '@mui/icons-material/ExitToApp'
-import SettingsIcon from '@mui/icons-material/Settings'
-import { useEffect, useState } from 'react'
-import { useAuth } from '../auth/useAuth'
-import { api } from '../services/api'
-import { ACOLHIDOS_COUNT_REFRESH_EVENT } from '../utils/acolhidosEvents'
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
+  Avatar,
+  Divider,
+  IconButton,
+  Button,
+} from '@mui/material';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import GroupIcon from '@mui/icons-material/Group';
+import GridViewIcon from '@mui/icons-material/GridView';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../auth/useAuth';
+import { api } from '../services/api';
+import { ACOLHIDOS_COUNT_REFRESH_EVENT } from '../utils/acolhidosEvents';
 
-const SIDEBAR_W = 220
-const HEADER_H = { xs: 72, sm: 80 }
+const SIDEBAR_W = 220;
+const HEADER_H = { xs: 72, sm: 80 };
 
 const NAV = [
   {
@@ -57,46 +68,55 @@ const NAV = [
     path: '/saidas',
     submodules: [{ label: 'Saídas', path: '/saidas' }],
   },
-]
+];
 
-const isActivePath = (pathname: string, path: string) => pathname === path || pathname.startsWith(`${path}/`)
+const isActivePath = (pathname: string, path: string) =>
+  pathname === path || pathname.startsWith(`${path}/`);
 
 export function AppLayout() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [acolhidosAtivos, setAcolhidosAtivos] = useState<number | null>(null)
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [acolhidosAtivos, setAcolhidosAtivos] = useState<number | null>(null);
 
   useEffect(() => {
     const loadAcolhidosCount = async () => {
       try {
-        const res = await api.get<{ data: { acolhidos_ativos: number } }>('/dashboard')
-        setAcolhidosAtivos(res.data.data.acolhidos_ativos)
+        const res = await api.get<{ data: { acolhidos_ativos: number } }>('/dashboard');
+        setAcolhidosAtivos(res.data.data.acolhidos_ativos);
       } catch {
-        // Ignore dashboard count failures silently
+        // silent
       }
-    }
+    };
 
-    void loadAcolhidosCount()
+    void loadAcolhidosCount();
 
-    const handleRefresh = () => {
-      void loadAcolhidosCount()
-    }
-
-    window.addEventListener(ACOLHIDOS_COUNT_REFRESH_EVENT, handleRefresh)
-    return () => window.removeEventListener(ACOLHIDOS_COUNT_REFRESH_EVENT, handleRefresh)
-  }, [])
+    const handleRefresh = () => { void loadAcolhidosCount(); };
+    window.addEventListener(ACOLHIDOS_COUNT_REFRESH_EVENT, handleRefresh);
+    return () => window.removeEventListener(ACOLHIDOS_COUNT_REFRESH_EVENT, handleRefresh);
+  }, []);
 
   const handleLogout = async () => {
-    await logout()
-    navigate('/login', { replace: true })
-  }
+    await logout();
+    navigate('/login', { replace: true });
+  };
 
-  const initials = (user?.name || 'U').split(' ').filter(Boolean).slice(0, 2).map(s => s[0]).join('').toUpperCase()
-  const activeModule = NAV.find(item => isActivePath(location.pathname, item.path))
-  const activeSubmodule = activeModule?.submodules.find(item =>
-    location.pathname === item.path || (item.path !== activeModule.path && isActivePath(location.pathname, item.path)),
-  )
+  const initials = (user?.name || 'U')
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => s[0])
+    .join('')
+    .toUpperCase();
+  const activeModule = NAV.find((item) =>
+    isActivePath(location.pathname, item.path),
+  );
+  const activeSubmodule = activeModule?.submodules.find(
+    (item) =>
+      location.pathname === item.path ||
+      (item.path !== activeModule.path &&
+        isActivePath(location.pathname, item.path)),
+  );
 
   return (
     <Box
@@ -112,49 +132,82 @@ export function AppLayout() {
           width: SIDEBAR_W,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: SIDEBAR_W, boxSizing: 'border-box',
-            borderRight: '1px solid', borderColor: 'divider',
+            width: SIDEBAR_W,
+            boxSizing: 'border-box',
+            borderRight: '1px solid',
+            borderColor: 'divider',
             backgroundColor: 'background.paper',
           },
         }}
       >
-        <Box sx={{
-          height: HEADER_H,
-          minHeight: HEADER_H,
-          maxHeight: HEADER_H,
-          px: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          flexShrink: 0,
-        }}>
-          <Avatar variant="rounded" sx={{ bgcolor: 'primary.main', width: 32, height: 32, fontSize: 13, fontWeight: 700 }}>
+        <Box
+          sx={{
+            height: HEADER_H,
+            minHeight: HEADER_H,
+            maxHeight: HEADER_H,
+            px: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            flexShrink: 0,
+          }}
+        >
+          <Avatar
+            variant="rounded"
+            sx={{
+              bgcolor: 'primary.main',
+              width: 32,
+              height: 32,
+              fontSize: 13,
+              fontWeight: 700,
+            }}
+          >
             SE
           </Avatar>
           <Box>
-            <Typography sx={{ fontSize: 14, fontWeight: 600 }}>SEMAS</Typography>
+            <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+              SEMAS
+            </Typography>
             <Typography variant="caption">Casa Abrigo Temporário</Typography>
           </Box>
         </Box>
 
-        <Typography variant="caption" sx={{ px: 2, pt: 1.5, pb: 0.5, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'text.disabled' }}>
-          Operação 
+        <Typography
+          variant="caption"
+          sx={{
+            px: 2,
+            pt: 1.5,
+            pb: 0.5,
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: 'text.disabled',
+          }}
+        >
+          Operação
         </Typography>
         <List sx={{ px: 1, flex: 1 }}>
-          {NAV.map(item => {
-            const Icon = item.icon
-            const active = isActivePath(location.pathname, item.path)
+          {NAV.map((item) => {
+            const Icon = item.icon;
+            const active = isActivePath(location.pathname, item.path);
             return (
               <ListItem key={item.id} disablePadding sx={{ mb: 0.25 }}>
                 <ListItemButton
                   selected={active}
                   onClick={() => navigate(item.path)}
                   sx={{
-                    borderRadius: 1.5, py: 1,
-                    '&.Mui-selected': { bgcolor: 'primary.light', color: 'primary.main', '&:hover': { bgcolor: 'primary.light' } },
-                    '&.Mui-selected .MuiListItemIcon-root': { color: 'primary.main' },
+                    borderRadius: 1.5,
+                    py: 1,
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.light',
+                      color: 'primary.main',
+                      '&:hover': { bgcolor: 'primary.light' },
+                    },
+                    '&.Mui-selected .MuiListItemIcon-root': {
+                      color: 'primary.main',
+                    },
                   }}
                 >
                   <ListItemIcon sx={{ minWidth: 32, color: 'text.secondary' }}>
@@ -162,16 +215,21 @@ export function AppLayout() {
                   </ListItemIcon>
                   <ListItemText
                     primary={item.label}
-                    slotProps={{ primary: { sx: { fontSize: 13.5, fontWeight: 500 } } }}
+                    slotProps={{
+                      primary: { sx: { fontSize: 13.5, fontWeight: 500 } },
+                    }}
                   />
                   {item.id === 'acolhidos' && acolhidosAtivos != null && (
-                    <Typography variant="caption" sx={{ color: active ? 'primary.main' : 'text.disabled' }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ color: active ? 'primary.main' : 'text.disabled' }}
+                    >
                       {acolhidosAtivos}
                     </Typography>
                   )}
                 </ListItemButton>
               </ListItem>
-            )
+            );
           })}
         </List>
 
@@ -207,11 +265,28 @@ export function AppLayout() {
 
         <Divider />
         <Box sx={{ p: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Avatar sx={{ bgcolor: 'primary.light', color: 'primary.main', width: 30, height: 30, fontSize: 12, fontWeight: 600 }}>
+          <Avatar
+            sx={{
+              bgcolor: 'primary.light',
+              color: 'primary.main',
+              width: 30,
+              height: 30,
+              fontSize: 12,
+              fontWeight: 600,
+            }}
+          >
             {initials}
           </Avatar>
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: 500,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
               {user?.name}
             </Typography>
             <Typography variant="caption">{user?.role}</Typography>
@@ -223,17 +298,21 @@ export function AppLayout() {
       </Drawer>
 
       {/* Main */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        <Toolbar sx={{
-          height: HEADER_H,
-          minHeight: HEADER_H,
-          maxHeight: HEADER_H,
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
-          px: 3,
-          flexShrink: 0,
-        }}>
+      <Box
+        sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}
+      >
+        <Toolbar
+          sx={{
+            height: HEADER_H,
+            minHeight: HEADER_H,
+            maxHeight: HEADER_H,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            px: 3,
+            flexShrink: 0,
+          }}
+        >
           <Box
             component="nav"
             aria-label="Submódulos"
@@ -247,8 +326,8 @@ export function AppLayout() {
               pb: 0.25,
             }}
           >
-            {(activeModule?.submodules ?? []).map(item => {
-              const active = activeSubmodule?.path === item.path
+            {(activeModule?.submodules ?? []).map((item) => {
+              const active = activeSubmodule?.path === item.path;
 
               return (
                 <Button
@@ -268,12 +347,17 @@ export function AppLayout() {
                 >
                   {item.label}
                 </Button>
-              )
+              );
             })}
           </Box>
           <Box sx={{ flex: 1 }} />
           <Typography variant="caption">
-            {new Date().toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+            {new Date().toLocaleString('pt-BR', {
+              day: '2-digit',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
           </Typography>
         </Toolbar>
 
@@ -284,5 +368,5 @@ export function AppLayout() {
         </Box>
       </Box>
     </Box>
-  )
+  );
 }

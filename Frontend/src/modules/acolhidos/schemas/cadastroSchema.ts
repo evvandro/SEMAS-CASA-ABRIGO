@@ -1,9 +1,16 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const cadastroSchema = z.object({
   name: z.string().min(3, 'Informe o nome completo'),
-  cpf: z.string().refine(value => value.replace(/\D/g, '').length === 11, 'CPF deve ter 11 dígitos'),
-  birth: z.string().refine(value => value.replace(/\D/g, '').length === 8, 'Data inválida'),
+  cpf: z
+    .string()
+    .refine(
+      (value) => value.replace(/\D/g, '').length === 11,
+      'CPF deve ter 11 dígitos',
+    ),
+  birth: z
+    .string()
+    .refine((value) => value.replace(/\D/g, '').length === 8, 'Data inválida'),
   sectorId: z.string().min(1, 'Selecione um setor'),
   pcd: z.boolean(),
   gestante: z.boolean(),
@@ -11,4 +18,4 @@ export const cadastroSchema = z.object({
   idoso: z.boolean(),
   notes: z.string().optional(),
   bed: z.string().optional(),
-})
+});

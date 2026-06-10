@@ -1,11 +1,11 @@
-import { Component } from 'react'
-import type { ErrorInfo, PropsWithChildren, ReactNode } from 'react'
-import { Alert, Box, Button, Stack, Tooltip, Typography } from '@mui/material'
-import RefreshIcon from '@mui/icons-material/Refresh'
+import { Component } from 'react';
+import type { ErrorInfo, PropsWithChildren, ReactNode } from 'react';
+import { Alert, Box, Button, Stack, Tooltip, Typography } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 interface ErrorBoundaryState {
-  hasError: boolean
-  error: Error | null
+  hasError: boolean;
+  error: Error | null;
 }
 
 export class ErrorBoundary extends Component<
@@ -13,21 +13,21 @@ export class ErrorBoundary extends Component<
   ErrorBoundaryState
 > {
   constructor(props: PropsWithChildren) {
-    super(props)
-    this.state = { hasError: false, error: null }
+    super(props);
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    console.error('[ErrorBoundary]', error, info.componentStack)
+    console.error('[ErrorBoundary]', error, info.componentStack);
   }
 
   handleReset = (): void => {
-    this.setState({ hasError: false, error: null })
-  }
+    this.setState({ hasError: false, error: null });
+  };
 
   render(): ReactNode {
     if (this.state.hasError) {
@@ -69,9 +69,9 @@ export class ErrorBoundary extends Component<
             </Button>
           </Stack>
         </Box>
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }

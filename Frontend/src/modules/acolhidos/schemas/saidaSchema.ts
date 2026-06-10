@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const saidaSchema = z.object({
   // Identificação do Abrigo
@@ -12,10 +12,12 @@ export const saidaSchema = z.object({
   nome: z.string().min(1, 'Nome completo é obrigatório'),
   cpfRg: z.string().min(1, 'Documento (CPF ou RG) é obrigatório'),
   responsavelFamiliar: z.string().optional(),
-  integrantes: z.array(z.object({
-    nome: z.string(),
-    documento: z.string()
-  })),
+  integrantes: z.array(
+    z.object({
+      nome: z.string(),
+      documento: z.string(),
+    }),
+  ),
 
   // Registro de Saída
   data: z.string().min(1, 'Data é obrigatória'),
@@ -41,7 +43,7 @@ export const saidaSchema = z.object({
   // Responsável
   responsavelNome: z.string().min(1, 'Nome do responsável é obrigatório'),
   responsavelCargo: z.string().min(1, 'Cargo é obrigatório'),
-  responsavelData: z.string().min(1, 'Data é obrigatória')
-})
+  responsavelData: z.string().min(1, 'Data é obrigatória'),
+});
 
-export type SaidaPayload = z.infer<typeof saidaSchema>
+export type SaidaPayload = z.infer<typeof saidaSchema>;
