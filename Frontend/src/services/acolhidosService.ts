@@ -155,15 +155,35 @@ export function toCadastroPayload(payload: CadastroPayload) {
 
 // ── Chamadas API ──────────────────────────────────────────────────────────────
 
-export async function fetchAcolhidos(params?: { status?: 'ativos' | 'saida'; search?: string; setorId?: string }): Promise<Acolhido[]> {
-  const res = await api.get<{ data: ApiAcolhido[] }>('/acolhidos', {
+export async function fetchAcolhidos(params?: {
+  status?: 'ativos' | 'saida'
+  search?: string
+  setorId?: string
+  setor_id?: number
+  pcd?: boolean
+  gestante?: boolean
+  cronica?: boolean
+  idoso?: boolean
+  page?: number
+  per_page?: number
+}): Promise<{ data: Acolhido[]; meta?: { total: number } }> {
+  const res = await api.get<{ data: ApiAcolhido[]; meta?: { total: number } }>('/acolhidos', {
     params: {
       status: params?.status === 'saida' ? 'saida' : undefined,
       search: params?.search || undefined,
-      setor_id: params?.setorId || undefined,
+      setor_id: params?.setor_id || params?.setorId || undefined,
+      pcd: params?.pcd || undefined,
+      gestante: params?.gestante || undefined,
+      cronica: params?.cronica || undefined,
+      idoso: params?.idoso || undefined,
+      page: params?.page || undefined,
+      per_page: params?.per_page || undefined,
     },
   })
-  return res.data.data.map(toAcolhido)
+  return {
+    data: res.data.data.map(toAcolhido),
+    meta: res.data.meta,
+  }
 }
 
 export async function fetchSetores(): Promise<ApiSetor[]> {

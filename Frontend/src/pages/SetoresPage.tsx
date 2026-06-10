@@ -283,7 +283,7 @@ export function SetoresPage() {
       setError(null)
 
       try {
-        const [loadedSetores, loadedAcolhidos] = await Promise.all([
+        const [loadedSetores, acolhidosResult] = await Promise.all([
           fetchSetores(),
           fetchAcolhidos(),
         ])
@@ -291,7 +291,7 @@ export function SetoresPage() {
         if (!active) return
 
         setSetores(loadedSetores)
-        setAcolhidos(loadedAcolhidos)
+        setAcolhidos(acolhidosResult.data)
       } catch {
         if (active) setError('Erro ao carregar setores.')
       } finally {

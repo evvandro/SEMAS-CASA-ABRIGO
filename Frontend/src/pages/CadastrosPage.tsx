@@ -292,10 +292,10 @@ export function CadastrosPage() {
       setLoadError(null)
 
       try {
-        const [data, acolhidos] = await Promise.all([fetchSetores(), fetchAcolhidos()])
+        const [data, acolhidosResult] = await Promise.all([fetchSetores(), fetchAcolhidos()])
         if (active) {
           setSectors(data)
-          setActiveAcolhidos(acolhidos)
+          setActiveAcolhidos(acolhidosResult.data)
         }
       } catch {
         if (active) setLoadError('Não foi possível carregar os setores.')

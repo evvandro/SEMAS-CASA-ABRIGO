@@ -8,7 +8,7 @@ import {
   toSector,
   updateAcolhidoRecord,
 } from '../../../services/acolhidosService'
-import type { Acolhido, AcolhidoAction, AcolhidosFilters, AlertCategory, CadastroPayload, Sector } from '../types'
+import type { Acolhido, AcolhidoAction, AcolhidosFilters, CadastroPayload, Sector } from '../types'
 
 type Toast = {
   message: string
@@ -30,6 +30,9 @@ export function useAcolhidosPageState() {
   const [search, setSearch] = useState('')
   const [filters, setFilters] = useState<AcolhidosFilters>(emptyFilters)
   const [sectorId, setSectorId] = useState('')
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalRows, setTotalRows] = useState(0)
   const [fichaRow, setFichaRow] = useState<Acolhido | null>(null)
   const [labelRow, setLabelRow] = useState<Acolhido | null>(null)
   const [editRow, setEditRow] = useState<Acolhido | null>(null)
@@ -42,14 +45,39 @@ export function useAcolhidosPageState() {
     const load = async () => {
       setLoading(true)
       setError(null)
+
       try {
-        const [acolhidos, rawSetores] = await Promise.all([fetchAcolhidos(), fetchSetores()])
+        const params = {
+          search: search.trim() || undefined,
+          setor_id: sectorId ? Number(sectorId) : undefined,
+          pcd: filters.pcd || undefined,
+          gestante: filters.gestante || undefined,
+          cronica: filters.cronica || undefined,
+          idoso: filters.idoso || undefined,
+          page: page + 1,
+          per_page: pageSize,
+        }
+
+        const [acolhidosResult, rawSetores] = await Promise.all([
+          fetchAcolhidos(params),
+          fetchSetores(),
+        ])
+
         if (!active) return
+
+        const acolhidos = acolhidosResult.data
+        const occupiedBySector = acolhidos.reduce<Record<string, number>>((acc, acolhido) => {
+          if (acolhido.sectorId) acc[acolhido.sectorId] = (acc[acolhido.sectorId] ?? 0) + 1
+          return acc
+        }, {})
+
         const built = rawSetores.map(s =>
-          toSector(s, acolhidos.filter(a => a.sectorId === String(s.id)).length),
+          toSector(s, occupiedBySector[String(s.id)] ?? 0),
         )
+
         setRows(acolhidos)
         setSectors(built)
+        setTotalRows(acolhidosResult.meta?.total ?? acolhidos.length)
       } catch {
         if (active) setError('Não foi possível carregar os dados. Verifique a conexão.')
       } finally {
@@ -59,9 +87,13 @@ export function useAcolhidosPageState() {
 
     void load()
     return () => { active = false }
-  }, [])
+  }, [search, filters, sectorId, page, pageSize])
 
-  useEffect(() => {
+    useEffect(() => {
+    setPage(0)
+  }, [search, filters, sectorId])
+
+useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
@@ -84,17 +116,7 @@ export function useAcolhidosPageState() {
     [sectors],
   )
 
-  const filteredRows = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    const activeAlerts = (Object.keys(filters) as AlertCategory[]).filter(key => filters[key])
-
-    return rows.filter(row => {
-      if (query && !`${row.name} ${row.cpf} ${row.id} ${row.familyCode ?? ''} ${row.familyResponsible ?? ''}`.toLowerCase().includes(query)) return false
-      if (activeAlerts.some(alert => !row.alerts.includes(alert))) return false
-      if (sectorId && row.sectorId !== sectorId) return false
-      return true
-    })
-  }, [rows, search, filters, sectorId])
+  const filteredRows = rows
 
   const handleSave = async (payload: CadastroPayload) => {
     const newRow = await createAcolhido(payload)
@@ -122,27 +144,6 @@ export function useAcolhidosPageState() {
         return sector
       }))
     }
-  }
-
-  const removeRow = (apiId: number) => {
-    const previous = rows.find(row => row.apiId === apiId)
-
-    setRows(prev => prev.filter(row => row.apiId !== apiId))
-    if (previous) {
-      setSectors(prev => prev.map(sector => (
-        sector.id === previous.sectorId ? { ...sector, occupied: Math.max(sector.occupied - 1, 0) } : sector
-      )))
-    }
-  }
-
-  const removeRowsByFamily = (familyId: number) => {
-    const removed = rows.filter(row => row.familyId === familyId)
-
-    setRows(prev => prev.filter(row => row.familyId !== familyId))
-    setSectors(prev => prev.map(sector => {
-      const removedCount = removed.filter(row => row.sectorId === sector.id).length
-      return removedCount ? { ...sector, occupied: Math.max(sector.occupied - removedCount, 0) } : sector
-    }))
   }
 
   const getAcolhidoDetail = async (row: Acolhido) => {
@@ -218,6 +219,11 @@ export function useAcolhidosPageState() {
     filters,
     setFilters,
     sectorId,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalRows,
     setSectorId,
     fichaRow,
     setFichaRow,
@@ -230,8 +236,6 @@ export function useAcolhidosPageState() {
     toast,
     setToast,
     applyAcolhidoUpdate,
-    removeRow,
-    removeRowsByFamily,
     getAcolhidoDetail,
     openFicha,
     openLabel,
