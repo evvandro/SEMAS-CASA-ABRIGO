@@ -9,6 +9,7 @@ import GridViewIcon from '@mui/icons-material/GridView'
 import Inventory2Icon from '@mui/icons-material/Inventory2'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import SettingsIcon from '@mui/icons-material/Settings'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../auth/useAuth'
 import { api } from '../services/api'
@@ -173,6 +174,36 @@ export function AppLayout() {
             )
           })}
         </List>
+
+        {user?.role === 'admin' && (
+          <>
+            <Divider />
+            <Typography variant="caption" sx={{ px: 2, pt: 1.5, pb: 0.5, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'text.disabled' }}>
+              Administração
+            </Typography>
+            <List sx={{ px: 1 }}>
+              <ListItem disablePadding sx={{ mb: 0.25 }}>
+                <ListItemButton
+                  selected={isActivePath(location.pathname, '/admin')}
+                  onClick={() => navigate('/admin')}
+                  sx={{
+                    borderRadius: 1.5, py: 1,
+                    '&.Mui-selected': { bgcolor: 'primary.light', color: 'primary.main', '&:hover': { bgcolor: 'primary.light' } },
+                    '&.Mui-selected .MuiListItemIcon-root': { color: 'primary.main' },
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 32, color: 'text.secondary' }}>
+                    <SettingsIcon sx={{ fontSize: 18 }} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Usuários"
+                    slotProps={{ primary: { sx: { fontSize: 13.5, fontWeight: 500 } } }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </>
+        )}
 
         <Divider />
         <Box sx={{ p: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>

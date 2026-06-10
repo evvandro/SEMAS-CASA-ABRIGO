@@ -207,7 +207,7 @@ export function EstoquePage() {
     setError(null)
 
     try {
-      const [materiaisData, recebimentosData, entregasData, acolhidosData, familiasData] = await Promise.all([
+      const [materiaisData, recebimentosData, entregasData, acolhidosResult, familiasData] = await Promise.all([
         fetchMateriais(),
         fetchRecebimentos(),
         fetchEntregas(),
@@ -218,7 +218,7 @@ export function EstoquePage() {
       setMateriais(materiaisData)
       setRecebimentos(recebimentosData)
       setEntregas(entregasData)
-      setAcolhidos(acolhidosData)
+      setAcolhidos(acolhidosResult.data)
       setFamilias(familiasData)
     } catch {
       setError('Não foi possível carregar o estoque.')

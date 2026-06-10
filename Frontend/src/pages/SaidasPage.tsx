@@ -55,15 +55,15 @@ export function SaidasPage() {
   const loadData = async () => {
     setLoading(true)
     try {
-      const [pessoas, grupos, pessoasSaidas, familiasSaidas] = await Promise.all([
+      const [pessoasResult, grupos, pessoasSaidasResult, familiasSaidas] = await Promise.all([
         fetchAcolhidos(),
         fetchFamilias(),
         fetchAcolhidos({ status: 'saida' }),
         fetchFamilias({ status: 'saida' }),
       ])
-      setAcolhidos(pessoas)
+      setAcolhidos(pessoasResult.data)
       setFamilias(grupos)
-      setHistoricoAcolhidos(pessoasSaidas)
+      setHistoricoAcolhidos(pessoasSaidasResult.data)
       setHistoricoFamilias(familiasSaidas)
     } catch {
       setErrorMsg('Nao foi possivel carregar pessoas e familias ativas.')
