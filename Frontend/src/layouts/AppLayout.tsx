@@ -1,5 +1,8 @@
 import {
+  Avatar,
   Box,
+  Button,
+  Divider,
   Drawer,
   List,
   ListItem,
@@ -8,23 +11,19 @@ import {
   ListItemText,
   Toolbar,
   Typography,
-  Avatar,
-  Divider,
-  IconButton,
-  Button,
 } from '@mui/material';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import GroupIcon from '@mui/icons-material/Group';
 import GridViewIcon from '@mui/icons-material/GridView';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
-import LogoutIcon from '@mui/icons-material/Logout';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth/useAuth';
 import { api } from '../services/api';
 import { ACOLHIDOS_COUNT_REFRESH_EVENT } from '../utils/acolhidosEvents';
+import { ProfileMenu } from '../components/ProfileMenu';
 
 const SIDEBAR_W = 220;
 const HEADER_H = { xs: 72, sm: 80 };
@@ -74,7 +73,7 @@ const isActivePath = (pathname: string, path: string) =>
   pathname === path || pathname.startsWith(`${path}/`);
 
 export function AppLayout() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [acolhidosAtivos, setAcolhidosAtivos] = useState<number | null>(null);
@@ -96,18 +95,6 @@ export function AppLayout() {
     return () => window.removeEventListener(ACOLHIDOS_COUNT_REFRESH_EVENT, handleRefresh);
   }, []);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login', { replace: true });
-  };
-
-  const initials = (user?.name || 'U')
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((s) => s[0])
-    .join('')
-    .toUpperCase();
   const activeModule = NAV.find((item) =>
     isActivePath(location.pathname, item.path),
   );
@@ -264,36 +251,8 @@ export function AppLayout() {
         )}
 
         <Divider />
-        <Box sx={{ p: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Avatar
-            sx={{
-              bgcolor: 'primary.light',
-              color: 'primary.main',
-              width: 30,
-              height: 30,
-              fontSize: 12,
-              fontWeight: 600,
-            }}
-          >
-            {initials}
-          </Avatar>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              sx={{
-                fontSize: 13,
-                fontWeight: 500,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {user?.name}
-            </Typography>
-            <Typography variant="caption">{user?.role}</Typography>
-          </Box>
-          <IconButton size="small" onClick={handleLogout} aria-label="Sair">
-            <LogoutIcon sx={{ fontSize: 16 }} />
-          </IconButton>
+        <Box sx={{ p: 1.5 }}>
+          <ProfileMenu variant="card" />
         </Box>
       </Drawer>
 

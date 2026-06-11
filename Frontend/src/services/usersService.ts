@@ -38,6 +38,20 @@ export async function deleteUser(userId: number): Promise<void> {
 }
 
 export async function updateUser(userId: number, payload: Partial<CreateUserPayload>): Promise<AuthUser> {
-  const res = await api.put<UserResponse>(`/users/${userId}`, payload)
+  const res = await api.put<UserResponse>(`/admin/users/${userId}`, payload)
+  return res.data.data.user
+}
+
+export interface UpdateMyProfilePayload {
+  name?: string
+  email?: string
+  phone?: string | null
+  current_password?: string
+  password?: string
+  password_confirmation?: string
+}
+
+export async function updateMyProfile(payload: UpdateMyProfilePayload): Promise<AuthUser> {
+  const res = await api.patch<UserResponse>('/me', payload)
   return res.data.data.user
 }

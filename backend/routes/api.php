@@ -18,6 +18,7 @@ Route::middleware('throttle:login')->post('/login', [AuthController::class, 'log
 
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/me', [AuthController::class, 'me']);
+    Route::patch('/me', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::middleware('role:admin,tecnico')->group(function (): void {

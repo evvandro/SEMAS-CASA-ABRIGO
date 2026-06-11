@@ -22,6 +22,7 @@ interface AuthContextValue {
   isLoading: boolean;
   login: (payload: LoginPayload) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (user: AuthUser) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -89,6 +90,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setUser(nextUser);
   }, []);
 
+  const updateUser = useCallback((nextUser: AuthUser): void => {
+    setUser(nextUser);
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(nextUser));
+  }, []);
+
   const logout = useCallback(async (): Promise<void> => {
     try {
       await api.post('/logout');
@@ -105,8 +111,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isLoading,
       login,
       logout,
+      updateUser,
     }),
-    [user, token, isLoading, login, logout],
+    [user, token, isLoading, login, logout, updateUser],
   );
 
   if (isLoading) {

@@ -78,6 +78,47 @@ class AuthController extends Controller
     }
 
     /**
+     * Update the authenticated user's profile.
+     */
+    public function update(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'email' => ['sometimes', 'required', 'email', 'max:255', "unique:users,email,{$user->id}"],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'current_password' => ['sometimes', 'required', 'string', 'min:8'],
+            'password' => ['sometimes', 'required_with:current_password', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        if (array_key_exists('current_password', $validated) && ! Hash::check($validated['current_password'], $user->password)) {
+            return response()->json([
+                'message' => 'Senha atual incorreta.',
+            ], 422);
+        }
+
+        if (array_key_exists('password', $validated)) {
+            $user->password = Hash::make($validated['password']);
+            unset($validated['password']);
+            unset($validated['password_confirmation']);
+        }
+
+        unset($validated['current_password']);
+
+        $user->fill($validated);
+        $user->save();
+
+        return response()->json([
+            'message' => 'Perfil atualizado com sucesso.',
+            'data' => [
+                'user' => new UserResource($user->fresh()),
+            ],
+        ]);
+    }
+
+    /**
      * Revoke current API token.
      */
     public function logout(Request $request): JsonResponse
