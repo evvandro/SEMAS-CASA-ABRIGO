@@ -1,9 +1,15 @@
-import CloseIcon from '@mui/icons-material/Close'
-import { Box, IconButton, LinearProgress, Stack, Typography } from '@mui/material'
-import { useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
+import CloseIcon from '@mui/icons-material/Close';
+import {
+  Box,
+  IconButton,
+  LinearProgress,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
-const TOAST_DURATION = 5000
+const TOAST_DURATION = 5000;
 
 const toastVariantStyles = {
   success: {
@@ -20,58 +26,63 @@ const toastVariantStyles = {
     text: '#991b1b',
     description: '#5f2121',
   },
-} as const
+} as const;
 
-type NotificationType = 'success' | 'error'
+type NotificationType = 'success' | 'error';
 
 interface NotificationProps {
-  id: string | number
-  title: string
-  description?: string
-  variant: NotificationType
+  id: string | number;
+  title: string;
+  description?: string;
+  variant: NotificationType;
 }
 
-export default function NotificationToast({ id, title, description, variant }: NotificationProps) {
-  const [remaining, setRemaining] = useState(TOAST_DURATION)
-  const [paused, setPaused] = useState(false)
-  const remainingRef = useRef(TOAST_DURATION)
-  const lastTickRef = useRef<number>(0)
+export default function NotificationToast({
+  id,
+  title,
+  description,
+  variant,
+}: NotificationProps) {
+  const [remaining, setRemaining] = useState(TOAST_DURATION);
+  const [paused, setPaused] = useState(false);
+  const remainingRef = useRef(TOAST_DURATION);
+  const lastTickRef = useRef<number>(0);
 
-  const styles = toastVariantStyles[variant]
+  const styles = toastVariantStyles[variant];
 
   useEffect(() => {
     if (!lastTickRef.current) {
-      lastTickRef.current = Date.now()
+      lastTickRef.current = Date.now();
     }
 
     if (remainingRef.current <= 0) {
-      toast.dismiss(id)
-      return
+      toast.dismiss(id);
+      return;
     }
 
     if (paused) {
-      lastTickRef.current = Date.now()
-      return
+      lastTickRef.current = Date.now();
+      return;
     }
 
     const interval = window.setInterval(() => {
-      const now = Date.now()
-      const delta = now - lastTickRef.current
-      lastTickRef.current = now
-      remainingRef.current = Math.max(remainingRef.current - delta, 0)
-      setRemaining(remainingRef.current)
+      const now = Date.now();
+      const delta = now - lastTickRef.current;
+      lastTickRef.current = now;
+      remainingRef.current = Math.max(remainingRef.current - delta, 0);
+      setRemaining(remainingRef.current);
 
       if (remainingRef.current <= 0) {
-        toast.dismiss(id)
+        toast.dismiss(id);
       }
-    }, 40)
+    }, 40);
 
     return () => {
-      window.clearInterval(interval)
-    }
-  }, [id, paused])
+      window.clearInterval(interval);
+    };
+  }, [id, paused]);
 
-  const progress = Math.max((remaining / TOAST_DURATION) * 100, 0)
+  const progress = Math.max((remaining / TOAST_DURATION) * 100, 0);
 
   return (
     <Box
@@ -88,13 +99,31 @@ export default function NotificationToast({ id, title, description, variant }: N
       }}
     >
       <Stack direction="row" spacing={1} alignItems="flex-start">
-        <Box sx={{ width: 10, height: 10, borderRadius: 1, bgcolor: styles.accent, mt: 0.5 }} />
+        <Box
+          sx={{
+            width: 10,
+            height: 10,
+            borderRadius: 1,
+            bgcolor: styles.accent,
+            mt: 0.5,
+          }}
+        />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: styles.text }}>
+          <Typography
+            variant="subtitle2"
+            sx={{ fontWeight: 700, color: styles.text }}
+          >
             {title}
           </Typography>
           {description ? (
-            <Typography variant="body2" sx={{ color: styles.description, mt: 0.5, whiteSpace: 'pre-line' }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: styles.description,
+                mt: 0.5,
+                whiteSpace: 'pre-line',
+              }}
+            >
               {description}
             </Typography>
           ) : null}
@@ -123,5 +152,5 @@ export default function NotificationToast({ id, title, description, variant }: N
         />
       </Box>
     </Box>
-  )
+  );
 }

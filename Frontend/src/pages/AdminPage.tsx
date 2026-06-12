@@ -19,6 +19,7 @@ import {
   Typography,
   Container,
   IconButton,
+  InputAdornment,
 } from '@mui/material'
 import { useState, useEffect } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -26,6 +27,8 @@ import EditIcon from '@mui/icons-material/Edit'
 import { createUser, listUsers, deleteUser, updateUser } from '../services/usersService'
 import type { AuthUser } from '../types/auth'
 import type { UserRole } from '../types/auth'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
 export function AdminPage() {
   const [users, setUsers] = useState<AuthUser[]>([])
@@ -40,6 +43,7 @@ export function AdminPage() {
     password: '',
     role: 'tecnico' as UserRole,
   })
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     loadUsers()
@@ -88,6 +92,7 @@ export function AdminPage() {
       password: '',
       role: 'tecnico',
     })
+    setShowPassword(false)
   }
 
   const handleSubmit = async () => {
@@ -265,11 +270,28 @@ export function AdminPage() {
           <TextField
             fullWidth
             label="Senha"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             margin="normal"
             helperText={editingUser ? 'Deixe em branco para não alterar' : 'Campo obrigatório'}
+            slotProps={{
+               htmlInput: {
+                autoComplete: 'new-password',
+                name: 'new-user-password',
+              },
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }
+            }}
           />
           <TextField
             fullWidth
