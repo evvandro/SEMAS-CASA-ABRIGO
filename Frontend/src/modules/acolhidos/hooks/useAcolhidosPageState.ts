@@ -8,7 +8,13 @@ import {
   toSector,
   updateAcolhidoRecord,
 } from '../../../services/acolhidosService';
-import type { Acolhido, AcolhidoAction, AcolhidosFilters, CadastroPayload, Sector } from '../types';
+import type {
+  Acolhido,
+  AcolhidoAction,
+  AcolhidosFilters,
+  CadastroPayload,
+  Sector,
+} from '../types';
 
 type Toast = {
   message: string;
@@ -66,10 +72,14 @@ export function useAcolhidosPageState() {
         if (!active) return;
 
         const acolhidos = acolhidosResult.data;
-        const occupiedBySector = acolhidos.reduce<Record<string, number>>((acc, acolhido) => {
-          if (acolhido.sectorId) acc[acolhido.sectorId] = (acc[acolhido.sectorId] ?? 0) + 1;
-          return acc;
-        }, {});
+        const occupiedBySector = acolhidos.reduce<Record<string, number>>(
+          (acc, acolhido) => {
+            if (acolhido.sectorId)
+              acc[acolhido.sectorId] = (acc[acolhido.sectorId] ?? 0) + 1;
+            return acc;
+          },
+          {},
+        );
 
         const built = rawSetores.map((s) =>
           toSector(s, occupiedBySector[String(s.id)] ?? 0),
@@ -87,7 +97,9 @@ export function useAcolhidosPageState() {
     };
 
     void load();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [search, filters, sectorId, page, pageSize]);
 
   useEffect(() => {

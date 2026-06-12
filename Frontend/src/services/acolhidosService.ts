@@ -180,19 +180,22 @@ export async function fetchAcolhidos(params?: {
   page?: number;
   per_page?: number;
 }): Promise<{ data: Acolhido[]; meta?: { total: number } }> {
-  const res = await api.get<{ data: ApiAcolhido[]; meta?: { total: number } }>('/acolhidos', {
-    params: {
-      status: params?.status === 'saida' ? 'saida' : undefined,
-      search: params?.search || undefined,
-      setor_id: params?.setor_id || params?.setorId || undefined,
-      pcd: params?.pcd || undefined,
-      gestante: params?.gestante || undefined,
-      cronica: params?.cronica || undefined,
-      idoso: params?.idoso || undefined,
-      page: params?.page || undefined,
-      per_page: params?.per_page || undefined,
+  const res = await api.get<{ data: ApiAcolhido[]; meta?: { total: number } }>(
+    '/acolhidos',
+    {
+      params: {
+        status: params?.status === 'saida' ? 'saida' : undefined,
+        search: params?.search || undefined,
+        setor_id: params?.setor_id || params?.setorId || undefined,
+        pcd: params?.pcd || undefined,
+        gestante: params?.gestante || undefined,
+        cronica: params?.cronica || undefined,
+        idoso: params?.idoso || undefined,
+        page: params?.page || undefined,
+        per_page: params?.per_page || undefined,
+      },
     },
-  });
+  );
   return {
     data: res.data.data.map(toAcolhido),
     meta: res.data.meta,

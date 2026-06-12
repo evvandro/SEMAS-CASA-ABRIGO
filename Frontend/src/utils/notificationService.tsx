@@ -1,11 +1,22 @@
-import { toast } from 'sonner'
-import NotificationToast from './NotificationToast'
+import { toast } from 'sonner';
+import NotificationToast from './NotificationToast';
 
-type NotificationType = 'success' | 'error'
+type NotificationType = 'success' | 'error';
 
-function showToast(type: NotificationType, title: string, description?: string) {
+function showToast(
+  type: NotificationType,
+  title: string,
+  description?: string,
+) {
   toast.custom(
-    (id) => <NotificationToast id={id} title={title} description={description} variant={type} />,
+    (id) => (
+      <NotificationToast
+        id={id}
+        title={title}
+        description={description}
+        variant={type}
+      />
+    ),
     {
       duration: 0,
       closeButton: false,
@@ -16,13 +27,13 @@ function showToast(type: NotificationType, title: string, description?: string) 
         boxShadow: 'none',
       },
     },
-  )
+  );
 }
 
 export function showSuccessToast(title: string, description?: string) {
-  showToast('success', title, description)
+  showToast('success', title, description);
 }
 
 export function showErrorToast(title: string, description?: string) {
-  showToast('error', title, description)
+  showToast('error', title, description);
 }
