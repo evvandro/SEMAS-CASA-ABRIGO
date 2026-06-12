@@ -108,18 +108,6 @@ export function AppLayout() {
       window.removeEventListener(ACOLHIDOS_COUNT_REFRESH_EVENT, handleRefresh);
   }, []);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login', { replace: true });
-  };
-
-  const initials = (user?.name || 'U')
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((s) => s[0])
-    .join('')
-    .toUpperCase();
   const navigationItems = user?.role === 'admin' ? [...NAV, ADMIN_NAV] : NAV;
   const activeModule = navigationItems.find((item) =>
     isActivePath(location.pathname, item.path),
