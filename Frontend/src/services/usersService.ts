@@ -10,38 +10,33 @@ export interface CreateUserPayload {
 
 export interface UserResponse {
   message: string;
-  data: {
-    user: AuthUser;
-  };
+  data: AuthUser;
 }
 
 export interface UsersListResponse {
   message: string;
-  data: {
-    users: AuthUser[];
-    total: number;
-  };
+  data: AuthUser[];
 }
 
 export async function createUser(
   payload: CreateUserPayload,
 ): Promise<AuthUser> {
-  const res = await api.post<UserResponse>('/users', payload);
-  return res.data.data.user;
+  const res = await api.post<UserResponse>('/admin/users', payload);
+  return res.data.data;
 }
 
 export async function listUsers(): Promise<AuthUser[]> {
-  const res = await api.get<UsersListResponse>('/users');
-  return res.data.data.users;
+  const res = await api.get<UsersListResponse>('/admin/users');
+  return res.data.data;
 }
 
 export async function deleteUser(userId: number): Promise<void> {
-  await api.delete(`/users/${userId}`);
+  await api.delete(`/admin/users/${userId}`);
 }
 
 export async function updateUser(userId: number, payload: Partial<CreateUserPayload>): Promise<AuthUser> {
-  const res = await api.put<UserResponse>(`/admin/users/${userId}`, payload)
-  return res.data.data.user
+  const res = await api.patch<UserResponse>(`/admin/users/${userId}`, payload)
+  return res.data.data
 }
 
 export interface UpdateMyProfilePayload {
@@ -54,6 +49,6 @@ export interface UpdateMyProfilePayload {
 }
 
 export async function updateMyProfile(payload: UpdateMyProfilePayload): Promise<AuthUser> {
-  const res = await api.patch<UserResponse>('/me', payload)
+  const res = await api.patch<{ data: { user: AuthUser } }>('/me', payload)
   return res.data.data.user
 }
