@@ -17,14 +17,17 @@ interface Props {
 
 type BedState = 'priority' | 'occupied' | 'blocked' | 'free';
 
+const BRAND_TEXT = '#12313a';
+const BRAND_SURFACE = '#f6f8f8';
+
 const cellBg = (
   active: boolean,
   pct: number,
   usableCapacity: number,
   occupied: number,
 ) => {
-  if (!active) return '#F8FAFC';
-  if (usableCapacity === 0 && occupied === 0) return '#F8FAFC';
+  if (!active) return BRAND_SURFACE;
+  if (usableCapacity === 0 && occupied === 0) return BRAND_SURFACE;
   if (pct >= 95) return '#FEE2E2';
   if (pct >= 80) return '#FEF3C7';
   if (pct >= 50) return '#F0FDF4';
@@ -261,7 +264,7 @@ export function SectorHeatmap({
                 }}
               >
                 <Typography variant="caption">
-                  <strong style={{ color: '#0F172A' }}>{s.occupied}</strong> /{' '}
+                  <strong style={{ color: BRAND_TEXT }}>{s.occupied}</strong> /{' '}
                   {s.usableCapacity} vagas úteis
                 </Typography>
                 <Typography sx={{ fontWeight: 600, fontSize: 13 }}>

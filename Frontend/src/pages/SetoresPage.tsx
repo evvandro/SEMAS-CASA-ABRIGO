@@ -53,6 +53,8 @@ const PRESET_COLORS = [
 ];
 
 const MAX_PREVIEW_BEDS = 24;
+const BRAND_TEXT = '#12313a';
+const BRAND_SURFACE = '#f6f8f8';
 
 type SectorStatusKey =
   | 'available'
@@ -129,14 +131,14 @@ const statusMeta: Record<
   undefined: {
     label: 'Sem capacidade',
     helper: 'Capacidade ainda não definida',
-    color: '#64748B',
+    color: '#60767c',
     bg: '#F1F5F9',
     border: '#E2E8F0',
   },
 };
 
 const cellBg = (status: SectorStatusKey, pct: number) => {
-  if (status === 'blocked') return '#F8FAFC';
+  if (status === 'blocked') return BRAND_SURFACE;
   if (pct >= 95) return '#FEE2E2';
   if (pct >= 80) return '#FEF3C7';
   if (pct >= 50) return '#F0FDF4';
@@ -781,8 +783,8 @@ export function SetoresPage() {
                     }}
                   >
                     <Typography variant="caption">
-                      <strong style={{ color: '#0F172A' }}>{occupied}</strong> /{' '}
-                      {capacity || 0} leitos
+                      <strong style={{ color: BRAND_TEXT }}>{occupied}</strong>{' '}
+                      / {capacity || 0} leitos
                       {hiddenBeds > 0 ? ` · +${hiddenBeds}` : ''}
                     </Typography>
                     <Typography sx={{ fontWeight: 600, fontSize: 13 }}>
