@@ -1,21 +1,30 @@
-// Frontend/src/theme.ts
-// Substitui o theme.ts atual. Slate + Indigo, 0 sombras, bordas 1px.
-
 import { createTheme } from '@mui/material';
+
+const brand = {
+  deep: '#0f4f58',
+  main: '#176f7c',
+  dark: '#125b66',
+  light: '#e4f4f1',
+  accent: '#91d4c7',
+  text: '#12313a',
+  muted: '#60767c',
+  surface: '#f6f8f8',
+  divider: '#dce7e7',
+};
 
 export const appTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#4F46E5',
-      dark: '#4338CA',
-      light: '#EEF2FF',
+      main: brand.main,
+      dark: brand.dark,
+      light: brand.light,
       contrastText: '#fff',
     },
-    secondary: { main: '#0F172A' },
-    background: { default: '#F8FAFC', paper: '#FFFFFF' },
-    divider: '#E5E7EB',
-    text: { primary: '#0F172A', secondary: '#64748B' },
+    secondary: { main: brand.deep },
+    background: { default: brand.surface, paper: '#FFFFFF' },
+    divider: brand.divider,
+    text: { primary: brand.text, secondary: brand.muted },
     error: { main: '#DC2626' },
     warning: { main: '#EA580C' },
     success: { main: '#16A34A' },
@@ -33,31 +42,40 @@ export const appTheme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        body: { backgroundColor: '#F8FAFC' },
+        body: { backgroundColor: brand.surface },
       },
     },
     MuiPaper: {
       defaultProps: { elevation: 0 },
       styleOverrides: {
-        root: { backgroundImage: 'none', border: '1px solid #E5E7EB' },
+        root: { backgroundImage: 'none', border: `1px solid ${brand.divider}` },
       },
     },
     MuiAppBar: {
       defaultProps: { elevation: 0, color: 'inherit' },
       styleOverrides: {
-        root: { borderBottom: '1px solid #E5E7EB', backgroundColor: '#fff' },
+        root: {
+          borderBottom: `1px solid ${brand.divider}`,
+          backgroundColor: '#fff',
+        },
       },
     },
     MuiButton: {
       defaultProps: { disableElevation: true },
-      styleOverrides: { root: { borderRadius: 6, fontWeight: 500 } },
+      styleOverrides: {
+        root: { borderRadius: 6, fontWeight: 700 },
+        containedPrimary: {
+          '&:hover': { backgroundColor: brand.dark },
+        },
+      },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
           borderRadius: 6,
-          '& fieldset': { borderColor: '#E5E7EB' },
-          '&:hover fieldset': { borderColor: '#D1D5DB' },
+          '& fieldset': { borderColor: brand.divider },
+          '&:hover fieldset': { borderColor: '#c7d8d8' },
+          '&.Mui-focused fieldset': { borderColor: brand.main },
         },
       },
     },
@@ -68,11 +86,11 @@ export const appTheme = createTheme({
           fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '0.04em',
-          color: '#64748B',
-          backgroundColor: '#F9FAFB',
-          borderBottom: '1px solid #E5E7EB',
+          color: brand.muted,
+          backgroundColor: brand.surface,
+          borderBottom: `1px solid ${brand.divider}`,
         },
-        body: { borderBottom: '1px solid #F1F5F9' },
+        body: { borderBottom: '1px solid #edf3f3' },
       },
     },
     MuiChip: {
@@ -83,12 +101,12 @@ export const appTheme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          backgroundColor: '#0F172A',
+          backgroundColor: brand.text,
           fontSize: 11,
           fontWeight: 500,
           padding: '4px 8px',
         },
-        arrow: { color: '#0F172A' },
+        arrow: { color: brand.text },
       },
     },
     MuiTabs: { styleOverrides: { indicator: { height: 2 } } },
