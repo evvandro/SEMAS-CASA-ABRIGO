@@ -44,8 +44,8 @@ import { listUsers, updateMyProfile } from '../services/usersService';
 import { showErrorToast, showSuccessToast } from '../utils/notificationService';
 import type { AuthUser } from '../types/auth';
 
-const MENU_BACKGROUND = '#1E1E1E';
-const INACTIVE_TEXT = 'rgba(255,255,255,0.72)';
+const MENU_BACKGROUND = 'background.paper';
+const INACTIVE_TEXT = 'text.secondary';
 
 const PROFILE_OPTIONS = [
   {
@@ -388,13 +388,15 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
       sx={{
         width: 320,
         bgcolor: MENU_BACKGROUND,
-        color: 'common.white',
+        color: 'text.primary',
         borderRadius: 2,
-        boxShadow: '0 32px 90px rgba(0,0,0,0.24)',
+        border: '1px solid',
+        borderColor: 'divider',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
         overflow: 'hidden',
       }}
     >
-      <Box sx={{ p: 2.25, pb: 1.5 }}>
+      <Box sx={{ p: 2, pb: 1.5 }}>
         <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1.5 }}>
           <Avatar sx={{ bgcolor: 'primary.main', width: 42, height: 42, fontWeight: 700 }}>
             {getInitials(user?.name ?? 'U')}
@@ -415,7 +417,7 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
         </Typography>
       </Box>
 
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+      <Divider />
 
       <List disablePadding>
         {PROFILE_OPTIONS.map((option) => {
@@ -428,7 +430,7 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
               sx={{
                 py: 1.5,
                 px: 2.25,
-                '&:hover': { bgcolor: 'rgba(255,255,255,0.06)' },
+                '&:hover': { bgcolor: 'action.hover' },
               }}
             >
               <ListItemIcon sx={{ minWidth: 36, color: 'primary.main' }}>
@@ -446,16 +448,16 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
         })}
       </List>
 
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+      <Divider />
 
-      <Box sx={{ p: 2.25 }}>
+      <Box sx={{ p: 2 }}>
         <Button
           variant="outlined"
           fullWidth
-          color="inherit"
+          color="error"
           startIcon={<LogoutIcon />}
           onClick={handleLogout}
-          sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.12)' }}
+          sx={{ borderRadius: 1.5 }}
         >
           Sair da conta
         </Button>
@@ -561,12 +563,14 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
         PaperProps={{
           sx: {
             bgcolor: MENU_BACKGROUND,
-            color: 'common.white',
+            color: 'text.primary',
             borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'divider',
           },
         }}
       >
-        <DialogTitle sx={{ color: 'common.white' }}>Trocar perfil</DialogTitle>
+        <DialogTitle>Trocar perfil</DialogTitle>
         <DialogContent dividers>
           <Typography variant="body2" sx={{ color: INACTIVE_TEXT, mb: 2 }}>
             Selecione um perfil existente ou entre com outro usuário.
@@ -587,7 +591,7 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                 sx={{
                   mb: 1,
                   borderRadius: 1.5,
-                  bgcolor: selectedProfileId === profile.id ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
+                  bgcolor: selectedProfileId === profile.id ? 'action.selected' : 'action.hover',
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
@@ -600,7 +604,7 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                   secondaryTypographyProps={{ color: INACTIVE_TEXT, fontSize: 12 }}
                 />
                 {profile.id === user.id && (
-                  <Chip label="Ativo" size="small" sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.2)' }} />
+                  <Chip label="Ativo" size="small" color="primary" variant="outlined" />
                 )}
               </ListItemButton>
             ))}
@@ -619,10 +623,10 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
             <Button
               variant="outlined"
               fullWidth
-              color="inherit"
+              color="primary"
               onClick={handleConfirmProfileSwitch}
               disabled={selectedProfileId === user.id || profilesLoading}
-              sx={{ borderRadius: 2, color: 'common.white', borderColor: 'rgba(255,255,255,0.18)' }}
+              sx={{ borderRadius: 2 }}
             >
               Entrar em outro perfil
             </Button>
@@ -643,12 +647,14 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
         PaperProps={{
           sx: {
             bgcolor: MENU_BACKGROUND,
-            color: 'common.white',
+            color: 'text.primary',
             borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'divider',
           },
         }}
       >
-        <DialogTitle sx={{ color: 'common.white' }}>Editar perfil</DialogTitle>
+        <DialogTitle>Editar perfil</DialogTitle>
         <DialogContent dividers>
           <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={2}>
@@ -742,12 +748,14 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
         PaperProps={{
           sx: {
             bgcolor: MENU_BACKGROUND,
-            color: 'common.white',
+            color: 'text.primary',
             borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'divider',
           },
         }}
       >
-        <DialogTitle sx={{ color: 'common.white' }}>Configurações</DialogTitle>
+        <DialogTitle>Configurações</DialogTitle>
         <DialogContent dividers>
           <Stack spacing={3}>
             <Box>
@@ -773,7 +781,7 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                 <Select
                   value={settings.primaryColor}
                   onChange={(event) => setSettings((prev) => ({ ...prev, primaryColor: event.target.value as ProfileSettingsState['primaryColor'] }))}
-                  sx={{ minWidth: 160, bgcolor: 'rgba(255,255,255,0.04)', borderRadius: 1 }}
+                  sx={{ minWidth: 160, bgcolor: 'action.hover', borderRadius: 1 }}
                 >
                   <MenuItem value="Ciano">Ciano</MenuItem>
                   <MenuItem value="Verde">Verde</MenuItem>
@@ -840,7 +848,7 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
               <Select
                 value={settings.dataVisibility}
                 onChange={(event) => setSettings((prev) => ({ ...prev, dataVisibility: event.target.value as ProfileSettingsState['dataVisibility'] }))}
-                sx={{ minWidth: 180, bgcolor: 'rgba(255,255,255,0.04)', borderRadius: 1, mt: 1 }}
+                sx={{ minWidth: 180, bgcolor: 'action.hover', borderRadius: 1, mt: 1 }}
               >
                 <MenuItem value="Público">Público</MenuItem>
                 <MenuItem value="Privado">Privado</MenuItem>
@@ -855,7 +863,8 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                 variant="outlined"
                 fullWidth
                 onClick={() => showSuccessToast('Sessões encerradas', 'Sessões em outros dispositivos foram encerradas.')}
-                sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.18)' }}
+                sx={{ borderColor: 'divider' }}
+                color="inherit"
               >
                 Encerrar sessão em outros dispositivos
               </Button>
@@ -880,12 +889,14 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
         PaperProps={{
           sx: {
             bgcolor: MENU_BACKGROUND,
-            color: 'common.white',
+            color: 'text.primary',
             borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'divider',
           },
         }}
       >
-        <DialogTitle sx={{ color: 'common.white' }}>Alterar senha</DialogTitle>
+        <DialogTitle>Alterar senha</DialogTitle>
         <DialogContent dividers>
           <Stack spacing={2}>
             {dialogError && (
