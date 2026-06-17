@@ -47,7 +47,7 @@ class SetorController extends Controller
 
     public function destroy(Setor $setor): JsonResponse
     {
-        if ($setor->acolhidos()->where('ativo', true)->exists()) {
+        if ($setor->acolhidos()->whereNull('data_saida')->exists()) {
             return response()->json([
                 'message' => 'Setor possui acolhidos ativos e não pode ser removido.',
             ], 422);
