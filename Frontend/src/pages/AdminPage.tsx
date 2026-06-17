@@ -29,14 +29,65 @@ import type { AuthUser } from '../types/auth'
 import type { UserRole } from '../types/auth'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import { showSuccessToast } from '../utils/notificationService'
+
+const PASSWORD_REQUIREMENTS =
+  'A senha deve ter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.'
+
+type UserFieldErrors = Partial<Record<'name' | 'email' | 'password' | 'role', string>>
+
+function getUserValidationErrors(error: unknown): UserFieldErrors {
+  const validationErrors = (
+    error as {
+      response?: {
+        data?: { errors?: Record<string, string[]> };
+      };
+    }
+  ).response?.data?.errors
+
+  if (!validationErrors) {
+    return {}
+  }
+
+  return Object.entries(validationErrors).reduce<UserFieldErrors>(
+    (errors, [field, messages]) => {
+      if (field === 'name' || field === 'email' || field === 'password' || field === 'role') {
+        errors[field] = messages[0]
+      }
+
+      return errors
+    },
+    {},
+  )
+}
+
+function getUserErrorMessage(error: unknown): string {
+  const response = (
+    error as {
+      response?: {
+        data?: { message?: string; errors?: Record<string, string[]> };
+      };
+    }
+  ).response
+  const validationErrors = response?.data?.errors
+  const firstValidationMessage = validationErrors
+    ? Object.values(validationErrors)[0]?.[0]
+    : undefined
+
+  return (
+    firstValidationMessage ??
+    response?.data?.message ??
+    (error instanceof Error ? error.message : 'Erro ao processar usuário')
+  )
+}
 
 export function AdminPage() {
   const [users, setUsers] = useState<AuthUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
   const [openDialog, setOpenDialog] = useState(false)
   const [editingUser, setEditingUser] = useState<AuthUser | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<UserFieldErrors>({})
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -55,14 +106,29 @@ export function AdminPage() {
       setError(null)
       const loadedUsers = await listUsers()
       setUsers(loadedUsers)
-    } catch {
-      setError('Não foi possível carregar os usuários')
+    } catch (err) {
+      const message = getUserErrorMessage(err)
+      setError(message)
     } finally {
       setLoading(false)
     }
   }
 
+  const clearFieldError = (field: keyof UserFieldErrors) => {
+    setFieldErrors((prev) => {
+      if (!prev[field]) {
+        return prev
+      }
+
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
   const handleOpenDialog = (user?: AuthUser) => {
+    setError(null)
+    setFieldErrors({})
     if (user) {
       setEditingUser(user)
       setFormData({
@@ -93,23 +159,28 @@ export function AdminPage() {
       role: 'tecnico',
     })
     setShowPassword(false)
+    setFieldErrors({})
   }
 
   const handleSubmit = async () => {
     try {
       setError(null)
+      setFieldErrors({})
 
       // Validações
       if (!formData.name.trim()) {
-        setError('Nome é obrigatório')
+        const message = 'Nome é obrigatório'
+        setFieldErrors({ name: message })
         return
       }
       if (!formData.email.trim()) {
-        setError('Email é obrigatório')
+        const message = 'Informe o e-mail.'
+        setFieldErrors({ email: message })
         return
       }
       if (!editingUser && !formData.password.trim()) {
-        setError('Senha é obrigatória')
+        const message = PASSWORD_REQUIREMENTS
+        setFieldErrors({ password: message })
         return
       }
 
@@ -124,17 +195,20 @@ export function AdminPage() {
           updatePayload.password = formData.password
         }
         await updateUser(editingUser.id, updatePayload)
-        setSuccess('Usuário atualizado com sucesso!')
+        showSuccessToast('Cadastro concluído', 'Usuário atualizado com sucesso.')
       } else {
         // Criar novo usuário
         await createUser(formData)
-        setSuccess('Usuário criado com sucesso!')
+        showSuccessToast('Cadastro concluído', 'Usuário cadastrado com sucesso.')
       }
 
       handleCloseDialog()
       await loadUsers()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar usuário')
+      const message = getUserErrorMessage(err)
+      const validationErrors = getUserValidationErrors(err)
+      setFieldErrors(validationErrors)
+      setError(Object.keys(validationErrors).length > 0 ? null : message)
     }
   }
 
@@ -146,10 +220,10 @@ export function AdminPage() {
     try {
       setError(null)
       await deleteUser(userId)
-      setSuccess('Usuário deletado com sucesso!')
       await loadUsers()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao deletar usuário')
+      const message = getUserErrorMessage(err)
+      setError(message)
     }
   }
 
@@ -163,12 +237,6 @@ export function AdminPage() {
         {error && (
           <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
             {error}
-          </Alert>
-        )}
-
-        {success && (
-          <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess(null)}>
-            {success}
           </Alert>
         )}
 
@@ -256,7 +324,12 @@ export function AdminPage() {
             fullWidth
             label="Nome"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={(e) => {
+              setFormData({ ...formData, name: e.target.value })
+              clearFieldError('name')
+            }}
+            error={!!fieldErrors.name}
+            helperText={fieldErrors.name}
             margin="normal"
           />
           <TextField
@@ -264,7 +337,12 @@ export function AdminPage() {
             label="Email"
             type="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) => {
+              setFormData({ ...formData, email: e.target.value })
+              clearFieldError('email')
+            }}
+            error={!!fieldErrors.email}
+            helperText={fieldErrors.email}
             margin="normal"
           />
           <TextField
@@ -272,9 +350,13 @@ export function AdminPage() {
             label="Senha"
             type={showPassword ? 'text' : 'password'}
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={(e) => {
+              setFormData({ ...formData, password: e.target.value })
+              clearFieldError('password')
+            }}
             margin="normal"
-            helperText={editingUser ? 'Deixe em branco para não alterar' : 'Campo obrigatório'}
+            error={!!fieldErrors.password}
+            helperText={fieldErrors.password ?? PASSWORD_REQUIREMENTS}
             slotProps={{
                htmlInput: {
                 autoComplete: 'new-password',
@@ -298,7 +380,12 @@ export function AdminPage() {
             select
             label="Função"
             value={formData.role}
-            onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
+            onChange={(e) => {
+              setFormData({ ...formData, role: e.target.value as UserRole })
+              clearFieldError('role')
+            }}
+            error={!!fieldErrors.role}
+            helperText={fieldErrors.role}
             margin="normal"
           >
             <MenuItem value="admin">Administrador</MenuItem>

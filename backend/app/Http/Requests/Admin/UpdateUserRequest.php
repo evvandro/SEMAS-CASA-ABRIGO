@@ -25,11 +25,25 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'email', Rule::unique('users')->ignore($userId)],
-            'password' => ['sometimes', Password::min(6)->mixedCase()->symbols()],
+            'password' => ['sometimes', Password::min(6)->mixedCase()->numbers()->symbols()],
             'role' => ['sometimes', 'in:'.implode(',', User::roles())],
             'is_active' => ['sometimes', 'boolean'],
             'phone' => ['sometimes', 'nullable', 'string', 'max:30'],
             'documento' => ['sometimes', 'nullable', 'string', 'size:11', Rule::unique('users')->ignore($userId)],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.email' => 'Informe um e-mail válido.',
+            'password.min' => 'A senha deve ter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
+            'password.mixed' => 'A senha deve ter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
+            'password.numbers' => 'A senha deve ter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
+            'password.symbols' => 'A senha deve ter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
         ];
     }
 }
