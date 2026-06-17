@@ -18,7 +18,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import GridViewIcon from '@mui/icons-material/GridView';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import SettingsIcon from '@mui/icons-material/Settings';
+import PersonIcon from '@mui/icons-material/Person';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth/useAuth';
 import { api } from '../services/api';
@@ -72,7 +72,7 @@ const NAV = [
 const ADMIN_NAV = {
   id: 'admin',
   label: 'Usuários',
-  icon: SettingsIcon,
+  icon: PersonIcon,
   path: '/admin',
   submodules: [{ label: 'Usuários', path: '/admin' }],
 };
