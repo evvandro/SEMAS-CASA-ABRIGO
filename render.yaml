@@ -3,12 +3,12 @@ services:
     name: semas-casa-abrigo
     runtime: php
     rootDir: backend
-    buildCommand: composer install --no-interaction --prefer-dist --optimize-autoloader && php artisan migrate --force && php artisan db:seed --force
-    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    buildCommand: composer install --no-interaction --prefer-dist --optimize-autoloader
+    startCommand: php artisan config:clear && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=$PORT
     envVars:
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
         value: false
       - key: LOG_LEVEL
-        value: error
+        value: warning
