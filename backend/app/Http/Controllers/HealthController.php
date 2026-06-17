@@ -3,16 +3,33 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class HealthController extends Controller
 {
     public function __invoke(): JsonResponse
     {
+        $dbStatus = 'ok';
+        $dbError = null;
+        $dbDriver = config('database.default');
+        $dbHost = config("database.connections.{$dbDriver}.host", 'n/a');
+
+        try {
+            DB::connection()->getPdo();
+        } catch (Throwable $e) {
+            $dbStatus = 'error';
+            $dbError = $e->getMessage();
+        }
+
         return response()->json([
-            'message' => 'API online.',
+            'message' => $dbStatus === 'ok' ? 'API online.' : 'DB unreachable.',
             'data' => [
-                'status' => 'ok',
+                'status' => $dbStatus,
+                'db_driver' => $dbDriver,
+                'db_host' => $dbHost,
+                'db_error' => $dbError,
             ],
-        ]);
+        ], $dbStatus === 'ok' ? 200 : 503);
     }
 }
