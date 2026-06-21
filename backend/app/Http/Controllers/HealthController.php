@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class HealthController extends Controller
@@ -11,15 +12,20 @@ class HealthController extends Controller
     public function __invoke(): JsonResponse
     {
         $dbStatus = 'ok';
-        $dbError = null;
         $dbDriver = config('database.default');
-        $dbHost = config("database.connections.{$dbDriver}.host", 'n/a');
 
         try {
             DB::connection()->getPdo();
         } catch (Throwable $e) {
             $dbStatus = 'error';
-            $dbError = $e->getMessage();
+
+            Log::error('Health check detectou banco de dados indisponivel.', [
+                'db_driver' => $dbDriver,
+                'db_host' => config("database.connections.{$dbDriver}.host", 'n/a'),
+                'db_port' => config("database.connections.{$dbDriver}.port", 'n/a'),
+                'db_database' => config("database.connections.{$dbDriver}.database", 'n/a'),
+                'exception' => $e,
+            ]);
         }
 
         return response()->json([
@@ -27,11 +33,6 @@ class HealthController extends Controller
             'data' => [
                 'status' => $dbStatus,
                 'db_driver' => $dbDriver,
-                'db_host' => $dbHost,
-                'db_error' => $dbError,
-                'config_cached' => app()->configurationIsCached(),
-                'env_db_connection' => env('DB_CONNECTION'),
-                'pgsql_host_config' => config('database.connections.pgsql.host'),
             ],
         ], $dbStatus === 'ok' ? 200 : 503);
     }

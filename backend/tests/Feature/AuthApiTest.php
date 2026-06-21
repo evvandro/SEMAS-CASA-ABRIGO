@@ -29,6 +29,7 @@ class AuthApiTest extends TestCase
 
         $response
             ->assertOk()
+            ->assertHeader('X-Request-ID')
             ->assertJsonPath('data.token_type', 'Bearer')
             ->assertJsonStructure([
                 'message',

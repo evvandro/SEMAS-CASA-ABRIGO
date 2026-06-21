@@ -11,8 +11,58 @@ export const api = axios.create({
   },
 });
 
+function createRequestId(): string {
+  return (
+    globalThis.crypto?.randomUUID?.() ??
+    `web-${Date.now()}-${Math.random().toString(16).slice(2)}`
+  );
+}
+
+function sanitizeForConsole(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(sanitizeForConsole);
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entryValue]) => [
+        key,
+        /password|token|authorization|cookie|secret|key/i.test(key)
+          ? '[REDACTED]'
+          : sanitizeForConsole(entryValue),
+      ]),
+    );
+  }
+
+  return value;
+}
+
+function logApiError(error: AxiosError): void {
+  const method = error.config?.method?.toUpperCase() ?? 'REQUEST';
+  const url = error.config ? api.getUri(error.config) : 'URL desconhecida';
+  const status = error.response?.status;
+  const requestId =
+    error.response?.headers['x-request-id'] ??
+    error.config?.headers?.['X-Request-ID'];
+
+  console.groupCollapsed(
+    `[API] ${method} ${url} -> ${status ?? error.code ?? 'erro'}`,
+  );
+  console.error('Falha na requisição da API', {
+    requestId,
+    status,
+    statusText: error.response?.statusText,
+    axiosCode: error.code,
+    message: error.message,
+    response: sanitizeForConsole(error.response?.data),
+  });
+  console.groupEnd();
+}
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem(AUTH_TOKEN_KEY);
+
+  config.headers['X-Request-ID'] = createRequestId();
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -24,6 +74,8 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
+    logApiError(error);
+
     if (error.response?.status === 401) {
       localStorage.removeItem(AUTH_TOKEN_KEY);
       localStorage.removeItem(AUTH_USER_KEY);
