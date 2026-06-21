@@ -5,44 +5,81 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 class RestrictedUsersSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = [
-            [
-                'name' => env('ADMIN_SEMAS_NAME', 'Administrador SEMAS'),
-                'email' => env('ADMIN_SEMAS_EMAIL', env('ADMIN_EMAIL', 'adm@semas.gov')),
-                'password' => env('ADMIN_SEMAS_PASSWORD', env('ADMIN_PASSWORD', '')),
-                'role' => User::ROLE_ADMIN,
-                'is_active' => true,
-            ],
-            [
-                'name' => env('ADMIN_DEV_NAME', 'Evandro Cieslinsky'),
-                'email' => env('ADMIN_DEV_EMAIL', 'evandro.cieslinsky@univille.br'),
-                'password' => env('ADMIN_DEV_PASSWORD', ''),
-                'role' => User::ROLE_ADMIN,
-                'is_active' => true,
-            ],
-        ];
+        $users = [$this->adminFromConfig('admin')];
+
+        if (! app()->isProduction()) {
+            $users[] = $this->adminFromConfig('dev_admin');
+        } else {
+            $this->warnAboutExistingDevelopmentAdmin();
+        }
 
         foreach ($users as $userData) {
-            if ($userData['password'] === '') {
+            if ($userData['email'] === '' || $userData['password'] === '') {
                 continue;
             }
 
-            User::updateOrCreate(
-                ['email' => $userData['email']],
-                [
-                    'name' => $userData['name'],
-                    'password' => Hash::make($userData['password']),
-                    'role' => $userData['role'],
-                    'is_active' => $userData['is_active'],
-                    'phone' => null,
-                    'documento' => null,
-                ]
-            );
+            if (User::query()->where('email', $userData['email'])->exists()) {
+                continue;
+            }
+
+            if (! $this->isStrongPassword($userData['password'])) {
+                throw new RuntimeException('A senha inicial do administrador deve ter ao menos 12 caracteres, com maiúscula, minúscula, número e símbolo.');
+            }
+
+            User::create([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'password' => Hash::make($userData['password']),
+                'role' => User::ROLE_ADMIN,
+                'is_active' => true,
+                'phone' => null,
+                'documento' => null,
+            ]);
+        }
+    }
+
+    /**
+     * @return array{name: string, email: string, password: string}
+     */
+    private function adminFromConfig(string $key): array
+    {
+        return [
+            'name' => trim((string) config("restricted_users.{$key}.name")),
+            'email' => mb_strtolower(trim((string) config("restricted_users.{$key}.email"))),
+            'password' => (string) config("restricted_users.{$key}.password"),
+        ];
+    }
+
+    private function isStrongPassword(string $password): bool
+    {
+        return mb_strlen($password) >= 12
+            && preg_match('/[a-z]/', $password) === 1
+            && preg_match('/[A-Z]/', $password) === 1
+            && preg_match('/\d/', $password) === 1
+            && preg_match('/[^A-Za-z0-9]/', $password) === 1;
+    }
+
+    private function warnAboutExistingDevelopmentAdmin(): void
+    {
+        $email = mb_strtolower(trim((string) config('restricted_users.dev_admin.email')));
+
+        if ($email === '') {
+            return;
+        }
+
+        $user = User::query()->where('email', $email)->first();
+
+        if ($user?->is_active) {
+            Log::warning('Conta de desenvolvimento ativa em producao; desative-a no painel administrativo.', [
+                'user_id' => $user->id,
+            ]);
         }
     }
 }

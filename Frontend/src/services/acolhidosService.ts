@@ -7,6 +7,7 @@ import type {
   SaidaPayload,
 } from '../modules/acolhidos/types';
 import { calculateAgeFromIsoDate } from '../modules/acolhidos/utils/date';
+import { brazilianDateToIso } from '../modules/acolhidos/utils/formFormatters';
 
 // ── Tipos da API ──────────────────────────────────────────────────────────────
 
@@ -151,11 +152,10 @@ export function toSector(api: ApiSetor, occupied = 0): Sector {
 }
 
 export function toCadastroPayload(payload: CadastroPayload) {
-  const [day, month, year] = payload.birth.split('/');
   return {
     nome: payload.name,
     cpf: payload.cpf.replace(/\D/g, '') || null,
-    data_nascimento: day && month && year ? `${year}-${month}-${day}` : null,
+    data_nascimento: brazilianDateToIso(payload.birth),
     setor_id: Number(payload.sectorId),
     leito: payload.bed?.trim() || null,
     pcd: payload.pcd,

@@ -44,6 +44,7 @@ export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -75,11 +76,14 @@ export function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      await login({
-        email: normalizedEmail,
-        password,
-        device_name: 'frontend-web',
-      });
+      await login(
+        {
+          email: normalizedEmail,
+          password,
+          device_name: 'frontend-web',
+        },
+        remember,
+      );
 
       navigate(from, { replace: true });
     } catch (error: unknown) {
@@ -323,7 +327,8 @@ export function LoginPage() {
             <FormControlLabel
               control={
                 <Checkbox
-                  defaultChecked
+                  checked={remember}
+                  onChange={(event) => setRemember(event.target.checked)}
                   size="small"
                   sx={{
                     color: '#1b7280',

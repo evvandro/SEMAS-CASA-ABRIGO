@@ -41,7 +41,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
 import { listUsers, updateMyProfile } from '../services/usersService';
-import { showErrorToast, showSuccessToast } from '../utils/notificationService';
+import { showSuccessToast } from '../utils/notificationService';
+import { getApiErrorMessage } from '../utils/apiError';
 import type { AuthUser } from '../types/auth';
 
 const MENU_BACKGROUND = 'background.paper';
@@ -128,11 +129,21 @@ function isValidEmail(value: string) {
 }
 
 function getPasswordStrength(password: string) {
-  if (password.length >= 12 && /[A-Z]/.test(password) && /\d/.test(password) && /[^A-Za-z0-9]/.test(password)) {
+  if (
+    password.length >= 12 &&
+    /[a-z]/.test(password) &&
+    /[A-Z]/.test(password) &&
+    /\d/.test(password) &&
+    /[^A-Za-z0-9]/.test(password)
+  ) {
     return { label: 'Forte', color: '#22C55E' };
   }
 
-  if (password.length >= 8 && /\d/.test(password) && /[A-Za-z]/.test(password)) {
+  if (
+    password.length >= 8 &&
+    /\d/.test(password) &&
+    /[A-Za-z]/.test(password)
+  ) {
     return { label: 'Média', color: '#F59E0B' };
   }
 
@@ -158,12 +169,17 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [activeDialog, setActiveDialog] = useState<'none' | ProfileAction>('none');
+  const [activeDialog, setActiveDialog] = useState<'none' | ProfileAction>(
+    'none',
+  );
   const [profiles, setProfiles] = useState<AuthUser[]>([]);
   const [profilesLoading, setProfilesLoading] = useState(false);
   const [profilesError, setProfilesError] = useState<string | null>(null);
-  const [selectedProfileId, setSelectedProfileId] = useState<number | null>(null);
-  const [settings, setSettings] = useState<ProfileSettingsState>(DEFAULT_SETTINGS);
+  const [selectedProfileId, setSelectedProfileId] = useState<number | null>(
+    null,
+  );
+  const [settings, setSettings] =
+    useState<ProfileSettingsState>(DEFAULT_SETTINGS);
   const [editForm, setEditForm] = useState<EditProfileState>({
     name: user?.name ?? '',
     email: user?.email ?? '',
@@ -307,20 +323,28 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
       });
 
       updateUser(updatedUser);
-      showSuccessToast('Perfil atualizado', 'Seus dados foram atualizados com sucesso.');
+      showSuccessToast(
+        'Perfil atualizado',
+        'Seus dados foram atualizados com sucesso.',
+      );
       setActiveDialog('none');
     } catch (error: unknown) {
-      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      const message = getApiErrorMessage(error, 'Erro ao atualizar perfil.');
       setDialogError(message ?? 'Erro ao atualizar perfil.');
-      showErrorToast('Erro ao atualizar perfil', message ?? 'Não foi possível salvar seus dados.');
     } finally {
       setSaving(false);
     }
   };
 
   const handleSaveSettings = () => {
-    window.localStorage.setItem('profile-menu-settings', JSON.stringify(settings));
-    showSuccessToast('Configurações salvas', 'Suas preferências foram atualizadas.');
+    window.localStorage.setItem(
+      'profile-menu-settings',
+      JSON.stringify(settings),
+    );
+    showSuccessToast(
+      'Configurações salvas',
+      'Suas preferências foram atualizadas.',
+    );
     setActiveDialog('none');
   };
 
@@ -329,8 +353,16 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
       return;
     }
 
-    if (passwordForm.newPassword.length < 8) {
-      setDialogError('A senha deve ter pelo menos 8 caracteres.');
+    if (
+      passwordForm.newPassword.length < 12 ||
+      !/[a-z]/.test(passwordForm.newPassword) ||
+      !/[A-Z]/.test(passwordForm.newPassword) ||
+      !/\d/.test(passwordForm.newPassword) ||
+      !/[^A-Za-z0-9]/.test(passwordForm.newPassword)
+    ) {
+      setDialogError(
+        'Use ao menos 12 caracteres, com maiúscula, minúscula, número e símbolo.',
+      );
       return;
     }
 
@@ -355,7 +387,10 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
       });
 
       updateUser(updatedUser);
-      showSuccessToast('Senha atualizada', 'Sua senha foi alterada com sucesso.');
+      showSuccessToast(
+        'Senha atualizada',
+        'Sua senha foi alterada com sucesso.',
+      );
       setActiveDialog('none');
       setPasswordForm((prev) => ({
         ...prev,
@@ -364,9 +399,8 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
         confirmPassword: '',
       }));
     } catch (error: unknown) {
-      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      const message = getApiErrorMessage(error, 'Erro ao atualizar senha.');
       setDialogError(message ?? 'Erro ao atualizar senha.');
-      showErrorToast('Erro ao atualizar senha', message ?? 'Não foi possível alterar a senha.');
     } finally {
       setSaving(false);
     }
@@ -398,14 +432,25 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
     >
       <Box sx={{ p: 2, pb: 1.5 }}>
         <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1.5 }}>
-          <Avatar sx={{ bgcolor: 'primary.main', width: 42, height: 42, fontWeight: 700 }}>
+          <Avatar
+            sx={{
+              bgcolor: 'primary.main',
+              width: 42,
+              height: 42,
+              fontWeight: 700,
+            }}
+          >
             {getInitials(user?.name ?? 'U')}
           </Avatar>
           <Box sx={{ minWidth: 0 }}>
             <Typography sx={{ fontWeight: 700, fontSize: 15 }} noWrap>
               {user?.name}
             </Typography>
-            <Typography variant="body2" sx={{ color: INACTIVE_TEXT, fontSize: 12 }} noWrap>
+            <Typography
+              variant="body2"
+              sx={{ color: INACTIVE_TEXT, fontSize: 12 }}
+              noWrap
+            >
               {user?.email ?? user?.role}
             </Typography>
           </Box>
@@ -440,9 +485,14 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                 primary={option.label}
                 secondary={option.description}
                 primaryTypographyProps={{ fontSize: 14, fontWeight: 600 }}
-                secondaryTypographyProps={{ fontSize: 12, color: INACTIVE_TEXT }}
+                secondaryTypographyProps={{
+                  fontSize: 12,
+                  color: INACTIVE_TEXT,
+                }}
               />
-              <ArrowForwardIosIcon sx={{ fontSize: 14, color: INACTIVE_TEXT }} />
+              <ArrowForwardIosIcon
+                sx={{ fontSize: 14, color: INACTIVE_TEXT }}
+              />
             </ListItemButton>
           );
         })}
@@ -465,7 +515,9 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
     </Paper>
   );
 
-  const profileTitle = user?.role ? `${user.name} · ${user.role}` : user?.name ?? '';
+  const profileTitle = user?.role
+    ? `${user.name} · ${user.role}`
+    : (user?.name ?? '');
   const passwordStrength = useMemo(
     () => getPasswordStrength(passwordForm.newPassword),
     [passwordForm.newPassword],
@@ -475,48 +527,66 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
     return null;
   }
 
-  const trigger = variant === 'card' ? (
-    <Box
-      component={ButtonBase}
-      onClick={handleOpenMenu}
-      sx={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1,
-        p: 1.5,
-        borderRadius: 2,
-        bgcolor: 'background.paper',
-        textAlign: 'left',
-        '&:hover': { bgcolor: 'action.hover' },
-      }}
-      aria-label="Abrir menu de perfil"
-    >
-      <Avatar sx={{ bgcolor: 'primary.light', color: 'primary.main', width: 34, height: 34, fontWeight: 700 }}>
-        {getInitials(user.name)}
-      </Avatar>
-      <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography sx={{ fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} noWrap>
-          {user.name}
-        </Typography>
-        <Typography variant="caption" sx={{ color: 'text.secondary' }} noWrap>
-          {user.role}
-        </Typography>
+  const trigger =
+    variant === 'card' ? (
+      <Box
+        component={ButtonBase}
+        onClick={handleOpenMenu}
+        sx={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          p: 1.5,
+          borderRadius: 2,
+          bgcolor: 'background.paper',
+          textAlign: 'left',
+          '&:hover': { bgcolor: 'action.hover' },
+        }}
+        aria-label="Abrir menu de perfil"
+      >
+        <Avatar
+          sx={{
+            bgcolor: 'primary.light',
+            color: 'primary.main',
+            width: 34,
+            height: 34,
+            fontWeight: 700,
+          }}
+        >
+          {getInitials(user.name)}
+        </Avatar>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            sx={{
+              fontSize: 13,
+              fontWeight: 700,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+            noWrap
+          >
+            {user.name}
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }} noWrap>
+            {user.role}
+          </Typography>
+        </Box>
+        <ChevronRightIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
       </Box>
-      <ChevronRightIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
-    </Box>
-  ) : (
-    <IconButton
-      onClick={handleOpenMenu}
-      size="small"
-      sx={{ width: 42, height: 42, ml: 1, bgcolor: 'background.paper' }}
-      aria-label="Abrir menu de perfil"
-    >
-      <Avatar sx={{ width: 34, height: 34, bgcolor: 'primary.main' }}>
-        {getInitials(user.name)}
-      </Avatar>
-    </IconButton>
-  );
+    ) : (
+      <IconButton
+        onClick={handleOpenMenu}
+        size="small"
+        sx={{ width: 42, height: 42, ml: 1, bgcolor: 'background.paper' }}
+        aria-label="Abrir menu de perfil"
+      >
+        <Avatar sx={{ width: 34, height: 34, bgcolor: 'primary.main' }}>
+          {getInitials(user.name)}
+        </Avatar>
+      </IconButton>
+    );
 
   return (
     <>
@@ -591,20 +661,33 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                 sx={{
                   mb: 1,
                   borderRadius: 1.5,
-                  bgcolor: selectedProfileId === profile.id ? 'action.selected' : 'action.hover',
+                  bgcolor:
+                    selectedProfileId === profile.id
+                      ? 'action.selected'
+                      : 'action.hover',
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Avatar sx={{ bgcolor: 'primary.main' }}>{getInitials(profile.name)}</Avatar>
+                  <Avatar sx={{ bgcolor: 'primary.main' }}>
+                    {getInitials(profile.name)}
+                  </Avatar>
                 </ListItemIcon>
                 <ListItemText
                   primary={profile.name}
                   secondary={profile.email}
                   primaryTypographyProps={{ fontWeight: 600 }}
-                  secondaryTypographyProps={{ color: INACTIVE_TEXT, fontSize: 12 }}
+                  secondaryTypographyProps={{
+                    color: INACTIVE_TEXT,
+                    fontSize: 12,
+                  }}
                 />
                 {profile.id === user.id && (
-                  <Chip label="Ativo" size="small" color="primary" variant="outlined" />
+                  <Chip
+                    label="Ativo"
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                  />
                 )}
               </ListItemButton>
             ))}
@@ -658,7 +741,14 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
         <DialogContent dividers>
           <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={2}>
-              <Avatar sx={{ width: 56, height: 56, bgcolor: 'primary.main', fontSize: 16 }}>
+              <Avatar
+                sx={{
+                  width: 56,
+                  height: 56,
+                  bgcolor: 'primary.main',
+                  fontSize: 16,
+                }}
+              >
                 {getInitials(user.name)}
               </Avatar>
               <Box>
@@ -678,7 +768,9 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
             <TextField
               label="Nome completo"
               value={editForm.name}
-              onChange={(event) => setEditForm((prev) => ({ ...prev, name: event.target.value }))}
+              onChange={(event) =>
+                setEditForm((prev) => ({ ...prev, name: event.target.value }))
+              }
               fullWidth
               InputLabelProps={{ sx: { color: INACTIVE_TEXT } }}
             />
@@ -692,25 +784,31 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
             <TextField
               label="E-mail"
               value={editForm.email}
-              onChange={(event) => setEditForm((prev) => ({
-                ...prev,
-                email: event.target.value,
-                username: buildUsername(event.target.value),
-              }))}
+              onChange={(event) =>
+                setEditForm((prev) => ({
+                  ...prev,
+                  email: event.target.value,
+                  username: buildUsername(event.target.value),
+                }))
+              }
               fullWidth
               InputLabelProps={{ sx: { color: INACTIVE_TEXT } }}
             />
             <TextField
               label="Telefone"
               value={editForm.phone}
-              onChange={(event) => setEditForm((prev) => ({ ...prev, phone: event.target.value }))}
+              onChange={(event) =>
+                setEditForm((prev) => ({ ...prev, phone: event.target.value }))
+              }
               fullWidth
               InputLabelProps={{ sx: { color: INACTIVE_TEXT } }}
             />
             <TextField
               label="Bio (opcional)"
               value={editForm.bio}
-              onChange={(event) => setEditForm((prev) => ({ ...prev, bio: event.target.value }))}
+              onChange={(event) =>
+                setEditForm((prev) => ({ ...prev, bio: event.target.value }))
+              }
               fullWidth
               multiline
               minRows={3}
@@ -719,22 +817,29 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
-          <Button color="inherit" onClick={() => {
-            setEditForm({
-              name: user.name,
-              email: user.email,
-              username: buildUsername(user.email),
-              phone: user.phone ?? '',
-              bio: '',
-            });
-            setDialogError(null);
-          }}>
+          <Button
+            color="inherit"
+            onClick={() => {
+              setEditForm({
+                name: user.name,
+                email: user.email,
+                username: buildUsername(user.email),
+                phone: user.phone ?? '',
+                bio: '',
+              });
+              setDialogError(null);
+            }}
+          >
             Restaurar
           </Button>
           <Button onClick={() => setActiveDialog('none')} color="inherit">
             Cancelar
           </Button>
-          <Button variant="contained" onClick={handleSaveProfile} disabled={saving}>
+          <Button
+            variant="contained"
+            onClick={handleSaveProfile}
+            disabled={saving}
+          >
             {saving ? 'Salvando...' : 'Salvar alterações'}
           </Button>
         </DialogActions>
@@ -764,7 +869,7 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
               </Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
                 <FormControlLabel
-                  control={(
+                  control={
                     <Switch
                       checked={settings.themeMode === 'dark'}
                       onChange={(event) =>
@@ -775,13 +880,23 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                       }
                       color="primary"
                     />
-                  )}
+                  }
                   label="Tema escuro"
                 />
                 <Select
                   value={settings.primaryColor}
-                  onChange={(event) => setSettings((prev) => ({ ...prev, primaryColor: event.target.value as ProfileSettingsState['primaryColor'] }))}
-                  sx={{ minWidth: 160, bgcolor: 'action.hover', borderRadius: 1 }}
+                  onChange={(event) =>
+                    setSettings((prev) => ({
+                      ...prev,
+                      primaryColor: event.target
+                        .value as ProfileSettingsState['primaryColor'],
+                    }))
+                  }
+                  sx={{
+                    minWidth: 160,
+                    bgcolor: 'action.hover',
+                    borderRadius: 1,
+                  }}
                 >
                   <MenuItem value="Ciano">Ciano</MenuItem>
                   <MenuItem value="Verde">Verde</MenuItem>
@@ -795,38 +910,50 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                 Preferências
               </Typography>
               <FormControlLabel
-                control={(
+                control={
                   <Switch
                     checked={settings.language === 'English (US)'}
                     onChange={(event) =>
                       setSettings((prev) => ({
                         ...prev,
-                        language: event.target.checked ? 'English (US)' : 'Português (BR)',
+                        language: event.target.checked
+                          ? 'English (US)'
+                          : 'Português (BR)',
                       }))
                     }
                     color="primary"
                   />
-                )}
+                }
                 label="Idioma inglês"
               />
               <FormControlLabel
-                control={(
+                control={
                   <Switch
                     checked={settings.notifications}
-                    onChange={(event) => setSettings((prev) => ({ ...prev, notifications: event.target.checked }))}
+                    onChange={(event) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        notifications: event.target.checked,
+                      }))
+                    }
                     color="primary"
                   />
-                )}
+                }
                 label="Notificações"
               />
               <FormControlLabel
-                control={(
+                control={
                   <Switch
                     checked={settings.sounds}
-                    onChange={(event) => setSettings((prev) => ({ ...prev, sounds: event.target.checked }))}
+                    onChange={(event) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        sounds: event.target.checked,
+                      }))
+                    }
                     color="primary"
                   />
-                )}
+                }
                 label="Sons"
               />
             </Box>
@@ -836,19 +963,35 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                 Privacidade
               </Typography>
               <FormControlLabel
-                control={(
+                control={
                   <Switch
                     checked={settings.publicProfile}
-                    onChange={(event) => setSettings((prev) => ({ ...prev, publicProfile: event.target.checked }))}
+                    onChange={(event) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        publicProfile: event.target.checked,
+                      }))
+                    }
                     color="primary"
                   />
-                )}
+                }
                 label="Perfil público"
               />
               <Select
                 value={settings.dataVisibility}
-                onChange={(event) => setSettings((prev) => ({ ...prev, dataVisibility: event.target.value as ProfileSettingsState['dataVisibility'] }))}
-                sx={{ minWidth: 180, bgcolor: 'action.hover', borderRadius: 1, mt: 1 }}
+                onChange={(event) =>
+                  setSettings((prev) => ({
+                    ...prev,
+                    dataVisibility: event.target
+                      .value as ProfileSettingsState['dataVisibility'],
+                  }))
+                }
+                sx={{
+                  minWidth: 180,
+                  bgcolor: 'action.hover',
+                  borderRadius: 1,
+                  mt: 1,
+                }}
               >
                 <MenuItem value="Público">Público</MenuItem>
                 <MenuItem value="Privado">Privado</MenuItem>
@@ -862,7 +1005,12 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
               <Button
                 variant="outlined"
                 fullWidth
-                onClick={() => showSuccessToast('Sessões encerradas', 'Sessões em outros dispositivos foram encerradas.')}
+                onClick={() =>
+                  showSuccessToast(
+                    'Sessões encerradas',
+                    'Sessões em outros dispositivos foram encerradas.',
+                  )
+                }
                 sx={{ borderColor: 'divider' }}
                 color="inherit"
               >
@@ -908,7 +1056,12 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
               label="Senha atual"
               type={passwordForm.showCurrent ? 'text' : 'password'}
               value={passwordForm.currentPassword}
-              onChange={(event) => setPasswordForm((prev) => ({ ...prev, currentPassword: event.target.value }))}
+              onChange={(event) =>
+                setPasswordForm((prev) => ({
+                  ...prev,
+                  currentPassword: event.target.value,
+                }))
+              }
               fullWidth
               InputLabelProps={{ sx: { color: INACTIVE_TEXT } }}
               slotProps={{
@@ -916,12 +1069,21 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => setPasswordForm((prev) => ({ ...prev, showCurrent: !prev.showCurrent }))}
+                        onClick={() =>
+                          setPasswordForm((prev) => ({
+                            ...prev,
+                            showCurrent: !prev.showCurrent,
+                          }))
+                        }
                         edge="end"
                         size="small"
                         sx={{ color: 'text.secondary' }}
                       >
-                        {passwordForm.showCurrent ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        {passwordForm.showCurrent ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -932,7 +1094,12 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
               label="Nova senha"
               type={passwordForm.showNew ? 'text' : 'password'}
               value={passwordForm.newPassword}
-              onChange={(event) => setPasswordForm((prev) => ({ ...prev, newPassword: event.target.value }))}
+              onChange={(event) =>
+                setPasswordForm((prev) => ({
+                  ...prev,
+                  newPassword: event.target.value,
+                }))
+              }
               fullWidth
               InputLabelProps={{ sx: { color: INACTIVE_TEXT } }}
               slotProps={{
@@ -940,23 +1107,41 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => setPasswordForm((prev) => ({ ...prev, showNew: !prev.showNew }))}
+                        onClick={() =>
+                          setPasswordForm((prev) => ({
+                            ...prev,
+                            showNew: !prev.showNew,
+                          }))
+                        }
                         edge="end"
                         size="small"
                         sx={{ color: 'text.secondary' }}
                       >
-                        {passwordForm.showNew ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        {passwordForm.showNew ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
                 },
               }}
             />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <Typography variant="body2" sx={{ color: INACTIVE_TEXT }}>
                 Força da senha
               </Typography>
-              <Typography variant="body2" sx={{ color: passwordStrength.color, fontWeight: 700 }}>
+              <Typography
+                variant="body2"
+                sx={{ color: passwordStrength.color, fontWeight: 700 }}
+              >
                 {passwordStrength.label}
               </Typography>
             </Box>
@@ -964,7 +1149,12 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
               label="Confirmar nova senha"
               type={passwordForm.showConfirm ? 'text' : 'password'}
               value={passwordForm.confirmPassword}
-              onChange={(event) => setPasswordForm((prev) => ({ ...prev, confirmPassword: event.target.value }))}
+              onChange={(event) =>
+                setPasswordForm((prev) => ({
+                  ...prev,
+                  confirmPassword: event.target.value,
+                }))
+              }
               fullWidth
               InputLabelProps={{ sx: { color: INACTIVE_TEXT } }}
               slotProps={{
@@ -972,12 +1162,21 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => setPasswordForm((prev) => ({ ...prev, showConfirm: !prev.showConfirm }))}
+                        onClick={() =>
+                          setPasswordForm((prev) => ({
+                            ...prev,
+                            showConfirm: !prev.showConfirm,
+                          }))
+                        }
                         edge="end"
                         size="small"
                         sx={{ color: 'text.secondary' }}
                       >
-                        {passwordForm.showConfirm ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        {passwordForm.showConfirm ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -990,7 +1189,11 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
           <Button onClick={() => setActiveDialog('none')} color="inherit">
             Cancelar
           </Button>
-          <Button variant="contained" onClick={handleUpdatePassword} disabled={saving}>
+          <Button
+            variant="contained"
+            onClick={handleUpdatePassword}
+            disabled={saving}
+          >
             Atualizar senha
           </Button>
         </DialogActions>

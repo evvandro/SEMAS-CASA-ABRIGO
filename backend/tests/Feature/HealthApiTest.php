@@ -11,6 +11,7 @@ class HealthApiTest extends TestCase
         $this->getJson('/api/health')
             ->assertOk()
             ->assertHeader('X-Request-ID')
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertJsonStructure([
                 'message',
                 'data' => ['status'],

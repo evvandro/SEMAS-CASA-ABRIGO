@@ -28,7 +28,8 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../auth/useAuth';
 import { fetchAcolhidos } from '../services/acolhidosService';
-import { showErrorToast, showSuccessToast } from '../utils/notificationService';
+import { showSuccessToast } from '../utils/notificationService';
+import { getApiErrorMessage } from '../utils/apiError';
 import {
   createSetor,
   deleteSetor,
@@ -451,11 +452,9 @@ export function SetoresPage() {
       }
       setDialogOpen(false);
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })
-        ?.response?.data?.message;
-      setFormError(msg ?? 'Erro ao salvar setor.');
+      const msg = getApiErrorMessage(err, 'Erro ao salvar setor.');
+      setFormError(msg);
       scrollAppContentToTop();
-      showErrorToast('Erro ao salvar setor', msg ?? 'Erro ao salvar setor.');
     } finally {
       setSaving(false);
     }
@@ -471,11 +470,9 @@ export function SetoresPage() {
       showSuccessToast('Setor removido', 'Setor excluído com sucesso.');
       setConfirmDelete(null);
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })
-        ?.response?.data?.message;
-      setError(msg ?? 'Erro ao remover setor.');
+      const msg = getApiErrorMessage(err, 'Erro ao remover setor.');
+      setError(msg);
       scrollAppContentToTop();
-      showErrorToast('Erro ao remover setor', msg ?? 'Erro ao remover setor.');
       setConfirmDelete(null);
     } finally {
       setDeleting(false);
@@ -492,9 +489,8 @@ export function SetoresPage() {
         blocked ? 'Setor interditado.' : 'Setor liberado.',
       );
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })
-        ?.response?.data?.message;
-      setError(msg ?? 'Erro ao alterar status do setor.');
+      const msg = getApiErrorMessage(err, 'Erro ao alterar status do setor.');
+      setError(msg);
     } finally {
       setUpdatingStatus(false);
     }
@@ -520,13 +516,8 @@ export function SetoresPage() {
           : `${bedLabel(bedNumber)} liberado.`,
       );
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })
-        ?.response?.data?.message;
-      setError(msg ?? 'Erro ao alterar status do leito.');
-      showErrorToast(
-        'Erro ao alterar leito',
-        msg ?? 'Erro ao alterar status do leito.',
-      );
+      const msg = getApiErrorMessage(err, 'Erro ao alterar status do leito.');
+      setError(msg);
     } finally {
       setUpdatingStatus(false);
     }

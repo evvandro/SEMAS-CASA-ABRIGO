@@ -1,7 +1,35 @@
 import axios, { AxiosError } from 'axios';
+import { showApiErrorToast } from '../utils/notificationService';
 
 const AUTH_TOKEN_KEY = 'semas_auth_token';
 const AUTH_USER_KEY = 'semas_auth_user';
+
+export function clearAuthSession(): void {
+  for (const storage of [localStorage, sessionStorage]) {
+    storage.removeItem(AUTH_TOKEN_KEY);
+    storage.removeItem(AUTH_USER_KEY);
+  }
+}
+
+export function getAuthStorage(): Storage {
+  if (localStorage.getItem(AUTH_TOKEN_KEY)) {
+    return localStorage;
+  }
+
+  return sessionStorage;
+}
+
+export function storeAuthSession(
+  token: string,
+  user: unknown,
+  remember: boolean,
+): void {
+  clearAuthSession();
+
+  const storage = remember ? localStorage : sessionStorage;
+  storage.setItem(AUTH_TOKEN_KEY, token);
+  storage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+}
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
@@ -60,7 +88,7 @@ function logApiError(error: AxiosError): void {
 }
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  const token = getAuthStorage().getItem(AUTH_TOKEN_KEY);
 
   config.headers['X-Request-ID'] = createRequestId();
 
@@ -76,9 +104,19 @@ api.interceptors.response.use(
   (error: AxiosError) => {
     logApiError(error);
 
+    const isLoginRequest = error.config?.url === '/login';
+    const isCanceledRequest = error.code === 'ERR_CANCELED';
+
+    if (
+      !isLoginRequest &&
+      !isCanceledRequest &&
+      error.response?.status !== 401
+    ) {
+      showApiErrorToast(error);
+    }
+
     if (error.response?.status === 401) {
-      localStorage.removeItem(AUTH_TOKEN_KEY);
-      localStorage.removeItem(AUTH_USER_KEY);
+      clearAuthSession();
 
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';

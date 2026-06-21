@@ -10,6 +10,7 @@ import App from './App.tsx';
 import { appTheme } from './theme.ts';
 import { AuthProvider } from './auth/AuthContext.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
+import { GlobalErrorHandler } from './components/GlobalErrorHandler.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
         <ErrorBoundary>
           <BrowserRouter>
             <AuthProvider>
+              <GlobalErrorHandler />
               <App />
               <Toaster
                 position="top-right"

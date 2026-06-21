@@ -43,7 +43,28 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
-        $user->update($request->validated());
+        $validated = $request->validated();
+        $actor = $request->user();
+
+        if ($actor?->is($user)) {
+            $wouldRemoveOwnAdminRole = isset($validated['role']) && $validated['role'] !== User::ROLE_ADMIN;
+            $wouldDeactivateOwnAccount = array_key_exists('is_active', $validated) && ! $validated['is_active'];
+
+            if ($wouldRemoveOwnAdminRole || $wouldDeactivateOwnAccount) {
+                return response()->json([
+                    'message' => 'Não é possível remover o acesso administrativo da própria conta.',
+                ], 403);
+            }
+        }
+
+        $mustRevokeTokens = array_key_exists('password', $validated)
+            || (array_key_exists('is_active', $validated) && ! $validated['is_active']);
+
+        $user->update($validated);
+
+        if ($mustRevokeTokens) {
+            $user->tokens()->delete();
+        }
 
         return response()->json([
             'message' => 'Usuário atualizado com sucesso.',
@@ -63,6 +84,7 @@ class UserController extends Controller
         }
 
         $user->update(['is_active' => false]);
+        $user->tokens()->delete();
 
         return response()->json([
             'message' => 'Usuário desativado com sucesso.',

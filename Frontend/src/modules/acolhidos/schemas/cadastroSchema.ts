@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isValidBrazilianDate } from '../utils/formFormatters';
 
 export const cadastroSchema = z.object({
   name: z.string().min(3, 'Informe o nome completo'),
@@ -10,7 +11,10 @@ export const cadastroSchema = z.object({
     ),
   birth: z
     .string()
-    .refine((value) => value.replace(/\D/g, '').length === 8, 'Data inválida'),
+    .refine(
+      isValidBrazilianDate,
+      'Informe uma data de nascimento válida e não futura',
+    ),
   sectorId: z.string().min(1, 'Selecione um setor'),
   pcd: z.boolean(),
   gestante: z.boolean(),

@@ -26,26 +26,7 @@ import { SectorHeatmap } from '../components/SectorHeatmap';
 import { useAcolhidosPageState } from '../hooks/useAcolhidosPageState';
 import type { Acolhido, AcolhidoAction, Familia, SaidaPayload } from '../types';
 import { useState } from 'react';
-
-function getApiErrorMessage(error: unknown): string {
-  const response = (
-    error as {
-      response?: {
-        data?: { message?: string; errors?: Record<string, string[]> };
-      };
-    }
-  ).response;
-  const validationErrors = response?.data?.errors;
-  const firstValidationMessage = validationErrors
-    ? Object.values(validationErrors)[0]?.[0]
-    : undefined;
-
-  return (
-    firstValidationMessage ??
-    response?.data?.message ??
-    'Nao foi possivel registrar a saida.'
-  );
-}
+import { getApiErrorMessage } from '../../../utils/apiError';
 
 export function AcolhidosPage() {
   const state = useAcolhidosPageState();
@@ -171,7 +152,13 @@ export function AcolhidosPage() {
         });
       }
     } catch (error) {
-      state.setToast({ message: getApiErrorMessage(error), severity: 'error' });
+      state.setToast({
+        message: getApiErrorMessage(
+          error,
+          'Não foi possível registrar a saída.',
+        ),
+        severity: 'error',
+      });
     }
   };
 
