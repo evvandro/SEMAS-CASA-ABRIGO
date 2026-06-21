@@ -1,35 +1,31 @@
-# =============================================================================
-# ATENÇÃO: este serviço roda como DOCKER no dashboard da Render (usa backend/Dockerfile).
-# As env vars abaixo são DOCUMENTAÇÃO da config canônica — elas NÃO sincronizam
-# automaticamente para um serviço gerenciado pelo dashboard. A fonte da verdade em
-# produção é o painel Environment da Render. Se faltar DB_CONNECTION lá, o Laravel
-# cai no default sqlite (config/database.php) → login retorna 503. Confira /api/health.
-# =============================================================================
 services:
   - type: web
     name: semas-casa-abrigo
     runtime: docker
     rootDir: backend
-    # Dockerfile faz config:clear + migrate + seed em runtime (CMD), onde as env
-    # vars do Render já existem. Não cachear config no build (senão sobe preso em sqlite).
     dockerfilePath: ./Dockerfile
     dockerContext: .
+    plan: free
+    branch: main
     envVars:
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
         value: false
-      - key: LOG_LEVEL
-        value: warning
-      # stderr -> erros aparecem no log stream da Render (stack/single grava em arquivo efêmero, invisível)
+      - key: APP_URL
+        value: https://semas-casa-abrigo.onrender.com
+      - key: APP_LOCALE
+        value: pt_BR
       - key: LOG_CHANNEL
         value: stderr
-      # --- Banco (Supabase) ---
+      - key: LOG_LEVEL
+        value: warning
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://semas-casa-abrigo.vercel.app
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
         value: aws-1-sa-east-1.pooler.supabase.com
-      # 5432 = session pooler (suporta prepared statements do Eloquent). 6543 = transaction pooler.
       - key: DB_PORT
         value: "5432"
       - key: DB_DATABASE
@@ -38,8 +34,13 @@ services:
         value: postgres.dflxtsbnfjqjwuvdfogp
       - key: DB_SSLMODE
         value: require
-      # Secretos: definir no dashboard da Render (Environment), nunca versionar
+      - key: ADMIN_NAME
+        value: Administrador SEMAS
+      - key: ADMIN_EMAIL
+        value: admin@semas.sbs.gov.br
       - key: DB_PASSWORD
         sync: false
       - key: APP_KEY
+        sync: false
+      - key: ADMIN_PASSWORD
         sync: false
