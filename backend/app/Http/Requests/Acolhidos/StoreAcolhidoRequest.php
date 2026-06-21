@@ -23,7 +23,7 @@ class StoreAcolhidoRequest extends FormRequest
             'familia_id' => ['nullable', 'integer', 'exists:familias,id'],
             'setor_id' => ['required', 'integer', 'exists:setores,id'],
             'nome' => ['required', 'string', 'max:255'],
-            'data_nascimento' => ['nullable', 'date'],
+            'data_nascimento' => ['nullable', 'date', 'before_or_equal:today'],
             'cpf' => ['nullable', 'regex:/^\d{11}$/'],
             'parentesco' => ['nullable', 'string', 'max:100'],
             'telefone' => ['nullable', 'string', 'max:20'],
@@ -46,6 +46,17 @@ class StoreAcolhidoRequest extends FormRequest
             $digits = preg_replace('/\D+/', '', (string) $this->input('cpf'));
             $this->merge(['cpf' => $digits ?: null]);
         }
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'data_nascimento.date' => 'Informe uma data de nascimento válida.',
+            'data_nascimento.before_or_equal' => 'A data de nascimento não pode ser futura.',
+        ];
     }
 
     /**

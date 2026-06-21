@@ -23,6 +23,16 @@ import {
   buildBedOptions,
   getSectorCapacitySummary,
 } from '../utils/sectorCapacity';
+import { getApiValidationErrors } from '../../../utils/apiError';
+
+const apiFieldMap: Record<string, keyof CadastroPayload> = {
+  nome: 'name',
+  cpf: 'cpf',
+  data_nascimento: 'birth',
+  setor_id: 'sectorId',
+  leito: 'bed',
+  observacoes: 'notes',
+};
 
 const empty: CadastroPayload = {
   name: '',
@@ -153,6 +163,19 @@ export function CadastroDrawer({
     try {
       await onSave(result.data);
       resetForm();
+    } catch (error) {
+      const apiErrors = getApiValidationErrors(error);
+      const fieldErrors = Object.entries(apiErrors).reduce<
+        Record<string, string>
+      >((mapped, [field, messages]) => {
+        const formField = apiFieldMap[field];
+        if (formField && messages[0]) {
+          mapped[formField] = messages[0];
+        }
+        return mapped;
+      }, {});
+
+      setErrors(fieldErrors);
     } finally {
       setSubmitting(false);
     }

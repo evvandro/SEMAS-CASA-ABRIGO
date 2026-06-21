@@ -44,7 +44,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import SendIcon from '@mui/icons-material/Send';
 import { TimeInput } from '../components/TimeInput';
 import { scrollAppContentToTop } from '../utils/scrollAppContent';
-import { showErrorToast, showSuccessToast } from '../utils/notificationService';
+import { showSuccessToast } from '../utils/notificationService';
+import { getApiErrorMessage } from '../utils/apiError';
 import { fetchAcolhidos } from '../services/acolhidosService';
 import { fetchFamilias } from '../services/familiasService';
 import {
@@ -481,11 +482,13 @@ export function EstoquePage() {
         'Recebimento registrado',
         'Estoque atualizado com sucesso.',
       );
-    } catch {
-      const failureMessage = 'Nao foi possivel salvar o recebimento.';
+    } catch (error) {
+      const failureMessage = getApiErrorMessage(
+        error,
+        'Não foi possível salvar o recebimento.',
+      );
       setError(failureMessage);
       scrollAppContentToTop();
-      showErrorToast('Erro ao salvar recebimento', failureMessage);
     } finally {
       setSubmitting(false);
     }
@@ -1949,20 +1952,4 @@ function formatDate(date?: string | null) {
 function valueOrFallback(value?: string | number | null) {
   const normalized = value == null ? '' : String(value).trim();
   return normalized || 'Não informado';
-}
-
-function getApiErrorMessage(error: unknown, fallback: string): string {
-  const response = (
-    error as {
-      response?: {
-        data?: { message?: string; errors?: Record<string, string[]> };
-      };
-    }
-  ).response;
-  const validationErrors = response?.data?.errors;
-  const firstValidationMessage = validationErrors
-    ? Object.values(validationErrors)[0]?.[0]
-    : undefined;
-
-  return firstValidationMessage ?? response?.data?.message ?? fallback;
 }

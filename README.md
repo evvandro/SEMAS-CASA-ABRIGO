@@ -66,7 +66,7 @@ Na prática, isso fortalece:
 
 | Camada | Tecnologias |
 |---|---|
-| Backend | Laravel 13, PHP 8.3, Sanctum, PostgreSQL |
+| Backend | Laravel 13, PHP 8.4, Sanctum, PostgreSQL |
 | Frontend | React 19, TypeScript, Vite, Material UI |
 | Deploy | Render (API) + Vercel (Frontend) |
 | Banco de dados | Supabase (PostgreSQL) |
@@ -117,8 +117,8 @@ DELETE /api/admin/users/{id} (admin)
 
 ## Requisitos de ambiente
 
-- Node.js 18+
-- PHP 8.3+
+- Node.js 20.19+ ou 22.12+
+- PHP 8.4+
 - Composer
 
 ## Instalação

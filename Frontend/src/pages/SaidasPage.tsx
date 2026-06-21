@@ -37,28 +37,9 @@ import {
 import { scrollAppContentToTop } from '../utils/scrollAppContent';
 import { showErrorToast, showSuccessToast } from '../utils/notificationService';
 import { notifyAcolhidosCountRefresh } from '../utils/acolhidosEvents';
+import { getApiErrorMessage } from '../utils/apiError';
 
 type SaidasTab = 'pessoas' | 'familias';
-
-function getApiErrorMessage(error: unknown): string {
-  const response = (
-    error as {
-      response?: {
-        data?: { message?: string; errors?: Record<string, string[]> };
-      };
-    }
-  ).response;
-  const validationErrors = response?.data?.errors;
-  const firstValidationMessage = validationErrors
-    ? Object.values(validationErrors)[0]?.[0]
-    : undefined;
-
-  return (
-    firstValidationMessage ??
-    response?.data?.message ??
-    'Falha ao registrar saida. Verifique os dados e tente novamente.'
-  );
-}
 
 export function SaidasPage() {
   const [tab, setTab] = useState<SaidasTab>('pessoas');
@@ -181,10 +162,12 @@ export function SaidasPage() {
 
       setDialogOpen(false);
     } catch (error) {
-      const message = getApiErrorMessage(error);
+      const message = getApiErrorMessage(
+        error,
+        'Falha ao registrar saída. Verifique os dados e tente novamente.',
+      );
       setErrorMsg(message);
       scrollAppContentToTop();
-      showErrorToast('Erro ao registrar saída', message);
     }
   };
 

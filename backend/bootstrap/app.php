@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureActiveUser;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\RequestDiagnostics;
@@ -16,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
+
         $middleware->api(append: [
             RequestDiagnostics::class,
         ]);
@@ -25,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $middleware->alias([
+            'active' => EnsureActiveUser::class,
             'admin' => EnsureAdmin::class,
             'role' => EnsureRole::class,
         ]);

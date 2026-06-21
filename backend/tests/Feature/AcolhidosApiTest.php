@@ -153,6 +153,31 @@ class AcolhidosApiTest extends TestCase
             ->assertJsonValidationErrors('cpf');
     }
 
+    public function test_rejects_invalid_or_future_birth_date_with_clear_message(): void
+    {
+        $this->actingAsUser();
+
+        $setor = Setor::create(['nome' => 'Datas', 'cor' => '#444444', 'capacidade' => 10, 'ativo' => true]);
+
+        $this->postJson('/api/acolhidos', [
+            'setor_id' => $setor->id,
+            'nome' => 'Data Invalida',
+            'data_nascimento' => 'data-invalida',
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('data_nascimento')
+            ->assertJsonPath('errors.data_nascimento.0', 'Informe uma data de nascimento válida.');
+
+        $this->postJson('/api/acolhidos', [
+            'setor_id' => $setor->id,
+            'nome' => 'Data Futura',
+            'data_nascimento' => now()->addDay()->toDateString(),
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('data_nascimento')
+            ->assertJsonPath('errors.data_nascimento.0', 'A data de nascimento não pode ser futura.');
+    }
+
     public function test_saida_accepts_form_date_and_legacy_tipo_field(): void
     {
         $this->actingAsUser();

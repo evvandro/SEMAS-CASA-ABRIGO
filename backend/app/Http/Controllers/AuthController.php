@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -13,6 +14,8 @@ use Throwable;
 
 class AuthController extends Controller
 {
+    private const DUMMY_PASSWORD_HASH = '$2y$12$wqkz7QuWR7qA1B9necKa5ONHxfj002hnGbrNQp135Dsh4OGobcnV6';
+
     /**
      * Handle login with restricted users and issue a Sanctum token.
      */
@@ -45,7 +48,9 @@ class AuthController extends Controller
             ], 503);
         }
 
-        if (! $user || ! Hash::check($password, $user->password)) {
+        $passwordIsValid = Hash::check($password, $user?->password ?? self::DUMMY_PASSWORD_HASH);
+
+        if (! $user || ! $passwordIsValid) {
             Log::warning('Login rejeitado por credenciais invalidas.', [
                 'email_fingerprint' => $emailFingerprint,
                 'user_found' => $user !== null,
@@ -73,7 +78,27 @@ class AuthController extends Controller
         }
 
         try {
-            $token = $user->createToken($deviceName)->plainTextToken;
+            $expirationMinutes = max(1, (int) config('sanctum.expiration', 480));
+            $expiresAt = now()->addMinutes($expirationMinutes);
+
+            $user->tokens()
+                ->where(function ($query): void {
+                    $query
+                        ->where('expires_at', '<=', now())
+                        ->orWhereNull('expires_at');
+                })
+                ->delete();
+
+            $token = $user->createToken($deviceName, ['*'], $expiresAt)->plainTextToken;
+
+            $excessTokenIds = $user->tokens()
+                ->latest('id')
+                ->pluck('id')
+                ->skip(5);
+
+            if ($excessTokenIds->isNotEmpty()) {
+                $user->tokens()->whereKey($excessTokenIds)->delete();
+            }
         } catch (Throwable $exception) {
             Log::error('Falha ao emitir token de autenticacao.', [
                 'user_id' => $user->id,
@@ -118,27 +143,22 @@ class AuthController extends Controller
     /**
      * Update the authenticated user's profile.
      */
-    public function update(Request $request): JsonResponse
+    public function update(UpdateProfileRequest $request): JsonResponse
     {
         /** @var User $user */
         $user = $request->user();
 
-        $validated = $request->validate([
-            'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'email' => ['sometimes', 'required', 'email', 'max:255', "unique:users,email,{$user->id}"],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'current_password' => ['sometimes', 'required', 'string', 'min:8'],
-            'password' => ['sometimes', 'required_with:current_password', 'string', 'min:8', 'confirmed'],
-        ]);
+        $validated = $request->validated();
+        $passwordChanged = array_key_exists('password', $validated);
 
-        if (array_key_exists('current_password', $validated) && ! Hash::check($validated['current_password'], $user->password)) {
+        if ($passwordChanged && ! Hash::check($validated['current_password'], $user->password)) {
             return response()->json([
                 'message' => 'Senha atual incorreta.',
             ], 422);
         }
 
-        if (array_key_exists('password', $validated)) {
-            $user->password = Hash::make($validated['password']);
+        if ($passwordChanged) {
+            $user->password = $validated['password'];
             unset($validated['password']);
             unset($validated['password_confirmation']);
         }
@@ -147,6 +167,21 @@ class AuthController extends Controller
 
         $user->fill($validated);
         $user->save();
+
+        if ($passwordChanged) {
+            $currentTokenId = $user->currentAccessToken()?->getKey();
+            $otherTokens = $user->tokens();
+
+            if ($currentTokenId !== null) {
+                $otherTokens->whereKeyNot($currentTokenId);
+            }
+
+            $otherTokens->delete();
+
+            Log::info('Senha alterada e demais tokens revogados.', [
+                'user_id' => $user->id,
+            ]);
+        }
 
         return response()->json([
             'message' => 'Perfil atualizado com sucesso.',

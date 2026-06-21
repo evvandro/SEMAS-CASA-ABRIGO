@@ -21,9 +21,7 @@ return [
         'http://localhost:5173,http://localhost:3000',
     )))),
 
-    'allowed_origins_patterns' => [
-        '#^https://semas-casa-abrigo.*\.vercel\.app$#',
-    ],
+    'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 

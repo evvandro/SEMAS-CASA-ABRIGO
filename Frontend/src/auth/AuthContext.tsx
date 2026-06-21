@@ -7,7 +7,14 @@ import {
   useState,
 } from 'react';
 import type { PropsWithChildren } from 'react';
-import { AUTH_TOKEN_KEY, AUTH_USER_KEY, api } from '../services/api';
+import {
+  AUTH_TOKEN_KEY,
+  AUTH_USER_KEY,
+  api,
+  clearAuthSession,
+  getAuthStorage,
+  storeAuthSession,
+} from '../services/api';
 import type {
   AuthUser,
   LoginPayload,
@@ -20,7 +27,7 @@ interface AuthContextValue {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (payload: LoginPayload) => Promise<void>;
+  login: (payload: LoginPayload, remember?: boolean) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: AuthUser) => void;
 }
@@ -36,16 +43,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [bootError, setBootError] = useState<string | null>(null);
 
   const clearSession = useCallback(() => {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
-    localStorage.removeItem(AUTH_USER_KEY);
+    clearAuthSession();
     setToken(null);
     setUser(null);
   }, []);
 
   useEffect(() => {
     const boot = async () => {
-      const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
-      const storedUserRaw = localStorage.getItem(AUTH_USER_KEY);
+      const storage = getAuthStorage();
+      const storedToken = storage.getItem(AUTH_TOKEN_KEY);
+      const storedUserRaw = storage.getItem(AUTH_USER_KEY);
 
       if (!storedToken) {
         setIsLoading(false);
@@ -58,7 +65,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         try {
           setUser(JSON.parse(storedUserRaw) as AuthUser);
         } catch {
-          localStorage.removeItem(AUTH_USER_KEY);
+          storage.removeItem(AUTH_USER_KEY);
         }
       }
 
@@ -66,7 +73,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         const response = await api.get<MeResponse>('/me');
         const currentUser = response.data.data.user;
         setUser(currentUser);
-        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(currentUser));
+        storage.setItem(AUTH_USER_KEY, JSON.stringify(currentUser));
       } catch {
         clearSession();
         setBootError('Sua sessão expirou. Faça login novamente.');
@@ -78,21 +85,23 @@ export function AuthProvider({ children }: PropsWithChildren) {
     void boot();
   }, [clearSession]);
 
-  const login = useCallback(async (payload: LoginPayload): Promise<void> => {
-    const response = await api.post<LoginSuccessResponse>('/login', payload);
-    const nextToken = response.data.data.token;
-    const nextUser = response.data.data.user;
+  const login = useCallback(
+    async (payload: LoginPayload, remember = false): Promise<void> => {
+      const response = await api.post<LoginSuccessResponse>('/login', payload);
+      const nextToken = response.data.data.token;
+      const nextUser = response.data.data.user;
 
-    localStorage.setItem(AUTH_TOKEN_KEY, nextToken);
-    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(nextUser));
+      storeAuthSession(nextToken, nextUser, remember);
 
-    setToken(nextToken);
-    setUser(nextUser);
-  }, []);
+      setToken(nextToken);
+      setUser(nextUser);
+    },
+    [],
+  );
 
   const updateUser = useCallback((nextUser: AuthUser): void => {
     setUser(nextUser);
-    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(nextUser));
+    getAuthStorage().setItem(AUTH_USER_KEY, JSON.stringify(nextUser));
   }, []);
 
   const logout = useCallback(async (): Promise<void> => {

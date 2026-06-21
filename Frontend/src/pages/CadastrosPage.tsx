@@ -30,7 +30,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { TimeInput } from '../components/TimeInput';
 import { scrollAppContentToTop } from '../utils/scrollAppContent';
-import { showErrorToast, showSuccessToast } from '../utils/notificationService';
+import { showSuccessToast } from '../utils/notificationService';
+import { getApiErrorMessage } from '../utils/apiError';
 import { notifyAcolhidosCountRefresh } from '../utils/acolhidosEvents';
 import {
   createAcolhidoRecord,
@@ -288,26 +289,6 @@ function toFormDataFromAcolhido(row: Acolhido): FormData {
       responsibleAttendance.nomeResponsavelAtendimento,
     cargoFuncao: responsibleAttendance.cargoFuncao,
   };
-}
-
-function getErrorMessage(error: unknown): string {
-  const response = (
-    error as {
-      response?: {
-        data?: { message?: string; errors?: Record<string, string[]> };
-      };
-    }
-  ).response;
-  const validationErrors = response?.data?.errors;
-  const firstValidationMessage = validationErrors
-    ? Object.values(validationErrors)[0]?.[0]
-    : undefined;
-
-  return (
-    firstValidationMessage ??
-    response?.data?.message ??
-    'Não foi possível salvar a ficha. Verifique os dados.'
-  );
 }
 
 export function CadastrosPage() {
@@ -654,10 +635,12 @@ export function CadastrosPage() {
       }
       setFieldErrors({});
     } catch (error) {
-      const errorMessage = getErrorMessage(error);
+      const errorMessage = getApiErrorMessage(
+        error,
+        'Não foi possível salvar a ficha. Verifique os dados.',
+      );
       setSubmitError(errorMessage);
       scrollAppContentToTop();
-      showErrorToast('Erro ao salvar cadastro', errorMessage);
     } finally {
       setSubmitting(false);
     }

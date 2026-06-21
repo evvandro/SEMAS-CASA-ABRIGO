@@ -9,6 +9,15 @@ use Illuminate\Validation\Rules\Password;
 
 class UpdateUserRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('email')) {
+            $this->merge([
+                'email' => mb_strtolower(trim((string) $this->input('email'))),
+            ]);
+        }
+    }
+
     public function authorize(): bool
     {
         return true;
@@ -25,7 +34,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'email', Rule::unique('users')->ignore($userId)],
-            'password' => ['sometimes', Password::min(6)->mixedCase()->numbers()->symbols()],
+            'password' => ['sometimes', Password::min(12)->mixedCase()->numbers()->symbols()],
             'role' => ['sometimes', 'in:'.implode(',', User::roles())],
             'is_active' => ['sometimes', 'boolean'],
             'phone' => ['sometimes', 'nullable', 'string', 'max:30'],
@@ -40,10 +49,10 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'email.email' => 'Informe um e-mail válido.',
-            'password.min' => 'A senha deve ter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
-            'password.mixed' => 'A senha deve ter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
-            'password.numbers' => 'A senha deve ter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
-            'password.symbols' => 'A senha deve ter no mínimo 6 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
+            'password.min' => 'A senha deve ter no mínimo 12 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
+            'password.mixed' => 'A senha deve ter no mínimo 12 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
+            'password.numbers' => 'A senha deve ter no mínimo 12 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
+            'password.symbols' => 'A senha deve ter no mínimo 12 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.',
         ];
     }
 }

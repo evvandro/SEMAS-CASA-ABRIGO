@@ -36,7 +36,7 @@ class AdminUserTest extends TestCase
         $this->postJson('/api/admin/users', [
             'name' => 'Nova Técnica',
             'email' => 'tecnica2@semas.gov.br',
-            'password' => 'Senha123!',
+            'password' => 'SenhaForte123!',
             'role' => 'tecnico',
         ])
             ->assertCreated()
@@ -54,7 +54,7 @@ class AdminUserTest extends TestCase
         $this->postJson('/api/admin/users', [
             'name' => 'Outro',
             'email' => 'existente@semas.gov.br',
-            'password' => 'Senha123!',
+            'password' => 'SenhaForte123!',
             'role' => 'tecnico',
         ])->assertUnprocessable();
     }
@@ -66,7 +66,7 @@ class AdminUserTest extends TestCase
         $this->postJson('/api/admin/users', [
             'name' => 'Teste',
             'email' => 'teste@semas.gov.br',
-            'password' => 'Senha123!',
+            'password' => 'SenhaForte123!',
             'role' => 'superuser',
         ])->assertUnprocessable();
     }
@@ -93,6 +93,37 @@ class AdminUserTest extends TestCase
         $this->assertDatabaseHas('users', ['id' => $user->id, 'is_active' => false]);
     }
 
+    public function test_deactivating_user_revokes_all_tokens(): void
+    {
+        Sanctum::actingAs($this->admin());
+        $user = User::factory()->create(['is_active' => true]);
+        $user->createToken('browser');
+
+        $this->deleteJson("/api/admin/users/{$user->id}")
+            ->assertOk();
+
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+            'tokenable_type' => User::class,
+        ]);
+    }
+
+    public function test_admin_password_reset_revokes_user_tokens(): void
+    {
+        Sanctum::actingAs($this->admin());
+        $user = User::factory()->create();
+        $user->createToken('browser');
+
+        $this->patchJson("/api/admin/users/{$user->id}", [
+            'password' => 'SenhaNovaForte123!',
+        ])->assertOk();
+
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+            'tokenable_type' => User::class,
+        ]);
+    }
+
     public function test_admin_cannot_deactivate_themselves(): void
     {
         $admin = $this->admin();
@@ -100,6 +131,31 @@ class AdminUserTest extends TestCase
 
         $this->deleteJson("/api/admin/users/{$admin->id}")
             ->assertStatus(403);
+    }
+
+    public function test_admin_cannot_remove_own_role_through_update(): void
+    {
+        $admin = $this->admin();
+        Sanctum::actingAs($admin);
+
+        $this->patchJson("/api/admin/users/{$admin->id}", [
+            'role' => User::ROLE_TECNICO,
+        ])->assertForbidden();
+
+        $this->assertSame(User::ROLE_ADMIN, $admin->fresh()->role);
+    }
+
+    public function test_admin_creation_normalizes_email(): void
+    {
+        Sanctum::actingAs($this->admin());
+
+        $this->postJson('/api/admin/users', [
+            'name' => 'Nova Técnica',
+            'email' => '  TECNICA@SEMAS.GOV.BR  ',
+            'password' => 'SenhaForte123!',
+            'role' => 'tecnico',
+        ])->assertCreated()
+            ->assertJsonPath('data.email', 'tecnica@semas.gov.br');
     }
 
     public function test_non_admin_cannot_access_admin_routes(): void

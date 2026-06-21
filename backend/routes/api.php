@@ -16,7 +16,7 @@ Route::get('/health', HealthController::class);
 
 Route::middleware('throttle:login')->post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function (): void {
+Route::middleware(['auth:sanctum', 'active'])->group(function (): void {
     Route::get('/me', [AuthController::class, 'me']);
     Route::patch('/me', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);

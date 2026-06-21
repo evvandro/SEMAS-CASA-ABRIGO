@@ -36,6 +36,17 @@ class RequestDiagnostics
         }
 
         $response->headers->set('X-Request-ID', $requestId);
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('Referrer-Policy', 'no-referrer');
+        $response->headers->set('X-Frame-Options', 'DENY');
+
+        if ($request->is('api/login') || $request->user() !== null) {
+            $response->headers->set('Cache-Control', 'no-store, private');
+        }
+
+        if (app()->isProduction() && $request->isSecure()) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        }
 
         $context = [
             'status' => $response->getStatusCode(),
