@@ -1,33 +1,57 @@
 import { AxiosError } from 'axios';
 
+function withRequestId(message: string, error: AxiosError): string {
+  const requestId = error.response?.headers['x-request-id'];
+
+  return requestId ? `${message} Código: ${requestId}` : message;
+}
+
 export function parseApiError(error: unknown): string {
   if (error instanceof AxiosError) {
     if (!error.response) {
       if (error.code === 'ERR_NETWORK') {
-        return 'Sem conexão com o servidor. Verifique se o backend está rodando.';
+        return withRequestId(
+          'Sem conexão com o servidor. Verifique se o backend está rodando.',
+          error,
+        );
       }
       if (error.code === 'ECONNABORTED') {
-        return 'A requisição demorou demais. Tente novamente.';
+        return withRequestId(
+          'A requisição demorou demais. Tente novamente.',
+          error,
+        );
       }
-      return 'Erro de rede. Verifique sua conexão e tente novamente.';
+      return withRequestId(
+        'Erro de rede. Verifique sua conexão e tente novamente.',
+        error,
+      );
     }
 
     const apiMessage = (error.response.data as { message?: string } | undefined)
       ?.message;
     if (apiMessage) {
-      return apiMessage;
+      return withRequestId(apiMessage, error);
     }
 
     if (error.response.status === 422) {
-      return 'Dados inválidos. Verifique e tente novamente.';
+      return withRequestId(
+        'Dados inválidos. Verifique e tente novamente.',
+        error,
+      );
     }
 
     if (error.response.status === 503) {
-      return 'Serviço temporariamente indisponível. Tente novamente em instantes.';
+      return withRequestId(
+        'Serviço temporariamente indisponível. Tente novamente em instantes.',
+        error,
+      );
     }
 
     if (error.response.status >= 500) {
-      return 'Erro interno do servidor. Tente novamente mais tarde.';
+      return withRequestId(
+        'Erro interno do servidor. Tente novamente mais tarde.',
+        error,
+      );
     }
   }
 

@@ -19,7 +19,7 @@ services:
       - key: LOG_CHANNEL
         value: stderr
       - key: LOG_LEVEL
-        value: warning
+        value: info
       - key: CORS_ALLOWED_ORIGINS
         value: https://semas-casa-abrigo.vercel.app
       - key: DB_CONNECTION

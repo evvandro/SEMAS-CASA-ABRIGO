@@ -20,6 +20,12 @@ class AuthController extends Controller
     {
         $email = $request->string('email')->toString();
         $password = $request->string('password')->toString();
+        $emailFingerprint = substr(hash('sha256', mb_strtolower($email)), 0, 16);
+
+        Log::info('Tentativa de login recebida.', [
+            'email_fingerprint' => $emailFingerprint,
+            'device_name' => $request->string('device_name')->toString() ?: 'frontend-web',
+        ]);
 
         try {
             /** @var User|null $user */
@@ -28,11 +34,10 @@ class AuthController extends Controller
             $driver = config('database.default');
 
             Log::error('Falha ao autenticar usuário por indisponibilidade do banco.', [
-                'email' => $email,
+                'email_fingerprint' => $emailFingerprint,
                 'db_driver' => $driver,
                 'db_host' => config("database.connections.{$driver}.host", 'n/a'),
-                'env_db_connection' => env('DB_CONNECTION'),
-                'error' => $exception->getMessage(),
+                'exception' => $exception,
             ]);
 
             return response()->json([
@@ -41,12 +46,22 @@ class AuthController extends Controller
         }
 
         if (! $user || ! Hash::check($password, $user->password)) {
+            Log::warning('Login rejeitado por credenciais invalidas.', [
+                'email_fingerprint' => $emailFingerprint,
+                'user_found' => $user !== null,
+            ]);
+
             return response()->json([
                 'message' => 'Credenciais inválidas.',
             ], 422);
         }
 
         if (! $user->is_active) {
+            Log::warning('Login rejeitado para usuario inativo.', [
+                'user_id' => $user->id,
+                'email_fingerprint' => $emailFingerprint,
+            ]);
+
             return response()->json([
                 'message' => 'Este usuário está inativo. Entre em contato com o administrador.',
             ], 403);
@@ -57,7 +72,25 @@ class AuthController extends Controller
             $deviceName = 'frontend-web';
         }
 
-        $token = $user->createToken($deviceName)->plainTextToken;
+        try {
+            $token = $user->createToken($deviceName)->plainTextToken;
+        } catch (Throwable $exception) {
+            Log::error('Falha ao emitir token de autenticacao.', [
+                'user_id' => $user->id,
+                'email_fingerprint' => $emailFingerprint,
+                'exception' => $exception,
+            ]);
+
+            return response()->json([
+                'message' => 'Serviço de autenticação temporariamente indisponível. Tente novamente em instantes.',
+            ], 503);
+        }
+
+        Log::info('Login realizado com sucesso.', [
+            'user_id' => $user->id,
+            'role' => $user->role,
+            'email_fingerprint' => $emailFingerprint,
+        ]);
 
         return response()->json([
             'message' => 'Login realizado com sucesso.',
