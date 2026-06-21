@@ -29,6 +29,9 @@ class HealthController extends Controller
                 'db_driver' => $dbDriver,
                 'db_host' => $dbHost,
                 'db_error' => $dbError,
+                'config_cached' => app()->configurationIsCached(),
+                'env_db_connection' => env('DB_CONNECTION'),
+                'pgsql_host_config' => config('database.connections.pgsql.host'),
             ],
         ], $dbStatus === 'ok' ? 200 : 503);
     }
