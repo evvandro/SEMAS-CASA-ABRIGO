@@ -18,10 +18,12 @@ RUN cp .env.example .env \
     && php artisan key:generate --force \
     && composer run-script post-autoload-dump
 
-RUN php artisan config:clear \
-    && php artisan route:cache \
-    && php artisan view:cache
-
 EXPOSE 8000
 
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+# IMPORTANTE: limpar a config em RUNTIME (não no build) garante que as variáveis de
+# ambiente do Render (DB_CONNECTION=pgsql etc.) valham. Se a config for cacheada no
+# build — quando essas vars ainda não existem — o app sobe preso em sqlite e ignora o env.
+CMD php artisan config:clear \
+    && php artisan migrate --force \
+    && php artisan db:seed --force \
+    && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}

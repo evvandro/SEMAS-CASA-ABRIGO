@@ -25,8 +25,13 @@ class AuthController extends Controller
             /** @var User|null $user */
             $user = User::query()->where('email', $email)->first();
         } catch (Throwable $exception) {
+            $driver = config('database.default');
+
             Log::error('Falha ao autenticar usuário por indisponibilidade do banco.', [
                 'email' => $email,
+                'db_driver' => $driver,
+                'db_host' => config("database.connections.{$driver}.host", 'n/a'),
+                'env_db_connection' => env('DB_CONNECTION'),
                 'error' => $exception->getMessage(),
             ]);
 
