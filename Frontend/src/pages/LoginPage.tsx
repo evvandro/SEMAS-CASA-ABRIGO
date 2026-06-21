@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Button,
   Checkbox,
@@ -26,6 +25,7 @@ import type { FormEvent, ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
 import { parseApiError } from '../auth/parseApiError';
+import { showErrorToast } from '../utils/notificationService';
 
 interface LocationState {
   from?: {
@@ -45,14 +45,30 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setErrorMessage(null);
 
-    if (!email || !password) {
-      setErrorMessage('Informe e-mail e senha para continuar.');
+    const normalizedEmail = email.trim();
+
+    if (!normalizedEmail || !password) {
+      showErrorToast(
+        'Dados incompletos',
+        'Informe e-mail e senha para continuar.',
+      );
+      return;
+    }
+
+    if (!normalizedEmail.includes('@')) {
+      showErrorToast(
+        'E-mail inválido',
+        'O e-mail precisa conter @ para continuar.',
+      );
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      showErrorToast('E-mail inválido', 'Informe um e-mail funcional válido.');
       return;
     }
 
@@ -60,14 +76,14 @@ export function LoginPage() {
 
     try {
       await login({
-        email,
+        email: normalizedEmail,
         password,
         device_name: 'frontend-web',
       });
 
       navigate(from, { replace: true });
     } catch (error: unknown) {
-      setErrorMessage(parseApiError(error));
+      showErrorToast('Erro ao entrar', parseApiError(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -233,6 +249,7 @@ export function LoginPage() {
           spacing={{ xs: 2.5, md: 3 }}
           component="form"
           onSubmit={handleSubmit}
+          noValidate
           sx={{ width: '100%', maxWidth: 520 }}
         >
           <Stack spacing={1}>
@@ -243,8 +260,6 @@ export function LoginPage() {
               Acesso restrito à equipe da Casa Abrigo.
             </Typography>
           </Stack>
-
-          {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
 
           <Stack spacing={{ xs: 2, md: 2.5 }}>
             <TextField
