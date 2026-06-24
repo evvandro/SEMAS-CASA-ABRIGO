@@ -173,6 +173,16 @@ function formatCpf(value: string): string {
   return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
 }
 
+function formatPhone(value: string): string {
+  const digits = onlyDigits(value).slice(0, 11);
+
+  if (!digits) return '';
+  if (digits.length <= 2) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+}
+
 function buildObservacoes(formData: FormData, setorNome?: string): string {
   return [
     formData.horaEntrada ? `Hora da entrada: ${formData.horaEntrada}` : '',
@@ -735,7 +745,10 @@ export function CadastrosPage() {
                   }
                   error={!!fieldErrors.dataEntrada}
                   helperText={fieldErrors.dataEntrada}
-                  slotProps={{ inputLabel: { shrink: true } }}
+                  slotProps={{
+                    inputLabel: { shrink: true },
+                    htmlInput: { max: '9999-12-31' },
+                  }}
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 3 }}>
@@ -848,7 +861,10 @@ export function CadastrosPage() {
                     }
                     error={!!fieldErrors.dataNascimento}
                     helperText={fieldErrors.dataNascimento}
-                    slotProps={{ inputLabel: { shrink: true } }}
+                    slotProps={{
+                      inputLabel: { shrink: true },
+                      htmlInput: { max: '9999-12-31' },
+                    }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
@@ -874,7 +890,7 @@ export function CadastrosPage() {
                     label="Telefone"
                     value={formData.telefone}
                     onChange={(event) =>
-                      setField('telefone', event.target.value)
+                      setField('telefone', formatPhone(event.target.value))
                     }
                   />
                 </Grid>
@@ -988,7 +1004,10 @@ export function CadastrosPage() {
                                 event.target.value,
                               )
                             }
-                            slotProps={{ inputLabel: { shrink: true } }}
+                            slotProps={{
+                              inputLabel: { shrink: true },
+                              htmlInput: { max: '9999-12-31' },
+                            }}
                           />
                         </Grid>
                         <Grid size={{ xs: 12, md: 3 }}>
@@ -1023,7 +1042,7 @@ export function CadastrosPage() {
                               setFamilyMemberField(
                                 index,
                                 'telefone',
-                                event.target.value,
+                                formatPhone(event.target.value),
                               )
                             }
                           />

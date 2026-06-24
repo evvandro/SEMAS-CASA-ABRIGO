@@ -41,7 +41,7 @@ class UpdateProfileRequest extends FormRequest
             'password' => [
                 'sometimes',
                 'confirmed',
-                Password::min(12)->mixedCase()->numbers()->symbols(),
+                Password::min(6),
             ],
         ];
     }

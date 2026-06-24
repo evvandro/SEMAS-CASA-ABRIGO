@@ -3,69 +3,48 @@ import {
   Box,
   Button,
   ButtonBase,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
-  FormControlLabel,
   IconButton,
   InputAdornment,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  MenuItem,
   Paper,
   Popover,
-  Select,
   Stack,
-  Switch,
   TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsIcon from '@mui/icons-material/Settings';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
-import { listUsers, updateMyProfile } from '../services/usersService';
+import { updateMyProfile } from '../services/usersService';
 import { showSuccessToast } from '../utils/notificationService';
 import { getApiErrorMessage } from '../utils/apiError';
-import type { AuthUser } from '../types/auth';
 
 const MENU_BACKGROUND = 'background.paper';
 const INACTIVE_TEXT = 'text.secondary';
 
 const PROFILE_OPTIONS = [
   {
-    id: 'switch',
-    label: 'Trocar perfil',
-    description: 'Selecione outro perfil existente',
-    icon: SwapHorizIcon,
-  },
-  {
     id: 'edit',
     label: 'Editar perfil',
     description: 'Atualize seus dados pessoais',
     icon: EditIcon,
-  },
-  {
-    id: 'settings',
-    label: 'Configurações',
-    description: 'Ajuste aparência e preferências',
-    icon: SettingsIcon,
   },
   {
     id: 'password',
@@ -76,16 +55,6 @@ const PROFILE_OPTIONS = [
 ] as const;
 
 type ProfileAction = (typeof PROFILE_OPTIONS)[number]['id'];
-
-type ProfileSettingsState = {
-  themeMode: 'light' | 'dark';
-  primaryColor: 'Ciano' | 'Verde' | 'Roxo';
-  language: 'Português (BR)' | 'English (US)';
-  notifications: boolean;
-  sounds: boolean;
-  publicProfile: boolean;
-  dataVisibility: 'Público' | 'Privado';
-};
 
 type ChangePasswordState = {
   currentPassword: string;
@@ -100,18 +69,6 @@ type EditProfileState = {
   name: string;
   email: string;
   username: string;
-  phone: string;
-  bio: string;
-};
-
-const DEFAULT_SETTINGS: ProfileSettingsState = {
-  themeMode: 'dark',
-  primaryColor: 'Ciano',
-  language: 'Português (BR)',
-  notifications: true,
-  sounds: false,
-  publicProfile: true,
-  dataVisibility: 'Privado',
 };
 
 function getInitials(name: string) {
@@ -172,20 +129,10 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
   const [activeDialog, setActiveDialog] = useState<'none' | ProfileAction>(
     'none',
   );
-  const [profiles, setProfiles] = useState<AuthUser[]>([]);
-  const [profilesLoading, setProfilesLoading] = useState(false);
-  const [profilesError, setProfilesError] = useState<string | null>(null);
-  const [selectedProfileId, setSelectedProfileId] = useState<number | null>(
-    null,
-  );
-  const [settings, setSettings] =
-    useState<ProfileSettingsState>(DEFAULT_SETTINGS);
   const [editForm, setEditForm] = useState<EditProfileState>({
     name: user?.name ?? '',
     email: user?.email ?? '',
-    username: buildUsername(user?.email ?? ''),
-    phone: user?.phone ?? '',
-    bio: '',
+    username: buildUsername(user?.email ?? '')
   });
   const [passwordForm, setPasswordForm] = useState<ChangePasswordState>({
     currentPassword: '',
@@ -205,53 +152,9 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
     setEditForm({
       name: user.name,
       email: user.email,
-      username: buildUsername(user.email),
-      phone: user.phone ?? '',
-      bio: '',
+      username: buildUsername(user.email)
     });
-    setSelectedProfileId(user.id);
   }, [user]);
-
-  useEffect(() => {
-    const storedSettings = window.localStorage.getItem('profile-menu-settings');
-    if (storedSettings) {
-      try {
-        setSettings(JSON.parse(storedSettings) as ProfileSettingsState);
-      } catch {
-        setSettings(DEFAULT_SETTINGS);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (activeDialog !== 'switch') {
-      return;
-    }
-
-    if (!user) {
-      setProfiles([]);
-      return;
-    }
-
-    if (user.role !== 'admin') {
-      setProfiles([user]);
-      setProfilesError(null);
-      return;
-    }
-
-    setProfilesLoading(true);
-    setProfilesError(null);
-
-    void listUsers()
-      .then((result) => {
-        setProfiles(result);
-        setSelectedProfileId((prev) => prev ?? user.id);
-      })
-      .catch(() => {
-        setProfilesError('Não foi possível carregar perfis.');
-      })
-      .finally(() => setProfilesLoading(false));
-  }, [activeDialog, user]);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -269,27 +172,6 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
 
   const handleLogout = async () => {
     handleCloseMenu();
-    await logout();
-    navigate('/login', { replace: true });
-  };
-
-  const handleConfirmProfileSwitch = async () => {
-    if (!user) {
-      return;
-    }
-
-    if (selectedProfileId === user.id) {
-      showSuccessToast('Perfil ativo', 'Você já está usando este perfil.');
-      setActiveDialog('none');
-      return;
-    }
-
-    if (!selectedProfileId) {
-      return;
-    }
-
-    handleCloseMenu();
-
     await logout();
     navigate('/login', { replace: true });
   };
@@ -318,8 +200,7 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
     try {
       const updatedUser = await updateMyProfile({
         name,
-        email,
-        phone: editForm.phone || null,
+        email
       });
 
       updateUser(updatedUser);
@@ -336,33 +217,13 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
     }
   };
 
-  const handleSaveSettings = () => {
-    window.localStorage.setItem(
-      'profile-menu-settings',
-      JSON.stringify(settings),
-    );
-    showSuccessToast(
-      'Configurações salvas',
-      'Suas preferências foram atualizadas.',
-    );
-    setActiveDialog('none');
-  };
-
   const handleUpdatePassword = async () => {
     if (!user) {
       return;
     }
 
-    if (
-      passwordForm.newPassword.length < 12 ||
-      !/[a-z]/.test(passwordForm.newPassword) ||
-      !/[A-Z]/.test(passwordForm.newPassword) ||
-      !/\d/.test(passwordForm.newPassword) ||
-      !/[^A-Za-z0-9]/.test(passwordForm.newPassword)
-    ) {
-      setDialogError(
-        'Use ao menos 12 caracteres, com maiúscula, minúscula, número e símbolo.',
-      );
+    if (passwordForm.newPassword.length < 6) {
+      setDialogError('A nova senha deve ter ao menos 6 caracteres.');
       return;
     }
 
@@ -404,16 +265,6 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleAddProfile = () => {
-    handleCloseMenu();
-    if (user?.role === 'admin') {
-      navigate('/admin');
-      return;
-    }
-
-    navigate('/login');
   };
 
   const menuContent = (
@@ -626,103 +477,6 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
       )}
 
       <Dialog
-        open={activeDialog === 'switch'}
-        onClose={() => setActiveDialog('none')}
-        fullWidth
-        maxWidth="sm"
-        PaperProps={{
-          sx: {
-            bgcolor: MENU_BACKGROUND,
-            color: 'text.primary',
-            borderRadius: 2,
-            border: '1px solid',
-            borderColor: 'divider',
-          },
-        }}
-      >
-        <DialogTitle>Trocar perfil</DialogTitle>
-        <DialogContent dividers>
-          <Typography variant="body2" sx={{ color: INACTIVE_TEXT, mb: 2 }}>
-            Selecione um perfil existente ou entre com outro usuário.
-          </Typography>
-
-          {profilesError && (
-            <Typography variant="body2" color="error" sx={{ mb: 2 }}>
-              {profilesError}
-            </Typography>
-          )}
-
-          <List disablePadding>
-            {profiles.map((profile) => (
-              <ListItemButton
-                key={profile.id}
-                selected={selectedProfileId === profile.id}
-                onClick={() => setSelectedProfileId(profile.id)}
-                sx={{
-                  mb: 1,
-                  borderRadius: 1.5,
-                  bgcolor:
-                    selectedProfileId === profile.id
-                      ? 'action.selected'
-                      : 'action.hover',
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Avatar sx={{ bgcolor: 'primary.main' }}>
-                    {getInitials(profile.name)}
-                  </Avatar>
-                </ListItemIcon>
-                <ListItemText
-                  primary={profile.name}
-                  secondary={profile.email}
-                  primaryTypographyProps={{ fontWeight: 600 }}
-                  secondaryTypographyProps={{
-                    color: INACTIVE_TEXT,
-                    fontSize: 12,
-                  }}
-                />
-                {profile.id === user.id && (
-                  <Chip
-                    label="Ativo"
-                    size="small"
-                    color="primary"
-                    variant="outlined"
-                  />
-                )}
-              </ListItemButton>
-            ))}
-          </List>
-
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} mt={2}>
-            <Button
-              variant="contained"
-              fullWidth
-              startIcon={<AddIcon />}
-              onClick={handleAddProfile}
-              sx={{ borderRadius: 2 }}
-            >
-              Adicionar perfil
-            </Button>
-            <Button
-              variant="outlined"
-              fullWidth
-              color="primary"
-              onClick={handleConfirmProfileSwitch}
-              disabled={selectedProfileId === user.id || profilesLoading}
-              sx={{ borderRadius: 2 }}
-            >
-              Entrar em outro perfil
-            </Button>
-          </Stack>
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setActiveDialog('none')} color="inherit">
-            Fechar
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
         open={activeDialog === 'edit'}
         onClose={() => setActiveDialog('none')}
         fullWidth
@@ -794,26 +548,6 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
               fullWidth
               InputLabelProps={{ sx: { color: INACTIVE_TEXT } }}
             />
-            <TextField
-              label="Telefone"
-              value={editForm.phone}
-              onChange={(event) =>
-                setEditForm((prev) => ({ ...prev, phone: event.target.value }))
-              }
-              fullWidth
-              InputLabelProps={{ sx: { color: INACTIVE_TEXT } }}
-            />
-            <TextField
-              label="Bio (opcional)"
-              value={editForm.bio}
-              onChange={(event) =>
-                setEditForm((prev) => ({ ...prev, bio: event.target.value }))
-              }
-              fullWidth
-              multiline
-              minRows={3}
-              InputLabelProps={{ sx: { color: INACTIVE_TEXT } }}
-            />
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
@@ -823,9 +557,7 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
               setEditForm({
                 name: user.name,
                 email: user.email,
-                username: buildUsername(user.email),
-                phone: user.phone ?? '',
-                bio: '',
+                username: buildUsername(user.email)
               });
               setDialogError(null);
             }}
@@ -841,190 +573,6 @@ export function ProfileMenu({ variant = 'icon' }: ProfileMenuProps) {
             disabled={saving}
           >
             {saving ? 'Salvando...' : 'Salvar alterações'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={activeDialog === 'settings'}
-        onClose={() => setActiveDialog('none')}
-        fullWidth
-        maxWidth="sm"
-        PaperProps={{
-          sx: {
-            bgcolor: MENU_BACKGROUND,
-            color: 'text.primary',
-            borderRadius: 2,
-            border: '1px solid',
-            borderColor: 'divider',
-          },
-        }}
-      >
-        <DialogTitle>Configurações</DialogTitle>
-        <DialogContent dividers>
-          <Stack spacing={3}>
-            <Box>
-              <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
-                Aparência
-              </Typography>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={settings.themeMode === 'dark'}
-                      onChange={(event) =>
-                        setSettings((prev) => ({
-                          ...prev,
-                          themeMode: event.target.checked ? 'dark' : 'light',
-                        }))
-                      }
-                      color="primary"
-                    />
-                  }
-                  label="Tema escuro"
-                />
-                <Select
-                  value={settings.primaryColor}
-                  onChange={(event) =>
-                    setSettings((prev) => ({
-                      ...prev,
-                      primaryColor: event.target
-                        .value as ProfileSettingsState['primaryColor'],
-                    }))
-                  }
-                  sx={{
-                    minWidth: 160,
-                    bgcolor: 'action.hover',
-                    borderRadius: 1,
-                  }}
-                >
-                  <MenuItem value="Ciano">Ciano</MenuItem>
-                  <MenuItem value="Verde">Verde</MenuItem>
-                  <MenuItem value="Roxo">Roxo</MenuItem>
-                </Select>
-              </Stack>
-            </Box>
-
-            <Box>
-              <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
-                Preferências
-              </Typography>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={settings.language === 'English (US)'}
-                    onChange={(event) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        language: event.target.checked
-                          ? 'English (US)'
-                          : 'Português (BR)',
-                      }))
-                    }
-                    color="primary"
-                  />
-                }
-                label="Idioma inglês"
-              />
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={settings.notifications}
-                    onChange={(event) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        notifications: event.target.checked,
-                      }))
-                    }
-                    color="primary"
-                  />
-                }
-                label="Notificações"
-              />
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={settings.sounds}
-                    onChange={(event) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        sounds: event.target.checked,
-                      }))
-                    }
-                    color="primary"
-                  />
-                }
-                label="Sons"
-              />
-            </Box>
-
-            <Box>
-              <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
-                Privacidade
-              </Typography>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={settings.publicProfile}
-                    onChange={(event) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        publicProfile: event.target.checked,
-                      }))
-                    }
-                    color="primary"
-                  />
-                }
-                label="Perfil público"
-              />
-              <Select
-                value={settings.dataVisibility}
-                onChange={(event) =>
-                  setSettings((prev) => ({
-                    ...prev,
-                    dataVisibility: event.target
-                      .value as ProfileSettingsState['dataVisibility'],
-                  }))
-                }
-                sx={{
-                  minWidth: 180,
-                  bgcolor: 'action.hover',
-                  borderRadius: 1,
-                  mt: 1,
-                }}
-              >
-                <MenuItem value="Público">Público</MenuItem>
-                <MenuItem value="Privado">Privado</MenuItem>
-              </Select>
-            </Box>
-
-            <Box>
-              <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
-                Conta
-              </Typography>
-              <Button
-                variant="outlined"
-                fullWidth
-                onClick={() =>
-                  showSuccessToast(
-                    'Sessões encerradas',
-                    'Sessões em outros dispositivos foram encerradas.',
-                  )
-                }
-                sx={{ borderColor: 'divider' }}
-                color="inherit"
-              >
-                Encerrar sessão em outros dispositivos
-              </Button>
-            </Box>
-          </Stack>
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
-          <Button onClick={() => setActiveDialog('none')} color="inherit">
-            Cancelar
-          </Button>
-          <Button variant="contained" onClick={handleSaveSettings}>
-            Salvar alterações
           </Button>
         </DialogActions>
       </Dialog>

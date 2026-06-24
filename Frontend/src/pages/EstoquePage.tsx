@@ -1079,7 +1079,10 @@ function RecebimentoDrawer({
                     }
                     fullWidth
                     required
-                    slotProps={{ inputLabel: { shrink: true } }}
+                    slotProps={{
+                      inputLabel: { shrink: true },
+                      htmlInput: { max: '9999-12-31' },
+                    }}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -1470,7 +1473,10 @@ function DistribuicaoDrawer({
                     onChange={(e) => onField('data_entrega', e.target.value)}
                     required
                     sx={{ width: { xs: '100%', md: 220 } }}
-                    slotProps={{ inputLabel: { shrink: true } }}
+                    slotProps={{
+                      inputLabel: { shrink: true },
+                      htmlInput: { max: '9999-12-31' },
+                    }}
                   />
                 </Stack>
 

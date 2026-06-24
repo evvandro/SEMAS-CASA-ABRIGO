@@ -34,7 +34,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'email', Rule::unique('users')->ignore($userId)],
-            'password' => ['sometimes', Password::min(12)->mixedCase()->numbers()->symbols()],
+            'password' => ['sometimes', Password::min(6)],
             'role' => ['sometimes', 'in:'.implode(',', User::roles())],
             'is_active' => ['sometimes', 'boolean'],
             'phone' => ['sometimes', 'nullable', 'string', 'max:30'],

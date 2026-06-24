@@ -30,7 +30,7 @@ class StoreUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', Password::min(12)->mixedCase()->numbers()->symbols()],
+            'password' => ['required', Password::min(6)],
             'role' => ['required', 'in:'.implode(',', User::roles())],
             'phone' => ['nullable', 'string', 'max:30'],
             'documento' => ['nullable', 'string', 'size:11', 'unique:users,documento'],
