@@ -50,6 +50,8 @@ export function TimeInput({
 }: TimeInputProps) {
   return (
     <TimePicker
+      ampm={false}
+      format="HH:mm"
       autoFocus={autoFocus}
       value={parseTime(value)}
       onChange={(nextValue) => onChange?.(formatTime(nextValue))}
