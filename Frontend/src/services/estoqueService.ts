@@ -109,8 +109,22 @@ export interface EntregaLotePayload {
   }>;
 }
 
+export interface MaterialPayload {
+  nome: string;
+  categoria: string;
+  unidade: string;
+  estoque_atual: number;
+}
+
 export async function fetchMateriais(): Promise<Material[]> {
   const res = await api.get<{ data: Material[] }>('/materiais');
+  return res.data.data;
+}
+
+export async function createMaterial(
+  payload: MaterialPayload,
+): Promise<Material> {
+  const res = await api.post<{ data: Material }>('/materiais', payload);
   return res.data.data;
 }
 

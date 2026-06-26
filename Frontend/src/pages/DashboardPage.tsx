@@ -23,12 +23,14 @@ import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
 import { api } from '../services/api';
+import { PageHeader } from '../components/PageHeader';
 
 interface DashboardSetor {
   id: number;
   nome: string;
   cor: string;
   capacidade: number;
+  leitos_interditados?: string[];
   familias_ativas_count: number;
   acolhidos_ativos_count: number;
 }
@@ -129,8 +131,12 @@ export function DashboardPage() {
   }, []);
 
   const setores = dashboard?.setores ?? [];
+  // Vagas úteis = capacidade − leitos interditados (mesma base do mapa de Setores),
+  // para a ocupação geral ser coerente entre as telas.
   const totalCapacity = setores.reduce(
-    (acc, setor) => acc + (setor.capacidade ?? 0),
+    (acc, setor) =>
+      acc +
+      Math.max((setor.capacidade ?? 0) - (setor.leitos_interditados?.length ?? 0), 0),
     0,
   );
   const occupiedCapacity = setores.reduce(
@@ -162,39 +168,26 @@ export function DashboardPage() {
 
   return (
     <Stack spacing={3}>
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        justifyContent="space-between"
-        alignItems={{ xs: 'flex-start', md: 'center' }}
-        gap={2}
-      >
-        <Box>
-          <Typography variant="h4">Painel Inicial</Typography>
-          <Typography color="text.secondary" sx={{ mt: 0.75 }}>
-            Acompanhamento dos acolhimentos ativos e da ocupacao da Casa Abrigo.
-          </Typography>
-        </Box>
-
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          gap={1}
-          sx={{ width: { xs: '100%', sm: 'auto' } }}
-        >
-          <Chip
-            label={`Perfil: ${user?.role ?? 'nao definido'}`}
-            sx={{ width: 'fit-content' }}
-          />
-          <Button
-            component={RouterLink}
-            to="/acolhidos"
-            variant="contained"
-            endIcon={<ArrowForwardIcon />}
-            sx={{ justifyContent: 'center' }}
-          >
-            Ver acolhidos
-          </Button>
-        </Stack>
-      </Stack>
+      <PageHeader
+        title="Painel Inicial"
+        description="Acompanhamento dos acolhimentos ativos e da ocupacao da Casa Abrigo."
+        actions={
+          <>
+            <Chip
+              label={`Perfil: ${user?.role ?? 'nao definido'}`}
+              sx={{ width: 'fit-content' }}
+            />
+            <Button
+              component={RouterLink}
+              to="/acolhidos"
+              variant="contained"
+              endIcon={<ArrowForwardIcon />}
+            >
+              Ver acolhidos
+            </Button>
+          </>
+        }
+      />
 
       {error ? <Alert severity="error">{error}</Alert> : null}
 
@@ -221,7 +214,7 @@ export function DashboardPage() {
             value={totalCapacity > 0 ? `${occupancyPercent}%` : '-'}
             helper={
               totalCapacity > 0
-                ? `${occupiedCapacity} de ${totalCapacity} vagas`
+                ? `${occupiedCapacity} de ${totalCapacity} vagas úteis`
                 : 'Capacidade nao cadastrada'
             }
             icon={<GridViewIcon />}
@@ -323,8 +316,8 @@ export function DashboardPage() {
                         color="text.secondary"
                         sx={{ display: 'block', mt: 1 }}
                       >
-                        {setor.familias_ativas_count} familias ativas neste
-                        setor
+                        {setor.acolhidos_ativos_count} pessoas ·{' '}
+                        {setor.familias_ativas_count} famílias ativas
                       </Typography>
                     </Box>
                   </Grid>

@@ -7,6 +7,7 @@ import {
   TableRow,
   TableSortLabel,
   TablePagination,
+  TableContainer,
   Paper,
   Box,
   IconButton,
@@ -83,8 +84,9 @@ export function AcolhidosTable({
 
   return (
     <Paper variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden' }}>
-      <Table>
-        <TableHead>
+      <TableContainer>
+        <Table sx={{ minWidth: 760 }}>
+          <TableHead>
           <TableRow>
             <SortHeaderCell id="id" sort={sort} onSort={toggleSort} width={110}>
               Prontuário
@@ -177,7 +179,8 @@ export function AcolhidosTable({
             </TableRow>
           )}
         </TableBody>
-      </Table>
+        </Table>
+      </TableContainer>
       <TablePagination
         component="div"
         count={sorted.length}

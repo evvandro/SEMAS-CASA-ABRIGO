@@ -30,6 +30,7 @@ import { useAuth } from '../auth/useAuth';
 import { fetchAcolhidos } from '../services/acolhidosService';
 import { showSuccessToast } from '../utils/notificationService';
 import { getApiErrorMessage } from '../utils/apiError';
+import { PageHeader } from '../components/PageHeader';
 import {
   createSetor,
   deleteSetor,
@@ -533,31 +534,21 @@ export function SetoresPage() {
 
   return (
     <Stack spacing={3}>
-      <Stack
-        direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="space-between"
-        alignItems={{ xs: 'flex-start', sm: 'center' }}
-        gap={2}
-      >
-        <Box>
-          <Typography variant="h4" gutterBottom>
-            Setores
-          </Typography>
-          <Typography color="text.secondary">
-            Ocupação, leitos e status operacional da Casa Abrigo.
-          </Typography>
-        </Box>
-        {isAdmin && (
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={openCreate}
-            sx={{ flexShrink: 0 }}
-          >
-            Novo setor
-          </Button>
-        )}
-      </Stack>
+      <PageHeader
+        title="Setores"
+        description="Ocupação, leitos e status operacional da Casa Abrigo."
+        actions={
+          isAdmin && (
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={openCreate}
+            >
+              Novo setor
+            </Button>
+          )
+        }
+      />
 
       {error && (
         <Alert severity="error" onClose={() => setError(null)}>
