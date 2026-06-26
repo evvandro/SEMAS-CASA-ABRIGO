@@ -109,6 +109,7 @@ export function LoginPage() {
           flexDirection: 'column',
           justifyContent: 'space-between',
           p: { xs: 3, sm: 5, lg: 8 },
+          '@media (max-height:760px)': { p: 4 },
           color: 'common.white',
           bgcolor: '#0f4f58',
           position: 'relative',
@@ -184,6 +185,7 @@ export function LoginPage() {
               component="h3"
               sx={{
                 fontSize: { xs: 38, sm: 52, lg: 64 },
+                '@media (max-height:760px)': { fontSize: 36 },
                 lineHeight: 1.08,
                 fontWeight: 900,
                 letterSpacing: 0,

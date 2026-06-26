@@ -10,6 +10,7 @@ import {
   Tab,
   Table,
   TableBody,
+  TableContainer,
   TableCell,
   TableHead,
   TableRow,
@@ -38,6 +39,7 @@ import { scrollAppContentToTop } from '../utils/scrollAppContent';
 import { showErrorToast, showSuccessToast } from '../utils/notificationService';
 import { notifyAcolhidosCountRefresh } from '../utils/acolhidosEvents';
 import { getApiErrorMessage } from '../utils/apiError';
+import { PageHeader } from '../components/PageHeader';
 
 type SaidasTab = 'pessoas' | 'familias';
 
@@ -174,12 +176,10 @@ export function SaidasPage() {
   return (
     <Box>
       <Box sx={{ mb: 2.5 }}>
-        <Typography variant="h4" gutterBottom>
-          Saidas
-        </Typography>
-        <Typography color="text.secondary">
-          Registro operacional de saidas individuais e familiares.
-        </Typography>
+        <PageHeader
+          title="Saidas"
+          description="Registro operacional de saidas individuais e familiares."
+        />
       </Box>
       {errorMsg ? (
         <Alert severity="error" onClose={() => setErrorMsg('')} sx={{ mb: 2 }}>
@@ -260,7 +260,8 @@ export function SaidasPage() {
         </Box>
 
         {tab === 'pessoas' ? (
-          <Table size="small">
+          <TableContainer>
+            <Table size="small" sx={{ minWidth: 720 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Data</TableCell>
@@ -309,9 +310,11 @@ export function SaidasPage() {
                 <EmptyHistoryRow colSpan={6} />
               ) : null}
             </TableBody>
-          </Table>
+            </Table>
+          </TableContainer>
         ) : (
-          <Table size="small">
+          <TableContainer>
+            <Table size="small" sx={{ minWidth: 720 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Data</TableCell>
@@ -354,7 +357,8 @@ export function SaidasPage() {
                 <EmptyHistoryRow colSpan={6} />
               ) : null}
             </TableBody>
-          </Table>
+            </Table>
+          </TableContainer>
         )}
       </Paper>
 

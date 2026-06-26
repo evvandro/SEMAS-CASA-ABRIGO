@@ -36,6 +36,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { showSuccessToast } from '../utils/notificationService';
 import { getApiErrorMessage } from '../utils/apiError';
+import { PageHeader } from '../components/PageHeader';
 
 const PASSWORD_REQUIREMENTS =
   'A senha deve ter no mínimo 12 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.';
@@ -229,23 +230,22 @@ export function AdminPage() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
-          Administração de Usuários
-        </Typography>
+        <Box sx={{ mb: 3 }}>
+          <PageHeader
+            title="Administração de Usuários"
+            actions={
+              <Button variant="contained" onClick={() => handleOpenDialog()}>
+                Novo Usuário
+              </Button>
+            }
+          />
+        </Box>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
             {error}
           </Alert>
         )}
-
-        <Button
-          variant="contained"
-          onClick={() => handleOpenDialog()}
-          sx={{ mb: 3 }}
-        >
-          Novo Usuário
-        </Button>
 
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -254,7 +254,7 @@ export function AdminPage() {
         ) : (
           <TableContainer component={Paper}>
             <Table>
-              <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+              <TableHead>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 'bold' }}>Nome</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>

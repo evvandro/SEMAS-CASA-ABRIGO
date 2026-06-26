@@ -8,6 +8,10 @@ import {
   Card,
   CardContent,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Drawer,
   Grid,
@@ -43,6 +47,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import SearchIcon from '@mui/icons-material/Search';
 import SendIcon from '@mui/icons-material/Send';
 import { TimeInput } from '../components/TimeInput';
+import { NumberField } from '../components/NumberField';
 import { scrollAppContentToTop } from '../utils/scrollAppContent';
 import { showSuccessToast } from '../utils/notificationService';
 import { getApiErrorMessage } from '../utils/apiError';
@@ -50,6 +55,7 @@ import { fetchAcolhidos } from '../services/acolhidosService';
 import { fetchFamilias } from '../services/familiasService';
 import {
   createEntregaLote,
+  createMaterial,
   createRecebimento,
   fetchEntregas,
   fetchMateriais,
@@ -112,6 +118,13 @@ interface RecebimentoItemForm {
   observacoes: string;
 }
 
+interface MaterialForm {
+  nome: string;
+  categoria: string;
+  unidade: string;
+  estoque_atual: number;
+}
+
 interface CartItem {
   material: Material | null;
   quantidade: number;
@@ -167,6 +180,25 @@ const emptyItem: RecebimentoItemForm = {
   observacoes: '',
 };
 
+const emptyMaterialForm: MaterialForm = {
+  nome: '',
+  categoria: '',
+  unidade: '',
+  estoque_atual: 0,
+};
+
+const UNIDADE_OPTIONS = [
+  'un',
+  'kg',
+  'g',
+  'L',
+  'mL',
+  'cx',
+  'pct',
+  'par',
+  'fardo',
+];
+
 const emptyDistribuicaoForm: DistribuicaoForm = {
   data_entrega: today,
   finalidade: '',
@@ -203,6 +235,10 @@ export function EstoquePage() {
   const [carrinho, setCarrinho] = useState<CartItem[]>([{ ...emptyCartItem }]);
   const [recebimentoOpen, setRecebimentoOpen] = useState(false);
   const [distribuicaoOpen, setDistribuicaoOpen] = useState(false);
+  const [itemDialogOpen, setItemDialogOpen] = useState(false);
+  const [itemForm, setItemForm] = useState<MaterialForm>(emptyMaterialForm);
+  const [itemError, setItemError] = useState<string | null>(null);
+  const [savingItem, setSavingItem] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [categoriaFilter, setCategoriaFilter] = useState('');
@@ -581,6 +617,56 @@ export function EstoquePage() {
     }
   };
 
+  const setItemField = <K extends keyof MaterialForm>(
+    field: K,
+    value: MaterialForm[K],
+  ) => {
+    setItemForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const openItemDialog = () => {
+    setItemForm(emptyMaterialForm);
+    setItemError(null);
+    setItemDialogOpen(true);
+  };
+
+  const submitMaterial = async () => {
+    if (
+      !itemForm.nome.trim() ||
+      !itemForm.categoria.trim() ||
+      !itemForm.unidade.trim()
+    ) {
+      setItemError('Preencha nome, categoria e unidade do item.');
+      return;
+    }
+
+    setSavingItem(true);
+    setItemError(null);
+
+    try {
+      await createMaterial({
+        nome: itemForm.nome.trim(),
+        categoria: itemForm.categoria.trim(),
+        unidade: itemForm.unidade.trim(),
+        estoque_atual: itemForm.estoque_atual,
+      });
+
+      setItemDialogOpen(false);
+      setItemForm(emptyMaterialForm);
+      await load();
+      showSuccessToast(
+        'Item cadastrado',
+        'Item adicionado ao catálogo de materiais.',
+      );
+    } catch (err) {
+      setItemError(
+        getApiErrorMessage(err, 'Não foi possível cadastrar o item.'),
+      );
+    } finally {
+      setSavingItem(false);
+    }
+  };
+
   return (
     <Stack spacing={3}>
       <Stack
@@ -601,6 +687,14 @@ export function EstoquePage() {
           gap={1}
           sx={{ width: { xs: '100%', sm: 'auto' } }}
         >
+          <Button
+            variant="outlined"
+            startIcon={<CategoryIcon />}
+            onClick={openItemDialog}
+            sx={{ justifyContent: 'center' }}
+          >
+            Cadastrar item
+          </Button>
           <Button
             variant="outlined"
             startIcon={<AddIcon />}
@@ -893,6 +987,7 @@ export function EstoquePage() {
         onItem={setItem}
         onAddItem={() => setItens((current) => [...current, { ...emptyItem }])}
         onRemoveItem={removeItem}
+        onCadastrarItem={openItemDialog}
         onSubmit={submitRecebimento}
       />
 
@@ -922,6 +1017,17 @@ export function EstoquePage() {
         }
         onRemoveCartItem={removeCartItem}
         onSubmit={submitDistribuicao}
+      />
+
+      <CadastroItemDialog
+        open={itemDialogOpen}
+        form={itemForm}
+        categorias={categoriasDisponiveis}
+        error={itemError}
+        saving={savingItem}
+        onClose={() => setItemDialogOpen(false)}
+        onField={setItemField}
+        onSubmit={submitMaterial}
       />
 
       <Snackbar
@@ -1007,6 +1113,7 @@ function RecebimentoDrawer({
   onItem,
   onAddItem,
   onRemoveItem,
+  onCadastrarItem,
   onSubmit,
 }: {
   open: boolean;
@@ -1020,6 +1127,7 @@ function RecebimentoDrawer({
   onItem: (index: number, patch: Partial<RecebimentoItemForm>) => void;
   onAddItem: () => void;
   onRemoveItem: (index: number) => void;
+  onCadastrarItem: () => void;
   onSubmit: () => void;
 }) {
   return (
@@ -1151,9 +1259,17 @@ function RecebimentoDrawer({
             <Section
               title="Materiais recebidos"
               action={
-                <Button startIcon={<AddIcon />} onClick={onAddItem}>
-                  Adicionar item
-                </Button>
+                <Stack direction="row" gap={1} flexWrap="wrap">
+                  <Button
+                    startIcon={<CategoryIcon />}
+                    onClick={onCadastrarItem}
+                  >
+                    Cadastrar item
+                  </Button>
+                  <Button startIcon={<AddIcon />} onClick={onAddItem}>
+                    Adicionar linha
+                  </Button>
+                </Stack>
               }
             >
               <Stack spacing={1.5}>
@@ -1182,15 +1298,14 @@ function RecebimentoDrawer({
                       />
                     </Grid>
                     <Grid size={{ xs: 6, md: 1.5 }}>
-                      <TextField
+                      <NumberField
                         label="Qtd."
-                        type="number"
                         value={item.quantidade}
-                        onChange={(e) =>
-                          onItem(index, { quantidade: Number(e.target.value) })
+                        onChange={(value) =>
+                          onItem(index, { quantidade: value })
                         }
+                        min={1}
                         fullWidth
-                        slotProps={{ htmlInput: { min: 1 } }}
                       />
                     </Grid>
                     <Grid size={{ xs: 6, md: 1.5 }}>
@@ -1382,6 +1497,104 @@ function RecebimentoDrawer({
         </DrawerFooter>
       </Box>
     </Drawer>
+  );
+}
+
+function CadastroItemDialog({
+  open,
+  form,
+  categorias,
+  error,
+  saving,
+  onClose,
+  onField,
+  onSubmit,
+}: {
+  open: boolean;
+  form: MaterialForm;
+  categorias: string[];
+  error: string | null;
+  saving: boolean;
+  onClose: () => void;
+  onField: <K extends keyof MaterialForm>(
+    field: K,
+    value: MaterialForm[K],
+  ) => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <DialogTitle>Cadastrar novo item</DialogTitle>
+      <DialogContent>
+        <Stack spacing={2.5} sx={{ pt: 1 }}>
+          {error ? <Alert severity="error">{error}</Alert> : null}
+
+          <Typography variant="body2" color="text.secondary">
+            Itens cadastrados aqui ficam disponíveis no catálogo para uso em
+            recebimentos e distribuições.
+          </Typography>
+
+          <TextField
+            label="Nome do item"
+            value={form.nome}
+            onChange={(e) => onField('nome', e.target.value)}
+            fullWidth
+            autoFocus
+            required
+          />
+
+          <Autocomplete
+            freeSolo
+            options={categorias}
+            value={form.categoria}
+            inputValue={form.categoria}
+            onChange={(_, value) => onField('categoria', value ?? '')}
+            onInputChange={(_, value) => onField('categoria', value)}
+            renderInput={(params) => (
+              <TextField {...params} label="Categoria" required />
+            )}
+          />
+
+          <Autocomplete
+            freeSolo
+            options={UNIDADE_OPTIONS}
+            value={form.unidade}
+            inputValue={form.unidade}
+            onChange={(_, value) => onField('unidade', value ?? '')}
+            onInputChange={(_, value) => onField('unidade', value)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Unidade (un, kg, L, cx...)"
+                required
+              />
+            )}
+          />
+
+          <NumberField
+            label="Estoque inicial"
+            value={form.estoque_atual}
+            onChange={(value) => onField('estoque_atual', value)}
+            min={0}
+            fullWidth
+            helperText="Quantidade já disponível em estoque (pode ser 0)."
+          />
+        </Stack>
+      </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button color="inherit" onClick={onClose}>
+          Cancelar
+        </Button>
+        <Button
+          variant="contained"
+          startIcon={<SaveIcon />}
+          onClick={onSubmit}
+          disabled={saving}
+        >
+          {saving ? 'Salvando...' : 'Cadastrar item'}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
@@ -1600,22 +1813,15 @@ function DistribuicaoDrawer({
                       />
                     </Grid>
                     <Grid size={{ xs: 8, md: 2 }}>
-                      <TextField
+                      <NumberField
                         label="Quantidade"
-                        type="number"
                         value={item.quantidade}
-                        onChange={(e) =>
-                          onCartItem(index, {
-                            quantidade: Number(e.target.value),
-                          })
+                        onChange={(value) =>
+                          onCartItem(index, { quantidade: value })
                         }
+                        min={1}
+                        max={item.material?.estoque_atual ?? undefined}
                         fullWidth
-                        slotProps={{
-                          htmlInput: {
-                            min: 1,
-                            max: item.material?.estoque_atual ?? undefined,
-                          },
-                        }}
                       />
                     </Grid>
                     <Grid size={{ xs: 4, md: 1 }}>
