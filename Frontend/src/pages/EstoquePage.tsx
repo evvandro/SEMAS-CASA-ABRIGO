@@ -1005,7 +1005,6 @@ export function EstoquePage() {
         cartTotal={cartTotal}
         loading={loading}
         distributing={distributing}
-        recebimentos={recebimentos}
         onClose={() => setDistribuicaoOpen(false)}
         onDestino={handleDestinoChange}
         onAcolhido={setSelectedAcolhido}
@@ -1611,7 +1610,7 @@ function DistribuicaoDrawer({
   readyCount,
   cartTotal,
   loading,
-  recebimentos,
+  distributing,
   onClose,
   onDestino,
   onAcolhido,
@@ -1620,6 +1619,7 @@ function DistribuicaoDrawer({
   onCartItem,
   onAddCartItem,
   onRemoveCartItem,
+  onSubmit,
 }: {
   open: boolean;
   materiais: Material[];
@@ -1634,7 +1634,6 @@ function DistribuicaoDrawer({
   cartTotal: number;
   loading: boolean;
   distributing: boolean;
-  recebimentos: Recebimento[];
   onClose: () => void;
   onDestino: (_: unknown, value: EntregaDestinoTipo | null) => void;
   onAcolhido: (value: Acolhido | null) => void;
@@ -1903,46 +1902,20 @@ function DistribuicaoDrawer({
             </Section>
           </Stack>
         </Box>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Data</TableCell>
-                <TableCell>Origem</TableCell>
-                <TableCell>Doador/instituicao</TableCell>
-                <TableCell>Recebido por</TableCell>
-                <TableCell align="right">Itens</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {recebimentos.map((recebimento) => (
-                <TableRow key={recebimento.id} hover>
-                  <TableCell>
-                    {new Date(
-                      `${recebimento.data_recebimento}T00:00:00`,
-                    ).toLocaleDateString('pt-BR')}{' '}
-                    {recebimento.hora_recebimento}
-                  </TableCell>
-                  <TableCell>{recebimento.origem}</TableCell>
-                  <TableCell>{recebimento.doador_nome}</TableCell>
-                  <TableCell>{recebimento.recebido_por}</TableCell>
-                  <TableCell align="right">
-                    {recebimento.itens.length}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {!loading && recebimentos.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} sx={{ textAlign: 'center', py: 4 }}>
-                    <Typography color="text.secondary">
-                      Nenhum recebimento registrado.
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ) : null}
-            </TableBody>
-          </Table>
-        </TableContainer>
+
+        <DrawerFooter>
+          <Button color="inherit" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<SendIcon />}
+            onClick={onSubmit}
+            disabled={distributing}
+          >
+            {distributing ? 'Registrando...' : 'Finalizar entrega'}
+          </Button>
+        </DrawerFooter>
       </Box>
     </Drawer>
   );
