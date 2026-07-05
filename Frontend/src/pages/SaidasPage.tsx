@@ -288,28 +288,35 @@ export function SaidasPage() {
               Registros desligados permanecem aqui para consulta operacional.
             </Typography>
           </Box>
-          <ExportPDFButton
-            title={`Relatório de Saídas - ${tab === 'pessoas' ? 'Pessoas' : 'Famílias'}`}
-            columns={tab === 'pessoas' ? acolhidosColumns : familiasColumns}
-            data={
-              tab === 'pessoas'
-                ? historicoAcolhidos.map((a) => ({
-                    ...a,
-                    data: formatDateTime(a.exitDate, a.exitTime),
-                    familyCode: a.familyCode || 'Pessoa sozinha',
-                  }))
-                : historicoFamilias.map((f) => ({
-                    ...f,
-                    data: formatDateTime(f.dataSaida, f.horaSaida),
-                    destinoCompleto: [f.destinoInformado, f.municipioDestino]
-                        .filter(Boolean)
-                        .join(' - '),
-                  }))
-            }
-            filename={`saidas-${tab}.pdf`}
-            variant="text"
-            color="secondary"
-          />
+          {tab === 'pessoas' ? (
+            <ExportPDFButton
+              title="Relatório de Saídas - Pessoas"
+              columns={acolhidosColumns}
+              data={historicoAcolhidos.map((a) => ({
+                ...a,
+                data: formatDateTime(a.exitDate, a.exitTime),
+                familyCode: a.familyCode || 'Pessoa sozinha',
+              }))}
+              filename="saidas-pessoas.pdf"
+              variant="text"
+              color="secondary"
+            />
+          ) : (
+            <ExportPDFButton
+              title="Relatório de Saídas - Famílias"
+              columns={familiasColumns}
+              data={historicoFamilias.map((f) => ({
+                ...f,
+                data: formatDateTime(f.dataSaida, f.horaSaida),
+                destinoCompleto: [f.destinoInformado, f.municipioDestino]
+                  .filter(Boolean)
+                  .join(' - '),
+              }))}
+              filename="saidas-familias.pdf"
+              variant="text"
+              color="secondary"
+            />
+          )}
         </Box>
 
         {tab === 'pessoas' ? (
