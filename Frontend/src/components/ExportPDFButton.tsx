@@ -8,7 +8,7 @@ interface ExportPDFButtonProps {
   title: string;
   subtitle?: string;
   columns: ReportColumn[];
-  data: any[];
+  data: Record<string, unknown>[];
   filename: string;
   orientation?: 'portrait' | 'landscape';
   variant?: 'text' | 'outlined' | 'contained';

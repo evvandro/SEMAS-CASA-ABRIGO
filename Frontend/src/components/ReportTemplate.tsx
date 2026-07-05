@@ -114,7 +114,7 @@ export interface ReportTemplateProps {
   title: string;
   subtitle?: string;
   columns: ReportColumn[];
-  data: any[];
+  data: Record<string, unknown>[];
   orientation?: 'portrait' | 'landscape';
 }
 
