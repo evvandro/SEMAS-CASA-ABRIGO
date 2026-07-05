@@ -67,6 +67,8 @@ import type {
   Recebimento,
 } from '../services/estoqueService';
 import type { Acolhido, Familia } from '../modules/acolhidos/types';
+import { ExportPDFButton } from '../components/ExportPDFButton';
+import type { ReportColumn } from '../components/ReportTemplate';
 
 interface Material {
   id: number;
@@ -213,6 +215,21 @@ const emptyCartItem: CartItem = {
   material: null,
   quantidade: 1,
 };
+
+const materiaisColumns: ReportColumn[] = [
+  { header: 'Material', key: 'nome', width: '40%' },
+  { header: 'Categoria', key: 'categoria', width: '25%' },
+  { header: 'Unidade', key: 'unidade', width: '15%' },
+  { header: 'Saldo', key: 'estoque_atual', width: '20%' },
+];
+
+const historicoColumns: ReportColumn[] = [
+  { header: 'Data', key: 'data', width: '15%' },
+  { header: 'Destino', key: 'destino', width: '30%' },
+  { header: 'Itens', key: 'totalItens', width: '15%' },
+  { header: 'Finalidade', key: 'finalidade', width: '20%' },
+  { header: 'Responsável', key: 'entreguePor', width: '20%' },
+];
 
 export function EstoquePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -843,6 +860,13 @@ export function EstoquePage() {
             {materiaisFiltrados.length}{' '}
             {materiaisFiltrados.length === 1 ? 'material' : 'materiais'}
           </Typography>
+          <ExportPDFButton
+            title="Relatório de Materiais em Estoque"
+            columns={materiaisColumns}
+            data={materiaisFiltrados}
+            filename="estoque-materiais.pdf"
+            variant="outlined"
+          />
           <Button
             variant="contained"
             startIcon={<AddShoppingCartIcon />}
@@ -924,11 +948,33 @@ export function EstoquePage() {
       </Paper>
 
       <Paper variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden' }}>
-        <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-          <Typography variant="h6">Histórico recente</Typography>
-          <Typography variant="body2" color="text.secondary">
-            Últimas distribuições agrupadas por operação.
-          </Typography>
+        <Box
+          sx={{
+            p: 2,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Box>
+            <Typography variant="h6">Histórico recente</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Últimas distribuições agrupadas por operação.
+            </Typography>
+          </Box>
+          <ExportPDFButton
+            title="Relatório de Distribuições"
+            columns={historicoColumns}
+            data={historicoRecente.map((g) => ({
+              ...g,
+              data: new Date(g.data).toLocaleDateString(),
+            }))}
+            filename="historico-distribuicao.pdf"
+            variant="text"
+            color="secondary"
+          />
         </Box>
         <TableContainer>
           <Table size="small">

@@ -80,6 +80,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-me">
                                 <a href="#endpoints-GETapi-me">Return the authenticated user.</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PATCHapi-me">
+                                <a href="#endpoints-PATCHapi-me">Update the authenticated user's profile.</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-logout">
                                 <a href="#endpoints-POSTapi-logout">Revoke current API token.</a>
                             </li>
@@ -110,6 +113,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-acolhidos">
                                 <a href="#endpoints-POSTapi-acolhidos">POST api/acolhidos</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-acolhidos-saida--acolhido_id-">
+                                <a href="#endpoints-POSTapi-acolhidos-saida--acolhido_id-">POST api/acolhidos/saida/{acolhido_id}</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-acolhidos--acolhido_id-">
                                 <a href="#endpoints-GETapi-acolhidos--acolhido_id-">GET api/acolhidos/{acolhido_id}</a>
                             </li>
@@ -139,6 +145,9 @@
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-entregas">
                                 <a href="#endpoints-POSTapi-entregas">POST api/entregas</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-entregas-lote">
+                                <a href="#endpoints-POSTapi-entregas-lote">POST api/entregas/lote</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-setores">
                                 <a href="#endpoints-POSTapi-setores">POST api/setores</a>
@@ -172,7 +181,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: May 20, 2026</li>
+        <li>Last updated: June 26, 2026</li>
     </ul>
 </div>
 
@@ -246,13 +255,18 @@ fetch(url, {
             </summary>
             <pre><code class="language-http">cache-control: no-cache, private
 content-type: application/json
+x-request-id: 5ad852c1-0700-42b1-af27-1bafa7285753
+x-content-type-options: nosniff
+referrer-policy: no-referrer
+x-frame-options: DENY
 vary: Origin
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;message&quot;: &quot;API online.&quot;,
     &quot;data&quot;: {
-        &quot;status&quot;: &quot;ok&quot;
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;db_driver&quot;: &quot;sqlite&quot;
     }
 }</code>
  </pre>
@@ -489,7 +503,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="gbailey@example.net"
                data-component="body">
     <br>
-<p>validation.email. Example: <code>gbailey@example.net</code></p>
+<p>validation.email validation.max. Example: <code>gbailey@example.net</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
@@ -658,6 +672,207 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Example: <code>application/json</code></p>
             </div>
                         </form>
+
+                    <h2 id="endpoints-PATCHapi-me">Update the authenticated user&#039;s profile.</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-PATCHapi-me">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PATCH \
+    "http://localhost:8000/api/me" \
+    --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"name\": \"b\",
+    \"email\": \"zbailey@example.net\",
+    \"phone\": \"i\",
+    \"current_password\": \"architecto\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/me"
+);
+
+const headers = {
+    "Authorization": "Bearer {YOUR_AUTH_KEY}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "name": "b",
+    "email": "zbailey@example.net",
+    "phone": "i",
+    "current_password": "architecto"
+};
+
+fetch(url, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PATCHapi-me">
+</span>
+<span id="execution-results-PATCHapi-me" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PATCHapi-me"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PATCHapi-me"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PATCHapi-me" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PATCHapi-me">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PATCHapi-me" data-method="PATCH"
+      data-path="api/me"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PATCHapi-me', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PATCHapi-me"
+                    onclick="tryItOut('PATCHapi-me');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PATCHapi-me"
+                    onclick="cancelTryOut('PATCHapi-me');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PATCHapi-me"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-purple">PATCH</small>
+            <b><code>api/me</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-me"
+               value="Bearer {YOUR_AUTH_KEY}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {YOUR_AUTH_KEY}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PATCHapi-me"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PATCHapi-me"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name"                data-endpoint="PATCHapi-me"
+               value="b"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>b</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="email"                data-endpoint="PATCHapi-me"
+               value="zbailey@example.net"
+               data-component="body">
+    <br>
+<p>validation.email validation.max. Example: <code>zbailey@example.net</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>phone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="phone"                data-endpoint="PATCHapi-me"
+               value="i"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>i</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>current_password</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="current_password"                data-endpoint="PATCHapi-me"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>This field is required when <code>password</code> is present. Example: <code>architecto</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="password"                data-endpoint="PATCHapi-me"
+               value=""
+               data-component="body">
+    <br>
+
+        </div>
+        </form>
 
                     <h2 id="endpoints-POSTapi-logout">Revoke current API token.</h2>
 
@@ -1233,7 +1448,25 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"responsavel_nome\": \"b\",
     \"setor_id\": 16,
     \"observacoes\": \"architecto\",
-    \"data_entrada\": \"2026-05-20T00:58:33\"
+    \"data_entrada\": \"2026-06-26T22:21:19\",
+    \"acolhidos\": [
+        {
+            \"nome\": \"n\",
+            \"cpf\": \"56425593142\",
+            \"data_nascimento\": \"2026-06-26T22:21:19\",
+            \"parentesco\": \"h\",
+            \"telefone\": \"waykcmyuwpwlvqwr\",
+            \"genero\": \"s\",
+            \"leito\": \"i\",
+            \"observacoes\": \"architecto\",
+            \"pertences_registrados\": \"architecto\",
+            \"pcd\": false,
+            \"gestante\": true,
+            \"cronica\": false,
+            \"idoso\": true,
+            \"hora_entrada\": \"22:21:19,22:21\"
+        }
+    ]
 }"
 </code></pre></div>
 
@@ -1253,7 +1486,25 @@ let body = {
     "responsavel_nome": "b",
     "setor_id": 16,
     "observacoes": "architecto",
-    "data_entrada": "2026-05-20T00:58:33"
+    "data_entrada": "2026-06-26T22:21:19",
+    "acolhidos": [
+        {
+            "nome": "n",
+            "cpf": "56425593142",
+            "data_nascimento": "2026-06-26T22:21:19",
+            "parentesco": "h",
+            "telefone": "waykcmyuwpwlvqwr",
+            "genero": "s",
+            "leito": "i",
+            "observacoes": "architecto",
+            "pertences_registrados": "architecto",
+            "pcd": false,
+            "gestante": true,
+            "cronica": false,
+            "idoso": true,
+            "hora_entrada": "22:21:19,22:21"
+        }
+    ]
 };
 
 fetch(url, {
@@ -1377,7 +1628,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>observacoes</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="observacoes"                data-endpoint="POSTapi-familias"
@@ -1393,10 +1644,230 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrada"                data-endpoint="POSTapi-familias"
-               value="2026-05-20T00:58:33"
+               value="2026-06-26T22:21:19"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date. Example: <code>2026-06-26T22:21:19</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>acolhidos</code></b>&nbsp;&nbsp;
+<small>object[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>validation.min.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>nome</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.nome"                data-endpoint="POSTapi-familias"
+               value="n"
+               data-component="body">
+    <br>
+<p>This field is required when <code>acolhidos</code> is present. validation.max. Example: <code>n</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>cpf</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.cpf"                data-endpoint="POSTapi-familias"
+               value="56425593142"
+               data-component="body">
+    <br>
+<p>Must match the regex /^\d{11}$/. Example: <code>56425593142</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>data_nascimento</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.data_nascimento"                data-endpoint="POSTapi-familias"
+               value="2026-06-26T22:21:19"
+               data-component="body">
+    <br>
+<p>validation.date. Example: <code>2026-06-26T22:21:19</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>parentesco</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.parentesco"                data-endpoint="POSTapi-familias"
+               value="h"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>h</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>telefone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.telefone"                data-endpoint="POSTapi-familias"
+               value="waykcmyuwpwlvqwr"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>waykcmyuwpwlvqwr</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>genero</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.genero"                data-endpoint="POSTapi-familias"
+               value="s"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>s</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>leito</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.leito"                data-endpoint="POSTapi-familias"
+               value="i"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>i</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>observacoes</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.observacoes"                data-endpoint="POSTapi-familias"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Example: <code>architecto</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>pertences_registrados</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.pertences_registrados"                data-endpoint="POSTapi-familias"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Example: <code>architecto</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>pcd</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-familias" style="display: none">
+            <input type="radio" name="acolhidos.0.pcd"
+                   value="true"
+                   data-endpoint="POSTapi-familias"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-familias" style="display: none">
+            <input type="radio" name="acolhidos.0.pcd"
+                   value="false"
+                   data-endpoint="POSTapi-familias"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>false</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>gestante</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-familias" style="display: none">
+            <input type="radio" name="acolhidos.0.gestante"
+                   value="true"
+                   data-endpoint="POSTapi-familias"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-familias" style="display: none">
+            <input type="radio" name="acolhidos.0.gestante"
+                   value="false"
+                   data-endpoint="POSTapi-familias"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>true</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>cronica</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-familias" style="display: none">
+            <input type="radio" name="acolhidos.0.cronica"
+                   value="true"
+                   data-endpoint="POSTapi-familias"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-familias" style="display: none">
+            <input type="radio" name="acolhidos.0.cronica"
+                   value="false"
+                   data-endpoint="POSTapi-familias"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>false</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>idoso</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <label data-endpoint="POSTapi-familias" style="display: none">
+            <input type="radio" name="acolhidos.0.idoso"
+                   value="true"
+                   data-endpoint="POSTapi-familias"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-familias" style="display: none">
+            <input type="radio" name="acolhidos.0.idoso"
+                   value="false"
+                   data-endpoint="POSTapi-familias"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Example: <code>true</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>hora_entrada</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="acolhidos.0.hora_entrada"                data-endpoint="POSTapi-familias"
+               value="22:21:19,22:21"
+               data-component="body">
+    <br>
+<p>Must be a valid date in the format <code>H:i:s,H:i</code>. Example: <code>22:21:19,22:21</code></p>
+                    </div>
+                                    </details>
         </div>
         </form>
 
@@ -1414,7 +1885,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/familias/16" \
+    --get "http://localhost:8000/api/familias/1" \
     --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -1422,7 +1893,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/familias/16"
+    "http://localhost:8000/api/familias/1"
 );
 
 const headers = {
@@ -1548,10 +2019,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="familia_id"                data-endpoint="GETapi-familias--familia_id-"
-               value="16"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the familia. Example: <code>16</code></p>
+<p>The ID of the familia. Example: <code>1</code></p>
             </div>
                     </form>
 
@@ -1569,7 +2040,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/familias/16" \
+    "http://localhost:8000/api/familias/1" \
     --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -1577,14 +2048,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"responsavel_nome\": \"b\",
     \"setor_id\": 16,
     \"observacoes\": \"architecto\",
-    \"data_entrada\": \"2026-05-20T00:58:33\"
+    \"data_entrada\": \"2026-06-26T22:21:19\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/familias/16"
+    "http://localhost:8000/api/familias/1"
 );
 
 const headers = {
@@ -1597,7 +2068,7 @@ let body = {
     "responsavel_nome": "b",
     "setor_id": 16,
     "observacoes": "architecto",
-    "data_entrada": "2026-05-20T00:58:33"
+    "data_entrada": "2026-06-26T22:21:19"
 };
 
 fetch(url, {
@@ -1701,10 +2172,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="familia_id"                data-endpoint="PATCHapi-familias--familia_id-"
-               value="16"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the familia. Example: <code>16</code></p>
+<p>The ID of the familia. Example: <code>1</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -1750,10 +2221,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrada"                data-endpoint="PATCHapi-familias--familia_id-"
-               value="2026-05-20T00:58:33"
+               value="2026-06-26T22:21:19"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date. Example: <code>2026-06-26T22:21:19</code></p>
         </div>
         </form>
 
@@ -1771,20 +2242,33 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/familias/16/saida" \
+    "http://localhost:8000/api/familias/1/saida" \
     --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"data_saida\": \"2026-05-20T00:58:33\",
-    \"tipo_saida\": \"b\"
+    \"data_saida\": \"2026-06-26T22:21:19\",
+    \"hora_saida\": \"22:21:19,22:21\",
+    \"tipo_saida\": \"b\",
+    \"destino_informado\": \"n\",
+    \"endereco_destino\": \"g\",
+    \"municipio_destino\": \"z\",
+    \"telefone_destino\": \"miyvdljnikhwaykc\",
+    \"encaminhamentos_rede\": [
+        \"architecto\"
+    ],
+    \"resumo_encaminhamento\": \"architecto\",
+    \"condicao_saida\": \"n\",
+    \"observacoes_tecnicas\": \"architecto\",
+    \"responsavel_desligamento\": \"n\",
+    \"cargo_responsavel\": \"g\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/familias/16/saida"
+    "http://localhost:8000/api/familias/1/saida"
 );
 
 const headers = {
@@ -1794,8 +2278,21 @@ const headers = {
 };
 
 let body = {
-    "data_saida": "2026-05-20T00:58:33",
-    "tipo_saida": "b"
+    "data_saida": "2026-06-26T22:21:19",
+    "hora_saida": "22:21:19,22:21",
+    "tipo_saida": "b",
+    "destino_informado": "n",
+    "endereco_destino": "g",
+    "municipio_destino": "z",
+    "telefone_destino": "miyvdljnikhwaykc",
+    "encaminhamentos_rede": [
+        "architecto"
+    ],
+    "resumo_encaminhamento": "architecto",
+    "condicao_saida": "n",
+    "observacoes_tecnicas": "architecto",
+    "responsavel_desligamento": "n",
+    "cargo_responsavel": "g"
 };
 
 fetch(url, {
@@ -1899,10 +2396,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="familia_id"                data-endpoint="POSTapi-familias--familia_id--saida"
-               value="16"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the familia. Example: <code>16</code></p>
+<p>The ID of the familia. Example: <code>1</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -1912,10 +2409,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_saida"                data-endpoint="POSTapi-familias--familia_id--saida"
-               value="2026-05-20T00:58:33"
+               value="2026-06-26T22:21:19"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date. Example: <code>2026-06-26T22:21:19</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>hora_saida</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="hora_saida"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="22:21:19,22:21"
+               data-component="body">
+    <br>
+<p>Must be a valid date in the format <code>H:i:s,H:i</code>. Example: <code>22:21:19,22:21</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>tipo_saida</code></b>&nbsp;&nbsp;
@@ -1928,6 +2437,128 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>validation.max. Example: <code>b</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>destino_informado</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="destino_informado"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="n"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>endereco_destino</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="endereco_destino"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="g"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>g</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>municipio_destino</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="municipio_destino"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="z"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>z</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>telefone_destino</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="telefone_destino"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="miyvdljnikhwaykc"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>miyvdljnikhwaykc</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>encaminhamentos_rede</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="encaminhamentos_rede[0]"                data-endpoint="POSTapi-familias--familia_id--saida"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="encaminhamentos_rede[1]"                data-endpoint="POSTapi-familias--familia_id--saida"
+               data-component="body">
+    <br>
+
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>resumo_encaminhamento</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="resumo_encaminhamento"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Example: <code>architecto</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>condicao_saida</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="condicao_saida"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="n"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>observacoes_tecnicas</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="observacoes_tecnicas"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Example: <code>architecto</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>responsavel_desligamento</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="responsavel_desligamento"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="n"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>cargo_responsavel</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="cargo_responsavel"                data-endpoint="POSTapi-familias--familia_id--saida"
+               value="g"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>g</code></p>
         </div>
         </form>
 
@@ -2096,16 +2727,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"familia_id\": 16,
     \"setor_id\": 16,
     \"nome\": \"n\",
-    \"data_nascimento\": \"2026-05-20T00:58:33\",
-    \"cpf\": \"gzmiyvdljnikhway\",
-    \"telefone\": \"kcmyuwpwlvqwrsit\",
-    \"genero\": \"c\",
-    \"leito\": \"p\",
+    \"data_nascimento\": \"2022-07-21\",
+    \"cpf\": \"56425593142\",
+    \"parentesco\": \"h\",
+    \"telefone\": \"waykcmyuwpwlvqwr\",
+    \"genero\": \"s\",
+    \"leito\": \"i\",
     \"observacoes\": \"architecto\",
     \"pertences_registrados\": \"architecto\",
-    \"data_entrada\": \"2026-05-20T00:58:33\",
-    \"hora_entrada\": \"00:58\",
-    \"pcd\": true,
+    \"data_entrada\": \"2026-06-26T22:21:20\",
+    \"hora_entrada\": \"22:21\",
+    \"pcd\": false,
     \"gestante\": true,
     \"cronica\": true,
     \"idoso\": false
@@ -2129,16 +2761,17 @@ let body = {
     "familia_id": 16,
     "setor_id": 16,
     "nome": "n",
-    "data_nascimento": "2026-05-20T00:58:33",
-    "cpf": "gzmiyvdljnikhway",
-    "telefone": "kcmyuwpwlvqwrsit",
-    "genero": "c",
-    "leito": "p",
+    "data_nascimento": "2022-07-21",
+    "cpf": "56425593142",
+    "parentesco": "h",
+    "telefone": "waykcmyuwpwlvqwr",
+    "genero": "s",
+    "leito": "i",
     "observacoes": "architecto",
     "pertences_registrados": "architecto",
-    "data_entrada": "2026-05-20T00:58:33",
-    "hora_entrada": "00:58",
-    "pcd": true,
+    "data_entrada": "2026-06-26T22:21:20",
+    "hora_entrada": "22:21",
+    "pcd": false,
     "gestante": true,
     "cronica": true,
     "idoso": false
@@ -2289,26 +2922,38 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>data_nascimento</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_nascimento"                data-endpoint="POSTapi-acolhidos"
-               value="2026-05-20T00:58:33"
+               value="2022-07-21"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date validation.before_or_equal. Example: <code>2022-07-21</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>cpf</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="cpf"                data-endpoint="POSTapi-acolhidos"
-               value="gzmiyvdljnikhway"
+               value="56425593142"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>gzmiyvdljnikhway</code></p>
+<p>Must match the regex /^\d{11}$/. Example: <code>56425593142</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>parentesco</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="parentesco"                data-endpoint="POSTapi-acolhidos"
+               value="h"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>h</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>telefone</code></b>&nbsp;&nbsp;
@@ -2317,10 +2962,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="telefone"                data-endpoint="POSTapi-acolhidos"
-               value="kcmyuwpwlvqwrsit"
+               value="waykcmyuwpwlvqwr"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>kcmyuwpwlvqwrsit</code></p>
+<p>validation.max. Example: <code>waykcmyuwpwlvqwr</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>genero</code></b>&nbsp;&nbsp;
@@ -2329,10 +2974,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="genero"                data-endpoint="POSTapi-acolhidos"
-               value="c"
+               value="s"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>c</code></p>
+<p>validation.max. Example: <code>s</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>leito</code></b>&nbsp;&nbsp;
@@ -2341,10 +2986,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="leito"                data-endpoint="POSTapi-acolhidos"
-               value="p"
+               value="i"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>p</code></p>
+<p>validation.max. Example: <code>i</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>observacoes</code></b>&nbsp;&nbsp;
@@ -2377,10 +3022,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrada"                data-endpoint="POSTapi-acolhidos"
-               value="2026-05-20T00:58:33"
+               value="2026-06-26T22:21:20"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date. Example: <code>2026-06-26T22:21:20</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>hora_entrada</code></b>&nbsp;&nbsp;
@@ -2389,10 +3034,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="hora_entrada"                data-endpoint="POSTapi-acolhidos"
-               value="00:58"
+               value="22:21"
                data-component="body">
     <br>
-<p>Must be a valid date in the format <code>H:i</code>. Example: <code>00:58</code></p>
+<p>Must be a valid date in the format <code>H:i</code>. Example: <code>22:21</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>pcd</code></b>&nbsp;&nbsp;
@@ -2414,7 +3059,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>gestante</code></b>&nbsp;&nbsp;
@@ -2484,6 +3129,352 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
+                    <h2 id="endpoints-POSTapi-acolhidos-saida--acolhido_id-">POST api/acolhidos/saida/{acolhido_id}</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-POSTapi-acolhidos-saida--acolhido_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost:8000/api/acolhidos/saida/1" \
+    --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"data_saida\": \"2026-06-26T22:21:20\",
+    \"hora_saida\": \"22:21:20,22:21\",
+    \"tipo_saida\": \"b\",
+    \"destino_informado\": \"n\",
+    \"endereco_destino\": \"g\",
+    \"municipio_destino\": \"z\",
+    \"telefone_destino\": \"miyvdljnikhwaykc\",
+    \"encaminhamentos_rede\": [
+        \"architecto\"
+    ],
+    \"resumo_encaminhamento\": \"architecto\",
+    \"condicao_saida\": \"n\",
+    \"observacoes_tecnicas\": \"architecto\",
+    \"responsavel_desligamento\": \"n\",
+    \"cargo_responsavel\": \"g\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/acolhidos/saida/1"
+);
+
+const headers = {
+    "Authorization": "Bearer {YOUR_AUTH_KEY}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "data_saida": "2026-06-26T22:21:20",
+    "hora_saida": "22:21:20,22:21",
+    "tipo_saida": "b",
+    "destino_informado": "n",
+    "endereco_destino": "g",
+    "municipio_destino": "z",
+    "telefone_destino": "miyvdljnikhwaykc",
+    "encaminhamentos_rede": [
+        "architecto"
+    ],
+    "resumo_encaminhamento": "architecto",
+    "condicao_saida": "n",
+    "observacoes_tecnicas": "architecto",
+    "responsavel_desligamento": "n",
+    "cargo_responsavel": "g"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-acolhidos-saida--acolhido_id-">
+</span>
+<span id="execution-results-POSTapi-acolhidos-saida--acolhido_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-acolhidos-saida--acolhido_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-acolhidos-saida--acolhido_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-acolhidos-saida--acolhido_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-acolhidos-saida--acolhido_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-acolhidos-saida--acolhido_id-" data-method="POST"
+      data-path="api/acolhidos/saida/{acolhido_id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-acolhidos-saida--acolhido_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-acolhidos-saida--acolhido_id-"
+                    onclick="tryItOut('POSTapi-acolhidos-saida--acolhido_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-acolhidos-saida--acolhido_id-"
+                    onclick="cancelTryOut('POSTapi-acolhidos-saida--acolhido_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-acolhidos-saida--acolhido_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/acolhidos/saida/{acolhido_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="Bearer {YOUR_AUTH_KEY}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {YOUR_AUTH_KEY}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>acolhido_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="acolhido_id"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the acolhido. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>data_saida</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="data_saida"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="2026-06-26T22:21:20"
+               data-component="body">
+    <br>
+<p>validation.date. Example: <code>2026-06-26T22:21:20</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>hora_saida</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="hora_saida"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="22:21:20,22:21"
+               data-component="body">
+    <br>
+<p>Must be a valid date in the format <code>H:i:s,H:i</code>. Example: <code>22:21:20,22:21</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>tipo_saida</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="tipo_saida"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="b"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>b</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>detalhes_saida</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="detalhes_saida"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value=""
+               data-component="body">
+    <br>
+
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>destino_informado</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="destino_informado"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="n"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>endereco_destino</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="endereco_destino"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="g"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>g</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>municipio_destino</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="municipio_destino"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="z"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>z</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>telefone_destino</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="telefone_destino"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="miyvdljnikhwaykc"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>miyvdljnikhwaykc</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>encaminhamentos_rede</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="encaminhamentos_rede[0]"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="encaminhamentos_rede[1]"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               data-component="body">
+    <br>
+
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>resumo_encaminhamento</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="resumo_encaminhamento"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Example: <code>architecto</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>condicao_saida</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="condicao_saida"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="n"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>observacoes_tecnicas</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="observacoes_tecnicas"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Example: <code>architecto</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>responsavel_desligamento</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="responsavel_desligamento"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="n"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>cargo_responsavel</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="cargo_responsavel"                data-endpoint="POSTapi-acolhidos-saida--acolhido_id-"
+               value="g"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>g</code></p>
+        </div>
+        </form>
+
                     <h2 id="endpoints-GETapi-acolhidos--acolhido_id-">GET api/acolhidos/{acolhido_id}</h2>
 
 <p>
@@ -2498,7 +3489,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/acolhidos/16" \
+    --get "http://localhost:8000/api/acolhidos/1" \
     --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -2506,7 +3497,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/acolhidos/16"
+    "http://localhost:8000/api/acolhidos/1"
 );
 
 const headers = {
@@ -2632,10 +3623,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="acolhido_id"                data-endpoint="GETapi-acolhidos--acolhido_id-"
-               value="16"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the acolhido. Example: <code>16</code></p>
+<p>The ID of the acolhido. Example: <code>1</code></p>
             </div>
                     </form>
 
@@ -2653,7 +3644,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/acolhidos/16" \
+    "http://localhost:8000/api/acolhidos/1" \
     --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -2662,16 +3653,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"familia_id\": 16,
     \"setor_id\": 16,
     \"nome\": \"n\",
-    \"data_nascimento\": \"2026-05-20T00:58:33\",
-    \"cpf\": \"gzmiyvdljnikhway\",
-    \"telefone\": \"kcmyuwpwlvqwrsit\",
-    \"genero\": \"c\",
-    \"leito\": \"p\",
+    \"data_nascimento\": \"2022-07-21\",
+    \"cpf\": \"56425593142\",
+    \"parentesco\": \"h\",
+    \"telefone\": \"waykcmyuwpwlvqwr\",
+    \"genero\": \"s\",
+    \"leito\": \"i\",
     \"observacoes\": \"architecto\",
     \"pertences_registrados\": \"architecto\",
-    \"data_entrada\": \"2026-05-20T00:58:33\",
-    \"hora_entrada\": \"00:58\",
-    \"pcd\": true,
+    \"data_entrada\": \"2026-06-26T22:21:20\",
+    \"hora_entrada\": \"22:21\",
+    \"pcd\": false,
     \"gestante\": true,
     \"cronica\": false,
     \"idoso\": false
@@ -2681,7 +3673,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/acolhidos/16"
+    "http://localhost:8000/api/acolhidos/1"
 );
 
 const headers = {
@@ -2695,16 +3687,17 @@ let body = {
     "familia_id": 16,
     "setor_id": 16,
     "nome": "n",
-    "data_nascimento": "2026-05-20T00:58:33",
-    "cpf": "gzmiyvdljnikhway",
-    "telefone": "kcmyuwpwlvqwrsit",
-    "genero": "c",
-    "leito": "p",
+    "data_nascimento": "2022-07-21",
+    "cpf": "56425593142",
+    "parentesco": "h",
+    "telefone": "waykcmyuwpwlvqwr",
+    "genero": "s",
+    "leito": "i",
     "observacoes": "architecto",
     "pertences_registrados": "architecto",
-    "data_entrada": "2026-05-20T00:58:33",
-    "hora_entrada": "00:58",
-    "pcd": true,
+    "data_entrada": "2026-06-26T22:21:20",
+    "hora_entrada": "22:21",
+    "pcd": false,
     "gestante": true,
     "cronica": false,
     "idoso": false
@@ -2811,10 +3804,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="acolhido_id"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="16"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the acolhido. Example: <code>16</code></p>
+<p>The ID of the acolhido. Example: <code>1</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -2872,10 +3865,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_nascimento"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="2026-05-20T00:58:33"
+               value="2022-07-21"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date validation.before_or_equal. Example: <code>2022-07-21</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>cpf</code></b>&nbsp;&nbsp;
@@ -2884,10 +3877,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="cpf"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="gzmiyvdljnikhway"
+               value="56425593142"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>gzmiyvdljnikhway</code></p>
+<p>Must match the regex /^\d{11}$/. Example: <code>56425593142</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>parentesco</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="parentesco"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
+               value="h"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>h</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>telefone</code></b>&nbsp;&nbsp;
@@ -2896,10 +3901,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="telefone"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="kcmyuwpwlvqwrsit"
+               value="waykcmyuwpwlvqwr"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>kcmyuwpwlvqwrsit</code></p>
+<p>validation.max. Example: <code>waykcmyuwpwlvqwr</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>genero</code></b>&nbsp;&nbsp;
@@ -2908,10 +3913,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="genero"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="c"
+               value="s"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>c</code></p>
+<p>validation.max. Example: <code>s</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>leito</code></b>&nbsp;&nbsp;
@@ -2920,10 +3925,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="leito"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="p"
+               value="i"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>p</code></p>
+<p>validation.max. Example: <code>i</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>observacoes</code></b>&nbsp;&nbsp;
@@ -2956,10 +3961,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrada"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="2026-05-20T00:58:33"
+               value="2026-06-26T22:21:20"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date. Example: <code>2026-06-26T22:21:20</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>hora_entrada</code></b>&nbsp;&nbsp;
@@ -2968,10 +3973,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="hora_entrada"                data-endpoint="PATCHapi-acolhidos--acolhido_id-"
-               value="00:58"
+               value="22:21"
                data-component="body">
     <br>
-<p>Must be a valid date in the format <code>H:i</code>. Example: <code>00:58</code></p>
+<p>Must be a valid date in the format <code>H:i</code>. Example: <code>22:21</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>pcd</code></b>&nbsp;&nbsp;
@@ -2993,7 +3998,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>gestante</code></b>&nbsp;&nbsp;
@@ -3077,20 +4082,33 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/acolhidos/16/saida" \
+    "http://localhost:8000/api/acolhidos/1/saida" \
     --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"data_saida\": \"2026-05-20T00:58:33\",
-    \"tipo_saida\": \"b\"
+    \"data_saida\": \"2026-06-26T22:21:20\",
+    \"hora_saida\": \"22:21:20,22:21\",
+    \"tipo_saida\": \"b\",
+    \"destino_informado\": \"n\",
+    \"endereco_destino\": \"g\",
+    \"municipio_destino\": \"z\",
+    \"telefone_destino\": \"miyvdljnikhwaykc\",
+    \"encaminhamentos_rede\": [
+        \"architecto\"
+    ],
+    \"resumo_encaminhamento\": \"architecto\",
+    \"condicao_saida\": \"n\",
+    \"observacoes_tecnicas\": \"architecto\",
+    \"responsavel_desligamento\": \"n\",
+    \"cargo_responsavel\": \"g\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/acolhidos/16/saida"
+    "http://localhost:8000/api/acolhidos/1/saida"
 );
 
 const headers = {
@@ -3100,8 +4118,21 @@ const headers = {
 };
 
 let body = {
-    "data_saida": "2026-05-20T00:58:33",
-    "tipo_saida": "b"
+    "data_saida": "2026-06-26T22:21:20",
+    "hora_saida": "22:21:20,22:21",
+    "tipo_saida": "b",
+    "destino_informado": "n",
+    "endereco_destino": "g",
+    "municipio_destino": "z",
+    "telefone_destino": "miyvdljnikhwaykc",
+    "encaminhamentos_rede": [
+        "architecto"
+    ],
+    "resumo_encaminhamento": "architecto",
+    "condicao_saida": "n",
+    "observacoes_tecnicas": "architecto",
+    "responsavel_desligamento": "n",
+    "cargo_responsavel": "g"
 };
 
 fetch(url, {
@@ -3205,10 +4236,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="acolhido_id"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
-               value="16"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the acolhido. Example: <code>16</code></p>
+<p>The ID of the acolhido. Example: <code>1</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -3218,10 +4249,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_saida"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
-               value="2026-05-20T00:58:33"
+               value="2026-06-26T22:21:20"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date. Example: <code>2026-06-26T22:21:20</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>hora_saida</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="hora_saida"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="22:21:20,22:21"
+               data-component="body">
+    <br>
+<p>Must be a valid date in the format <code>H:i:s,H:i</code>. Example: <code>22:21:20,22:21</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>tipo_saida</code></b>&nbsp;&nbsp;
@@ -3246,6 +4289,128 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>destino_informado</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="destino_informado"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="n"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>endereco_destino</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="endereco_destino"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="g"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>g</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>municipio_destino</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="municipio_destino"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="z"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>z</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>telefone_destino</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="telefone_destino"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="miyvdljnikhwaykc"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>miyvdljnikhwaykc</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>encaminhamentos_rede</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="encaminhamentos_rede[0]"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="encaminhamentos_rede[1]"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               data-component="body">
+    <br>
+
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>resumo_encaminhamento</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="resumo_encaminhamento"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Example: <code>architecto</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>condicao_saida</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="condicao_saida"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="n"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>observacoes_tecnicas</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="observacoes_tecnicas"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Example: <code>architecto</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>responsavel_desligamento</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="responsavel_desligamento"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="n"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>cargo_responsavel</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="cargo_responsavel"                data-endpoint="POSTapi-acolhidos--acolhido_id--saida"
+               value="g"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>g</code></p>
         </div>
         </form>
 
@@ -3970,14 +5135,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"nome_abrigo\": \"b\",
     \"municipio_uf\": \"n\",
     \"orgao_responsavel\": \"g\",
-    \"data_recebimento\": \"2026-05-20T00:58:33\",
-    \"hora_recebimento\": \"00:58\",
+    \"data_recebimento\": \"2026-06-26T22:21:20\",
+    \"hora_recebimento\": \"22:21\",
     \"origem\": \"z\",
     \"origem_outro\": \"m\",
     \"doador_nome\": \"i\",
     \"doador_documento\": \"y\",
     \"doador_contato\": \"v\",
-    \"conferido\": false,
+    \"conferido\": true,
     \"motivo_nao_conferido\": \"d\",
     \"possui_restricao\": false,
     \"restricao_descricao\": \"architecto\",
@@ -3989,10 +5154,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"observacoes_gerais\": \"architecto\",
     \"itens\": [
         {
-            \"categoria\": \"b\",
-            \"descricao\": \"n\",
-            \"quantidade\": 67,
-            \"unidade\": \"z\",
+            \"material_id\": 16,
+            \"quantidade\": 22,
             \"condicao\": \"architecto\",
             \"observacoes\": \"architecto\"
         }
@@ -4016,14 +5179,14 @@ let body = {
     "nome_abrigo": "b",
     "municipio_uf": "n",
     "orgao_responsavel": "g",
-    "data_recebimento": "2026-05-20T00:58:33",
-    "hora_recebimento": "00:58",
+    "data_recebimento": "2026-06-26T22:21:20",
+    "hora_recebimento": "22:21",
     "origem": "z",
     "origem_outro": "m",
     "doador_nome": "i",
     "doador_documento": "y",
     "doador_contato": "v",
-    "conferido": false,
+    "conferido": true,
     "motivo_nao_conferido": "d",
     "possui_restricao": false,
     "restricao_descricao": "architecto",
@@ -4035,10 +5198,8 @@ let body = {
     "observacoes_gerais": "architecto",
     "itens": [
         {
-            "categoria": "b",
-            "descricao": "n",
-            "quantidade": 67,
-            "unidade": "z",
+            "material_id": 16,
+            "quantidade": 22,
             "condicao": "architecto",
             "observacoes": "architecto"
         }
@@ -4182,10 +5343,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_recebimento"                data-endpoint="POSTapi-recebimentos-materiais"
-               value="2026-05-20T00:58:33"
+               value="2026-06-26T22:21:20"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date. Example: <code>2026-06-26T22:21:20</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>hora_recebimento</code></b>&nbsp;&nbsp;
@@ -4194,10 +5355,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="hora_recebimento"                data-endpoint="POSTapi-recebimentos-materiais"
-               value="00:58"
+               value="22:21"
                data-component="body">
     <br>
-<p>Must be a valid date in the format <code>H:i</code>. Example: <code>00:58</code></p>
+<p>Must be a valid date in the format <code>H:i</code>. Example: <code>22:21</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>origem</code></b>&nbsp;&nbsp;
@@ -4279,7 +5440,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>motivo_nao_conferido</code></b>&nbsp;&nbsp;
@@ -4291,7 +5452,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="d"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>d</code></p>
+<p>This field is required when <code>conferido</code> is <code>false</code>. validation.max. Example: <code>d</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>possui_restricao</code></b>&nbsp;&nbsp;
@@ -4325,7 +5486,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="architecto"
                data-component="body">
     <br>
-<p>Example: <code>architecto</code></p>
+<p>This field is required when <code>possui_restricao</code> is <code>true</code>. Example: <code>architecto</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>destinacao_inicial</code></b>&nbsp;&nbsp;
@@ -4410,28 +5571,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>validation.min.</p>
             </summary>
                                                 <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>categoria</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+                        <b style="line-height: 2;"><code>material_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
-                <input type="text" style="display: none"
-                              name="itens.0.categoria"                data-endpoint="POSTapi-recebimentos-materiais"
-               value="b"
+                <input type="number" style="display: none"
+               step="any"               name="itens.0.material_id"                data-endpoint="POSTapi-recebimentos-materiais"
+               value="16"
                data-component="body">
     <br>
-<p>validation.max. Example: <code>b</code></p>
-                    </div>
-                                                                <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>descricao</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="itens.0.descricao"                data-endpoint="POSTapi-recebimentos-materiais"
-               value="n"
-               data-component="body">
-    <br>
-<p>validation.max. Example: <code>n</code></p>
+<p>The <code>id</code> of an existing record in the materiais table. Example: <code>16</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>quantidade</code></b>&nbsp;&nbsp;
@@ -4440,22 +5589,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="itens.0.quantidade"                data-endpoint="POSTapi-recebimentos-materiais"
-               value="67"
+               value="22"
                data-component="body">
     <br>
-<p>validation.min. Example: <code>67</code></p>
-                    </div>
-                                                                <div style="margin-left: 14px; clear: unset;">
-                        <b style="line-height: 2;"><code>unidade</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="itens.0.unidade"                data-endpoint="POSTapi-recebimentos-materiais"
-               value="z"
-               data-component="body">
-    <br>
-<p>validation.max. Example: <code>z</code></p>
+<p>validation.min. Example: <code>22</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>condicao</code></b>&nbsp;&nbsp;
@@ -4650,7 +5787,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"familia_id\": 16,
     \"acolhido_id\": 16,
     \"quantidade\": 22,
-    \"data_entrega\": \"2026-05-20T00:58:33\",
+    \"data_entrega\": \"2026-06-26T22:21:21\",
+    \"finalidade\": \"g\",
     \"observacoes\": \"architecto\"
 }"
 </code></pre></div>
@@ -4672,7 +5810,8 @@ let body = {
     "familia_id": 16,
     "acolhido_id": 16,
     "quantidade": 22,
-    "data_entrega": "2026-05-20T00:58:33",
+    "data_entrega": "2026-06-26T22:21:21",
+    "finalidade": "g",
     "observacoes": "architecto"
 };
 
@@ -4825,10 +5964,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="data_entrega"                data-endpoint="POSTapi-entregas"
-               value="2026-05-20T00:58:33"
+               value="2026-06-26T22:21:21"
                data-component="body">
     <br>
-<p>validation.date. Example: <code>2026-05-20T00:58:33</code></p>
+<p>validation.date. Example: <code>2026-06-26T22:21:21</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>finalidade</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="finalidade"                data-endpoint="POSTapi-entregas"
+               value="g"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>g</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>observacoes</code></b>&nbsp;&nbsp;
@@ -4841,6 +5992,329 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Example: <code>architecto</code></p>
+        </div>
+        </form>
+
+                    <h2 id="endpoints-POSTapi-entregas-lote">POST api/entregas/lote</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-POSTapi-entregas-lote">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost:8000/api/entregas/lote" \
+    --header "Authorization: Bearer {YOUR_AUTH_KEY}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"data_entrega\": \"2026-06-26T22:21:21\",
+    \"destino_tipo\": \"externo\",
+    \"familia_id\": 16,
+    \"acolhido_id\": 16,
+    \"externo_nome\": \"n\",
+    \"externo_documento\": \"g\",
+    \"externo_contato\": \"z\",
+    \"externo_instituicao\": \"m\",
+    \"finalidade\": \"i\",
+    \"observacoes\": \"architecto\",
+    \"itens\": [
+        {
+            \"material_id\": 16,
+            \"quantidade\": 22
+        }
+    ]
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/entregas/lote"
+);
+
+const headers = {
+    "Authorization": "Bearer {YOUR_AUTH_KEY}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "data_entrega": "2026-06-26T22:21:21",
+    "destino_tipo": "externo",
+    "familia_id": 16,
+    "acolhido_id": 16,
+    "externo_nome": "n",
+    "externo_documento": "g",
+    "externo_contato": "z",
+    "externo_instituicao": "m",
+    "finalidade": "i",
+    "observacoes": "architecto",
+    "itens": [
+        {
+            "material_id": 16,
+            "quantidade": 22
+        }
+    ]
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-entregas-lote">
+</span>
+<span id="execution-results-POSTapi-entregas-lote" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-entregas-lote"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-entregas-lote"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-entregas-lote" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-entregas-lote">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-entregas-lote" data-method="POST"
+      data-path="api/entregas/lote"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-entregas-lote', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-entregas-lote"
+                    onclick="tryItOut('POSTapi-entregas-lote');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-entregas-lote"
+                    onclick="cancelTryOut('POSTapi-entregas-lote');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-entregas-lote"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/entregas/lote</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-entregas-lote"
+               value="Bearer {YOUR_AUTH_KEY}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {YOUR_AUTH_KEY}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-entregas-lote"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-entregas-lote"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>data_entrega</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="data_entrega"                data-endpoint="POSTapi-entregas-lote"
+               value="2026-06-26T22:21:21"
+               data-component="body">
+    <br>
+<p>validation.date. Example: <code>2026-06-26T22:21:21</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>destino_tipo</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="destino_tipo"                data-endpoint="POSTapi-entregas-lote"
+               value="externo"
+               data-component="body">
+    <br>
+<p>Example: <code>externo</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>acolhido</code></li> <li><code>familia</code></li> <li><code>externo</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>familia_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="familia_id"                data-endpoint="POSTapi-entregas-lote"
+               value="16"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the familias table. Example: <code>16</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>acolhido_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="acolhido_id"                data-endpoint="POSTapi-entregas-lote"
+               value="16"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the acolhidos table. Example: <code>16</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>externo_nome</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="externo_nome"                data-endpoint="POSTapi-entregas-lote"
+               value="n"
+               data-component="body">
+    <br>
+<p>This field is required when <code>destino_tipo</code> is <code>externo</code>. validation.max. Example: <code>n</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>externo_documento</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="externo_documento"                data-endpoint="POSTapi-entregas-lote"
+               value="g"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>g</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>externo_contato</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="externo_contato"                data-endpoint="POSTapi-entregas-lote"
+               value="z"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>z</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>externo_instituicao</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="externo_instituicao"                data-endpoint="POSTapi-entregas-lote"
+               value="m"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>m</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>finalidade</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="finalidade"                data-endpoint="POSTapi-entregas-lote"
+               value="i"
+               data-component="body">
+    <br>
+<p>validation.max. Example: <code>i</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>observacoes</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="observacoes"                data-endpoint="POSTapi-entregas-lote"
+               value="architecto"
+               data-component="body">
+    <br>
+<p>Example: <code>architecto</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>itens</code></b>&nbsp;&nbsp;
+<small>object[]</small>&nbsp;
+ &nbsp;
+ &nbsp;
+<br>
+<p>validation.min.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>material_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="itens.0.material_id"                data-endpoint="POSTapi-entregas-lote"
+               value="16"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the materiais table. Example: <code>16</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>quantidade</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="itens.0.quantidade"                data-endpoint="POSTapi-entregas-lote"
+               value="22"
+               data-component="body">
+    <br>
+<p>validation.min. Example: <code>22</code></p>
+                    </div>
+                                    </details>
         </div>
         </form>
 
@@ -5041,7 +6515,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"nome\": \"b\",
     \"cor\": \"n\",
     \"capacidade\": 7,
-    \"ativo\": true
+    \"ativo\": false,
+    \"leitos_interditados\": [
+        \"z\"
+    ]
 }"
 </code></pre></div>
 
@@ -5061,7 +6538,10 @@ let body = {
     "nome": "b",
     "cor": "n",
     "capacidade": 7,
-    "ativo": true
+    "ativo": false,
+    "leitos_interditados": [
+        "z"
+    ]
 };
 
 fetch(url, {
@@ -5227,7 +6707,21 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>leitos_interditados</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="leitos_interditados[0]"                data-endpoint="PATCHapi-setores--setor_id-"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="leitos_interditados[1]"                data-endpoint="PATCHapi-setores--setor_id-"
+               data-component="body">
+    <br>
+<p>validation.max.</p>
         </div>
         </form>
 
@@ -5752,7 +7246,7 @@ Must be one of:
     --data "{
     \"name\": \"b\",
     \"email\": \"zbailey@example.net\",
-    \"role\": \"admin\",
+    \"role\": \"logistica\",
     \"is_active\": false,
     \"phone\": \"i\",
     \"documento\": \"yvdljnikhwa\"
@@ -5774,7 +7268,7 @@ const headers = {
 let body = {
     "name": "b",
     "email": "zbailey@example.net",
-    "role": "admin",
+    "role": "logistica",
     "is_active": false,
     "phone": "i",
     "documento": "yvdljnikhwa"
@@ -5930,10 +7424,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="role"                data-endpoint="PATCHapi-admin-users--id-"
-               value="admin"
+               value="logistica"
                data-component="body">
     <br>
-<p>Example: <code>admin</code></p>
+<p>Example: <code>logistica</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>admin</code></li> <li><code>tecnico</code></li> <li><code>logistica</code></li> <li><code>saude</code></li></ul>
         </div>

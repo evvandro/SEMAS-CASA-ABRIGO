@@ -42,6 +42,8 @@ import {
 import { scrollAppContentToTop } from '../utils/scrollAppContent';
 import type { Acolhido } from '../modules/acolhidos/types';
 import { formatEntryDateTime } from '../modules/acolhidos/utils/date';
+import { ExportPDFButton } from '../components/ExportPDFButton';
+import type { ReportColumn } from '../components/ReportTemplate';
 
 const PRESET_COLORS = [
   '#2e7d32',
@@ -263,6 +265,14 @@ function StatusChip({ status }: { status: SectorStatusKey }) {
     />
   );
 }
+
+const setoresColumns: ReportColumn[] = [
+  { header: 'Setor', key: 'nome', width: '30%' },
+  { header: 'Capacidade', key: 'capacidade', width: '15%' },
+  { header: 'Ocupados', key: 'ocupados', width: '15%' },
+  { header: 'Livres', key: 'livres', width: '15%' },
+  { header: 'Interditados', key: 'interditados', width: '15%' },
+];
 
 function BedCell({
   bed,
@@ -589,6 +599,19 @@ export function SetoresPage() {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <ExportPDFButton
+              title="Relatório de Ocupação por Setor"
+              columns={setoresColumns}
+              data={details.map((d) => ({
+                nome: d.setor.nome,
+                capacidade: d.capacity,
+                ocupados: d.occupied,
+                livres: d.freeBeds,
+                interditados: d.blockedBeds + (d.setor.ativo ? 0 : d.capacity),
+              }))}
+              filename="relatorio-setores.pdf"
+              variant="outlined"
+            />
             <Typography variant="caption">Ocupação</Typography>
             <Box
               sx={{

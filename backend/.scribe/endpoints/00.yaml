@@ -31,10 +31,14 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{"message":"API online.","data":{"status":"ok"}}'
+        content: '{"message":"API online.","data":{"status":"ok","db_driver":"sqlite"}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
+          x-request-id: 5ad852c1-0700-42b1-af27-1bafa7285753
+          x-content-type-options: nosniff
+          referrer-policy: no-referrer
+          x-frame-options: DENY
           vary: Origin
         description: null
     responseFields: []
@@ -72,7 +76,7 @@ endpoints:
       email:
         custom: []
         name: email
-        description: validation.email.
+        description: 'validation.email validation.max.'
         required: true
         example: gbailey@example.net
         type: string
@@ -152,6 +156,100 @@ endpoints:
           content-type: application/json
           vary: Origin
         description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: api/me
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: "Update the authenticated user's profile."
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      name:
+        custom: []
+        name: name
+        description: validation.max.
+        required: false
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'validation.email validation.max.'
+        required: false
+        example: zbailey@example.net
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      phone:
+        custom: []
+        name: phone
+        description: validation.max.
+        required: false
+        example: i
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      current_password:
+        custom: []
+        name: current_password
+        description: 'This field is required when <code>password</code> is present.'
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: ''
+        required: false
+        example: null
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      name: b
+      email: zbailey@example.net
+      phone: i
+      current_password: architecto
+    fileParameters: []
+    responses: []
     responseFields: []
     auth:
       - headers
@@ -377,29 +475,210 @@ endpoints:
         custom: []
         name: observacoes
         description: ''
-        required: true
+        required: false
         example: architecto
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       data_entrada:
         custom: []
         name: data_entrada
         description: validation.date.
         required: true
-        example: '2026-05-20T00:58:33'
+        example: '2026-06-26T22:21:19'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      acolhidos:
+        custom: []
+        name: acolhidos
+        description: validation.min.
+        required: false
+        example: null
+        type: 'object[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].nome':
+        custom: []
+        name: 'acolhidos[].nome'
+        description: 'This field is required when <code>acolhidos</code> is present. validation.max.'
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'acolhidos[].cpf':
+        custom: []
+        name: 'acolhidos[].cpf'
+        description: 'Must match the regex /^\d{11}$/.'
+        required: false
+        example: '56425593142'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].data_nascimento':
+        custom: []
+        name: 'acolhidos[].data_nascimento'
+        description: validation.date.
+        required: false
+        example: '2026-06-26T22:21:19'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].parentesco':
+        custom: []
+        name: 'acolhidos[].parentesco'
+        description: validation.max.
+        required: false
+        example: h
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].telefone':
+        custom: []
+        name: 'acolhidos[].telefone'
+        description: validation.max.
+        required: false
+        example: waykcmyuwpwlvqwr
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].genero':
+        custom: []
+        name: 'acolhidos[].genero'
+        description: validation.max.
+        required: false
+        example: s
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].leito':
+        custom: []
+        name: 'acolhidos[].leito'
+        description: validation.max.
+        required: false
+        example: i
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].observacoes':
+        custom: []
+        name: 'acolhidos[].observacoes'
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].pertences_registrados':
+        custom: []
+        name: 'acolhidos[].pertences_registrados'
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].pcd':
+        custom: []
+        name: 'acolhidos[].pcd'
+        description: ''
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].gestante':
+        custom: []
+        name: 'acolhidos[].gestante'
+        description: ''
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].cronica':
+        custom: []
+        name: 'acolhidos[].cronica'
+        description: ''
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].idoso':
+        custom: []
+        name: 'acolhidos[].idoso'
+        description: ''
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      'acolhidos[].hora_entrada':
+        custom: []
+        name: 'acolhidos[].hora_entrada'
+        description: 'Must be a valid date in the format <code>H:i:s,H:i</code>.'
+        required: false
+        example: '22:21:19,22:21'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
     cleanBodyParameters:
       responsavel_nome: b
       setor_id: 16
       observacoes: architecto
-      data_entrada: '2026-05-20T00:58:33'
+      data_entrada: '2026-06-26T22:21:19'
+      acolhidos:
+        -
+          nome: 'n'
+          cpf: '56425593142'
+          data_nascimento: '2026-06-26T22:21:19'
+          parentesco: h
+          telefone: waykcmyuwpwlvqwr
+          genero: s
+          leito: i
+          observacoes: architecto
+          pertences_registrados: architecto
+          pcd: false
+          gestante: true
+          cronica: false
+          idoso: true
+          hora_entrada: '22:21:19,22:21'
     fileParameters: []
     responses: []
     responseFields: []
@@ -435,14 +714,14 @@ endpoints:
         name: familia_id
         description: 'The ID of the familia.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      familia_id: 16
+      familia_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -491,14 +770,14 @@ endpoints:
         name: familia_id
         description: 'The ID of the familia.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      familia_id: 16
+      familia_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -540,7 +819,7 @@ endpoints:
         name: data_entrada
         description: validation.date.
         required: false
-        example: '2026-05-20T00:58:33'
+        example: '2026-06-26T22:21:19'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -550,7 +829,7 @@ endpoints:
       responsavel_nome: b
       setor_id: 16
       observacoes: architecto
-      data_entrada: '2026-05-20T00:58:33'
+      data_entrada: '2026-06-26T22:21:19'
     fileParameters: []
     responses: []
     responseFields: []
@@ -586,14 +865,14 @@ endpoints:
         name: familia_id
         description: 'The ID of the familia.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      familia_id: 16
+      familia_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -602,11 +881,22 @@ endpoints:
         name: data_saida
         description: validation.date.
         required: true
-        example: '2026-05-20T00:58:33'
+        example: '2026-06-26T22:21:19'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
+        deprecated: false
+      hora_saida:
+        custom: []
+        name: hora_saida
+        description: 'Must be a valid date in the format <code>H:i:s,H:i</code>.'
+        required: false
+        example: '22:21:19,22:21'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
       tipo_saida:
         custom: []
@@ -619,9 +909,132 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      destino_informado:
+        custom: []
+        name: destino_informado
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      endereco_destino:
+        custom: []
+        name: endereco_destino
+        description: validation.max.
+        required: false
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      municipio_destino:
+        custom: []
+        name: municipio_destino
+        description: validation.max.
+        required: false
+        example: z
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      telefone_destino:
+        custom: []
+        name: telefone_destino
+        description: validation.max.
+        required: false
+        example: miyvdljnikhwaykc
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      encaminhamentos_rede:
+        custom: []
+        name: encaminhamentos_rede
+        description: ''
+        required: false
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      resumo_encaminhamento:
+        custom: []
+        name: resumo_encaminhamento
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      condicao_saida:
+        custom: []
+        name: condicao_saida
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      observacoes_tecnicas:
+        custom: []
+        name: observacoes_tecnicas
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      responsavel_desligamento:
+        custom: []
+        name: responsavel_desligamento
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      cargo_responsavel:
+        custom: []
+        name: cargo_responsavel
+        description: validation.max.
+        required: false
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
     cleanBodyParameters:
-      data_saida: '2026-05-20T00:58:33'
+      data_saida: '2026-06-26T22:21:19'
+      hora_saida: '22:21:19,22:21'
       tipo_saida: b
+      destino_informado: 'n'
+      endereco_destino: g
+      municipio_destino: z
+      telefone_destino: miyvdljnikhwaykc
+      encaminhamentos_rede:
+        - architecto
+      resumo_encaminhamento: architecto
+      condicao_saida: 'n'
+      observacoes_tecnicas: architecto
+      responsavel_desligamento: 'n'
+      cargo_responsavel: g
     fileParameters: []
     responses: []
     responseFields: []
@@ -747,31 +1160,42 @@ endpoints:
       data_nascimento:
         custom: []
         name: data_nascimento
-        description: validation.date.
-        required: true
-        example: '2026-05-20T00:58:33'
+        description: 'validation.date validation.before_or_equal.'
+        required: false
+        example: '2022-07-21'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       cpf:
         custom: []
         name: cpf
-        description: validation.max.
-        required: true
-        example: gzmiyvdljnikhway
+        description: 'Must match the regex /^\d{11}$/.'
+        required: false
+        example: '56425593142'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
+        deprecated: false
+      parentesco:
+        custom: []
+        name: parentesco
+        description: validation.max.
+        required: false
+        example: h
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
       telefone:
         custom: []
         name: telefone
         description: validation.max.
         required: false
-        example: kcmyuwpwlvqwrsit
+        example: waykcmyuwpwlvqwr
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -782,7 +1206,7 @@ endpoints:
         name: genero
         description: validation.max.
         required: false
-        example: c
+        example: s
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -793,7 +1217,7 @@ endpoints:
         name: leito
         description: validation.max.
         required: false
-        example: p
+        example: i
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -826,7 +1250,7 @@ endpoints:
         name: data_entrada
         description: validation.date.
         required: false
-        example: '2026-05-20T00:58:33'
+        example: '2026-06-26T22:21:20'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -837,7 +1261,7 @@ endpoints:
         name: hora_entrada
         description: 'Must be a valid date in the format <code>H:i</code>.'
         required: false
-        example: '00:58'
+        example: '22:21'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -848,7 +1272,7 @@ endpoints:
         name: pcd
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -892,19 +1316,236 @@ endpoints:
       familia_id: 16
       setor_id: 16
       nome: 'n'
-      data_nascimento: '2026-05-20T00:58:33'
-      cpf: gzmiyvdljnikhway
-      telefone: kcmyuwpwlvqwrsit
-      genero: c
-      leito: p
+      data_nascimento: '2022-07-21'
+      cpf: '56425593142'
+      parentesco: h
+      telefone: waykcmyuwpwlvqwr
+      genero: s
+      leito: i
       observacoes: architecto
       pertences_registrados: architecto
-      data_entrada: '2026-05-20T00:58:33'
-      hora_entrada: '00:58'
-      pcd: true
+      data_entrada: '2026-06-26T22:21:20'
+      hora_entrada: '22:21'
+      pcd: false
       gestante: true
       cronica: true
       idoso: false
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/acolhidos/saida/{acolhido_id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      acolhido_id:
+        custom: []
+        name: acolhido_id
+        description: 'The ID of the acolhido.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      acolhido_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      data_saida:
+        custom: []
+        name: data_saida
+        description: validation.date.
+        required: true
+        example: '2026-06-26T22:21:20'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      hora_saida:
+        custom: []
+        name: hora_saida
+        description: 'Must be a valid date in the format <code>H:i:s,H:i</code>.'
+        required: false
+        example: '22:21:20,22:21'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      tipo_saida:
+        custom: []
+        name: tipo_saida
+        description: validation.max.
+        required: true
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      detalhes_saida:
+        custom: []
+        name: detalhes_saida
+        description: ''
+        required: false
+        example: null
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      destino_informado:
+        custom: []
+        name: destino_informado
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      endereco_destino:
+        custom: []
+        name: endereco_destino
+        description: validation.max.
+        required: false
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      municipio_destino:
+        custom: []
+        name: municipio_destino
+        description: validation.max.
+        required: false
+        example: z
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      telefone_destino:
+        custom: []
+        name: telefone_destino
+        description: validation.max.
+        required: false
+        example: miyvdljnikhwaykc
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      encaminhamentos_rede:
+        custom: []
+        name: encaminhamentos_rede
+        description: ''
+        required: false
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      resumo_encaminhamento:
+        custom: []
+        name: resumo_encaminhamento
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      condicao_saida:
+        custom: []
+        name: condicao_saida
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      observacoes_tecnicas:
+        custom: []
+        name: observacoes_tecnicas
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      responsavel_desligamento:
+        custom: []
+        name: responsavel_desligamento
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      cargo_responsavel:
+        custom: []
+        name: cargo_responsavel
+        description: validation.max.
+        required: false
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      data_saida: '2026-06-26T22:21:20'
+      hora_saida: '22:21:20,22:21'
+      tipo_saida: b
+      destino_informado: 'n'
+      endereco_destino: g
+      municipio_destino: z
+      telefone_destino: miyvdljnikhwaykc
+      encaminhamentos_rede:
+        - architecto
+      resumo_encaminhamento: architecto
+      condicao_saida: 'n'
+      observacoes_tecnicas: architecto
+      responsavel_desligamento: 'n'
+      cargo_responsavel: g
     fileParameters: []
     responses: []
     responseFields: []
@@ -940,14 +1581,14 @@ endpoints:
         name: acolhido_id
         description: 'The ID of the acolhido.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      acolhido_id: 16
+      acolhido_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -996,14 +1637,14 @@ endpoints:
         name: acolhido_id
         description: 'The ID of the acolhido.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      acolhido_id: 16
+      acolhido_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -1054,31 +1695,42 @@ endpoints:
       data_nascimento:
         custom: []
         name: data_nascimento
-        description: validation.date.
+        description: 'validation.date validation.before_or_equal.'
         required: false
-        example: '2026-05-20T00:58:33'
+        example: '2022-07-21'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       cpf:
         custom: []
         name: cpf
-        description: validation.max.
+        description: 'Must match the regex /^\d{11}$/.'
         required: false
-        example: gzmiyvdljnikhway
+        example: '56425593142'
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
+        deprecated: false
+      parentesco:
+        custom: []
+        name: parentesco
+        description: validation.max.
+        required: false
+        example: h
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
       telefone:
         custom: []
         name: telefone
         description: validation.max.
         required: false
-        example: kcmyuwpwlvqwrsit
+        example: waykcmyuwpwlvqwr
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1089,7 +1741,7 @@ endpoints:
         name: genero
         description: validation.max.
         required: false
-        example: c
+        example: s
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1100,7 +1752,7 @@ endpoints:
         name: leito
         description: validation.max.
         required: false
-        example: p
+        example: i
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1133,7 +1785,7 @@ endpoints:
         name: data_entrada
         description: validation.date.
         required: false
-        example: '2026-05-20T00:58:33'
+        example: '2026-06-26T22:21:20'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1144,7 +1796,7 @@ endpoints:
         name: hora_entrada
         description: 'Must be a valid date in the format <code>H:i</code>.'
         required: false
-        example: '00:58'
+        example: '22:21'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1155,7 +1807,7 @@ endpoints:
         name: pcd
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1199,16 +1851,17 @@ endpoints:
       familia_id: 16
       setor_id: 16
       nome: 'n'
-      data_nascimento: '2026-05-20T00:58:33'
-      cpf: gzmiyvdljnikhway
-      telefone: kcmyuwpwlvqwrsit
-      genero: c
-      leito: p
+      data_nascimento: '2022-07-21'
+      cpf: '56425593142'
+      parentesco: h
+      telefone: waykcmyuwpwlvqwr
+      genero: s
+      leito: i
       observacoes: architecto
       pertences_registrados: architecto
-      data_entrada: '2026-05-20T00:58:33'
-      hora_entrada: '00:58'
-      pcd: true
+      data_entrada: '2026-06-26T22:21:20'
+      hora_entrada: '22:21'
+      pcd: false
       gestante: true
       cronica: false
       idoso: false
@@ -1247,14 +1900,14 @@ endpoints:
         name: acolhido_id
         description: 'The ID of the acolhido.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      acolhido_id: 16
+      acolhido_id: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -1263,11 +1916,22 @@ endpoints:
         name: data_saida
         description: validation.date.
         required: true
-        example: '2026-05-20T00:58:33'
+        example: '2026-06-26T22:21:20'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
+        deprecated: false
+      hora_saida:
+        custom: []
+        name: hora_saida
+        description: 'Must be a valid date in the format <code>H:i:s,H:i</code>.'
+        required: false
+        example: '22:21:20,22:21'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
       tipo_saida:
         custom: []
@@ -1291,9 +1955,132 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
+      destino_informado:
+        custom: []
+        name: destino_informado
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      endereco_destino:
+        custom: []
+        name: endereco_destino
+        description: validation.max.
+        required: false
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      municipio_destino:
+        custom: []
+        name: municipio_destino
+        description: validation.max.
+        required: false
+        example: z
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      telefone_destino:
+        custom: []
+        name: telefone_destino
+        description: validation.max.
+        required: false
+        example: miyvdljnikhwaykc
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      encaminhamentos_rede:
+        custom: []
+        name: encaminhamentos_rede
+        description: ''
+        required: false
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      resumo_encaminhamento:
+        custom: []
+        name: resumo_encaminhamento
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      condicao_saida:
+        custom: []
+        name: condicao_saida
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      observacoes_tecnicas:
+        custom: []
+        name: observacoes_tecnicas
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      responsavel_desligamento:
+        custom: []
+        name: responsavel_desligamento
+        description: validation.max.
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      cargo_responsavel:
+        custom: []
+        name: cargo_responsavel
+        description: validation.max.
+        required: false
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
     cleanBodyParameters:
-      data_saida: '2026-05-20T00:58:33'
+      data_saida: '2026-06-26T22:21:20'
+      hora_saida: '22:21:20,22:21'
       tipo_saida: b
+      destino_informado: 'n'
+      endereco_destino: g
+      municipio_destino: z
+      telefone_destino: miyvdljnikhwaykc
+      encaminhamentos_rede:
+        - architecto
+      resumo_encaminhamento: architecto
+      condicao_saida: 'n'
+      observacoes_tecnicas: architecto
+      responsavel_desligamento: 'n'
+      cargo_responsavel: g
     fileParameters: []
     responses: []
     responseFields: []
@@ -1644,7 +2431,7 @@ endpoints:
         name: data_recebimento
         description: validation.date.
         required: true
-        example: '2026-05-20T00:58:33'
+        example: '2026-06-26T22:21:20'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1655,7 +2442,7 @@ endpoints:
         name: hora_recebimento
         description: 'Must be a valid date in the format <code>H:i</code>.'
         required: true
-        example: '00:58'
+        example: '22:21'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1721,7 +2508,7 @@ endpoints:
         name: conferido
         description: ''
         required: true
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1730,7 +2517,7 @@ endpoints:
       motivo_nao_conferido:
         custom: []
         name: motivo_nao_conferido
-        description: validation.max.
+        description: 'This field is required when <code>conferido</code> is <code>false</code>. validation.max.'
         required: false
         example: d
         type: string
@@ -1752,7 +2539,7 @@ endpoints:
       restricao_descricao:
         custom: []
         name: restricao_descricao
-        description: ''
+        description: 'This field is required when <code>possui_restricao</code> is <code>true</code>.'
         required: false
         example: architecto
         type: string
@@ -1838,24 +2625,13 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      'itens[].categoria':
+      'itens[].material_id':
         custom: []
-        name: 'itens[].categoria'
-        description: validation.max.
+        name: 'itens[].material_id'
+        description: 'The <code>id</code> of an existing record in the materiais table.'
         required: true
-        example: b
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      'itens[].descricao':
-        custom: []
-        name: 'itens[].descricao'
-        description: validation.max.
-        required: true
-        example: 'n'
-        type: string
+        example: 16
+        type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -1865,19 +2641,8 @@ endpoints:
         name: 'itens[].quantidade'
         description: validation.min.
         required: true
-        example: 67
+        example: 22
         type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      'itens[].unidade':
-        custom: []
-        name: 'itens[].unidade'
-        description: validation.max.
-        required: true
-        example: z
-        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -1908,14 +2673,14 @@ endpoints:
       nome_abrigo: b
       municipio_uf: 'n'
       orgao_responsavel: g
-      data_recebimento: '2026-05-20T00:58:33'
-      hora_recebimento: '00:58'
+      data_recebimento: '2026-06-26T22:21:20'
+      hora_recebimento: '22:21'
       origem: z
       origem_outro: m
       doador_nome: i
       doador_documento: 'y'
       doador_contato: v
-      conferido: false
+      conferido: true
       motivo_nao_conferido: d
       possui_restricao: false
       restricao_descricao: architecto
@@ -1927,10 +2692,8 @@ endpoints:
       observacoes_gerais: architecto
       itens:
         -
-          categoria: b
-          descricao: 'n'
-          quantidade: 67
-          unidade: z
+          material_id: 16
+          quantidade: 22
           condicao: architecto
           observacoes: architecto
     fileParameters: []
@@ -2060,11 +2823,22 @@ endpoints:
         name: data_entrega
         description: validation.date.
         required: true
-        example: '2026-05-20T00:58:33'
+        example: '2026-06-26T22:21:21'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
+        deprecated: false
+      finalidade:
+        custom: []
+        name: finalidade
+        description: validation.max.
+        required: false
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
         deprecated: false
       observacoes:
         custom: []
@@ -2082,8 +2856,205 @@ endpoints:
       familia_id: 16
       acolhido_id: 16
       quantidade: 22
-      data_entrega: '2026-05-20T00:58:33'
+      data_entrega: '2026-06-26T22:21:21'
+      finalidade: g
       observacoes: architecto
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/entregas/lote
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      data_entrega:
+        custom: []
+        name: data_entrega
+        description: validation.date.
+        required: true
+        example: '2026-06-26T22:21:21'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      destino_tipo:
+        custom: []
+        name: destino_tipo
+        description: ''
+        required: true
+        example: externo
+        type: string
+        enumValues:
+          - acolhido
+          - familia
+          - externo
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      familia_id:
+        custom: []
+        name: familia_id
+        description: 'The <code>id</code> of an existing record in the familias table.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      acolhido_id:
+        custom: []
+        name: acolhido_id
+        description: 'The <code>id</code> of an existing record in the acolhidos table.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      externo_nome:
+        custom: []
+        name: externo_nome
+        description: 'This field is required when <code>destino_tipo</code> is <code>externo</code>. validation.max.'
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      externo_documento:
+        custom: []
+        name: externo_documento
+        description: validation.max.
+        required: false
+        example: g
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      externo_contato:
+        custom: []
+        name: externo_contato
+        description: validation.max.
+        required: false
+        example: z
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      externo_instituicao:
+        custom: []
+        name: externo_instituicao
+        description: validation.max.
+        required: false
+        example: m
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      finalidade:
+        custom: []
+        name: finalidade
+        description: validation.max.
+        required: false
+        example: i
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      observacoes:
+        custom: []
+        name: observacoes
+        description: ''
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      itens:
+        custom: []
+        name: itens
+        description: validation.min.
+        required: true
+        example:
+          - []
+        type: 'object[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'itens[].material_id':
+        custom: []
+        name: 'itens[].material_id'
+        description: 'The <code>id</code> of an existing record in the materiais table.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'itens[].quantidade':
+        custom: []
+        name: 'itens[].quantidade'
+        description: validation.min.
+        required: true
+        example: 22
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      data_entrega: '2026-06-26T22:21:21'
+      destino_tipo: externo
+      familia_id: 16
+      acolhido_id: 16
+      externo_nome: 'n'
+      externo_documento: g
+      externo_contato: z
+      externo_instituicao: m
+      finalidade: i
+      observacoes: architecto
+      itens:
+        -
+          material_id: 16
+          quantidade: 22
     fileParameters: []
     responses: []
     responseFields: []
@@ -2239,8 +3210,20 @@ endpoints:
         name: ativo
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      leitos_interditados:
+        custom: []
+        name: leitos_interditados
+        description: validation.max.
+        required: false
+        example:
+          - z
+        type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -2249,7 +3232,9 @@ endpoints:
       nome: b
       cor: 'n'
       capacidade: 7
-      ativo: true
+      ativo: false
+      leitos_interditados:
+        - z
     fileParameters: []
     responses: []
     responseFields: []
@@ -2536,7 +3521,7 @@ endpoints:
         name: role
         description: ''
         required: false
-        example: admin
+        example: logistica
         type: string
         enumValues:
           - admin
@@ -2582,7 +3567,7 @@ endpoints:
     cleanBodyParameters:
       name: b
       email: zbailey@example.net
-      role: admin
+      role: logistica
       is_active: false
       phone: i
       documento: yvdljnikhwa
