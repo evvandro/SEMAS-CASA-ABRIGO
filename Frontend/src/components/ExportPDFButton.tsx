@@ -4,11 +4,11 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import { ReportTemplate } from './ReportTemplate';
 import type { ReportColumn } from './ReportTemplate';
 
-interface ExportPDFButtonProps {
+interface ExportPDFButtonProps<T> {
   title: string;
   subtitle?: string;
   columns: ReportColumn[];
-  data: Record<string, unknown>[];
+  data: T[];
   filename: string;
   orientation?: 'portrait' | 'landscape';
   variant?: 'text' | 'outlined' | 'contained';
@@ -16,7 +16,7 @@ interface ExportPDFButtonProps {
   disabled?: boolean;
 }
 
-export const ExportPDFButton = ({
+export const ExportPDFButton = <T,>({
   title,
   subtitle,
   columns,
@@ -26,7 +26,7 @@ export const ExportPDFButton = ({
   variant = 'outlined',
   color = 'primary',
   disabled = false,
-}: ExportPDFButtonProps) => {
+}: ExportPDFButtonProps<T>) => {
   return (
     <PDFDownloadLink
       document={

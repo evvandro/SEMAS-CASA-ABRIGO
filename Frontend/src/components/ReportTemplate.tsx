@@ -110,21 +110,21 @@ export interface ReportColumn {
   width?: string; // e.g. '20%'
 }
 
-export interface ReportTemplateProps {
+export interface ReportTemplateProps<T> {
   title: string;
   subtitle?: string;
   columns: ReportColumn[];
-  data: Record<string, unknown>[];
+  data: T[];
   orientation?: 'portrait' | 'landscape';
 }
 
-export const ReportTemplate = ({
+export const ReportTemplate = <T,>({
   title,
   subtitle,
   columns,
   data,
   orientation = 'portrait',
-}: ReportTemplateProps) => {
+}: ReportTemplateProps<T>) => {
   return (
     <Document>
       <Page size="A4" orientation={orientation} style={styles.page}>
@@ -167,11 +167,10 @@ export const ReportTemplate = ({
               wrap={false}
             >
               {columns.map((col, colIndex) => {
-                let cellValue = row[col.key];
-                if (cellValue === null || cellValue === undefined) {
-                  cellValue = '-';
-                } else if (typeof cellValue !== 'string' && typeof cellValue !== 'number') {
-                  cellValue = String(cellValue);
+                const cellValue = (row as Record<string, unknown>)[col.key];
+                let displayValue = '-';
+                if (cellValue !== null && cellValue !== undefined) {
+                  displayValue = String(cellValue);
                 }
 
                 return (
@@ -182,7 +181,7 @@ export const ReportTemplate = ({
                       { width: col.width || `${100 / columns.length}%` },
                     ]}
                   >
-                    <Text style={styles.tableCell}>{cellValue}</Text>
+                    <Text style={styles.tableCell}>{displayValue}</Text>
                   </View>
                 );
               })}
