@@ -35,6 +35,8 @@ import {
   registerFamiliaSaida,
   toIsoDate,
 } from '../services/familiasService';
+import { ExportPDFButton } from '../components/ExportPDFButton';
+import type { ReportColumn } from '../components/ReportTemplate';
 import { scrollAppContentToTop } from '../utils/scrollAppContent';
 import { showErrorToast, showSuccessToast } from '../utils/notificationService';
 import { notifyAcolhidosCountRefresh } from '../utils/acolhidosEvents';
@@ -42,6 +44,24 @@ import { getApiErrorMessage } from '../utils/apiError';
 import { PageHeader } from '../components/PageHeader';
 
 type SaidasTab = 'pessoas' | 'familias';
+
+const acolhidosColumns: ReportColumn[] = [
+  { header: 'Data', key: 'data', width: '15%' },
+  { header: 'Pessoa', key: 'name', width: '25%' },
+  { header: 'Familia', key: 'familyCode', width: '15%' },
+  { header: 'Tipo', key: 'exitType', width: '15%' },
+  { header: 'Destino', key: 'exitDestination', width: '15%' },
+  { header: 'Responsável', key: 'exitResponsible', width: '15%' },
+];
+
+const familiasColumns: ReportColumn[] = [
+  { header: 'Data', key: 'data', width: '15%' },
+  { header: 'Familia', key: 'codigo', width: '25%' },
+  { header: 'Membros', key: 'acolhidosCount', width: '15%' },
+  { header: 'Tipo', key: 'tipoSaida', width: '15%' },
+  { header: 'Destino', key: 'destinoCompleto', width: '15%' },
+  { header: 'Responsável', key: 'responsavelDesligamento', width: '15%' },
+];
 
 export function SaidasPage() {
   const [tab, setTab] = useState<SaidasTab>('pessoas');
@@ -252,11 +272,44 @@ export function SaidasPage() {
           overflow: 'hidden',
         }}
       >
-        <Box sx={{ p: 2.5, borderBottom: '1px solid', borderColor: 'divider' }}>
-          <Typography variant="h6">Historico de saidas</Typography>
-          <Typography variant="body2" color="text.secondary">
-            Registros desligados permanecem aqui para consulta operacional.
-          </Typography>
+        <Box
+          sx={{
+            p: 2.5,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Box>
+            <Typography variant="h6">Historico de saidas</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Registros desligados permanecem aqui para consulta operacional.
+            </Typography>
+          </Box>
+          <ExportPDFButton
+            title={`Relatório de Saídas - ${tab === 'pessoas' ? 'Pessoas' : 'Famílias'}`}
+            columns={tab === 'pessoas' ? acolhidosColumns : familiasColumns}
+            data={
+              tab === 'pessoas'
+                ? historicoAcolhidos.map((a) => ({
+                    ...a,
+                    data: formatDateTime(a.exitDate, a.exitTime),
+                    familyCode: a.familyCode || 'Pessoa sozinha',
+                  }))
+                : historicoFamilias.map((f) => ({
+                    ...f,
+                    data: formatDateTime(f.dataSaida, f.horaSaida),
+                    destinoCompleto: [f.destinoInformado, f.municipioDestino]
+                        .filter(Boolean)
+                        .join(' - '),
+                  }))
+            }
+            filename={`saidas-${tab}.pdf`}
+            variant="text"
+            color="secondary"
+          />
         </Box>
 
         {tab === 'pessoas' ? (

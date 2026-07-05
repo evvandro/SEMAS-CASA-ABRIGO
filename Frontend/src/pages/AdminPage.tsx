@@ -37,6 +37,15 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { showSuccessToast } from '../utils/notificationService';
 import { getApiErrorMessage } from '../utils/apiError';
 import { PageHeader } from '../components/PageHeader';
+import { ExportPDFButton } from '../components/ExportPDFButton';
+import type { ReportColumn } from '../components/ReportTemplate';
+
+const usuariosColumns: ReportColumn[] = [
+  { header: 'Nome', key: 'name', width: '35%' },
+  { header: 'Email', key: 'email', width: '35%' },
+  { header: 'Função', key: 'role', width: '15%' },
+  { header: 'Status', key: 'statusStr', width: '15%' },
+];
 
 const PASSWORD_REQUIREMENTS =
   'A senha deve ter no mínimo 12 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.';
@@ -234,9 +243,21 @@ export function AdminPage() {
           <PageHeader
             title="Administração de Usuários"
             actions={
-              <Button variant="contained" onClick={() => handleOpenDialog()}>
-                Novo Usuário
-              </Button>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <ExportPDFButton
+                  title="Relatório de Usuários"
+                  columns={usuariosColumns}
+                  data={users.map((u) => ({
+                    ...u,
+                    statusStr: u.is_active ? 'Ativo' : 'Inativo',
+                  }))}
+                  filename="relatorio-usuarios.pdf"
+                  variant="outlined"
+                />
+                <Button variant="contained" onClick={() => handleOpenDialog()}>
+                  Novo Usuário
+                </Button>
+              </Box>
             }
           />
         </Box>
