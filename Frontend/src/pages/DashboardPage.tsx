@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Grid,
   LinearProgress,
   Paper,
@@ -24,6 +23,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
 import { api } from '../services/api';
 import { PageHeader } from '../components/PageHeader';
+import { StatsPageSkeleton } from '../components/StatsPageSkeleton';
 
 interface DashboardSetor {
   id: number;
@@ -117,7 +117,7 @@ export function DashboardPage() {
         const response = await api.get<DashboardResponse>('/dashboard');
         if (active) setDashboard(response.data.data);
       } catch {
-        if (active) setError('Nao foi possivel carregar os dados do painel.');
+        if (active) setError('Não foi possível carregar os dados do painel.');
       } finally {
         if (active) setLoading(false);
       }
@@ -159,22 +159,18 @@ export function DashboardPage() {
   );
 
   if (loading) {
-    return (
-      <Box sx={{ display: 'grid', placeItems: 'center', height: 300 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <StatsPageSkeleton />;
   }
 
   return (
     <Stack spacing={3}>
       <PageHeader
         title="Painel Inicial"
-        description="Acompanhamento dos acolhimentos ativos e da ocupacao da Casa Abrigo."
+        description="Acompanhamento dos acolhimentos ativos e da ocupação da Casa Abrigo."
         actions={
           <>
             <Chip
-              label={`Perfil: ${user?.role ?? 'nao definido'}`}
+              label={`Perfil: ${user?.role ?? 'não definido'}`}
               sx={{ width: 'fit-content' }}
             />
             <Button
@@ -196,7 +192,7 @@ export function DashboardPage() {
           <StatCard
             title="Acolhimentos ativos"
             value={dashboard?.acolhidos_ativos ?? 0}
-            helper="Pessoas sem registro de saida"
+            helper="Pessoas sem registro de saída"
             icon={<GroupIcon />}
           />
         </Grid>
@@ -210,12 +206,12 @@ export function DashboardPage() {
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatCard
-            title="Ocupacao geral"
+            title="Ocupação geral"
             value={totalCapacity > 0 ? `${occupancyPercent}%` : '-'}
             helper={
               totalCapacity > 0
                 ? `${occupiedCapacity} de ${totalCapacity} vagas úteis`
-                : 'Capacidade nao cadastrada'
+                : 'Capacidade não cadastrada'
             }
             icon={<GridViewIcon />}
           />

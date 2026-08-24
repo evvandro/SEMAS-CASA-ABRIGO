@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Grid,
   LinearProgress,
   Paper,
@@ -28,25 +27,27 @@ import GroupIcon from '@mui/icons-material/Group';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { Link as RouterLink } from 'react-router-dom';
 import { api } from '../services/api';
-import {
-  fetchAcolhidos,
-  fetchSetores,
-  toSector,
-} from '../services/acolhidosService';
+import { fetchAcolhidos, toSector } from '../services/acolhidosService';
+import type { ApiSetor } from '../services/setoresService';
 import type {
   Acolhido,
   AlertCategory,
   Sector,
 } from '../modules/acolhidos/types';
-import {
-  dateSortValue,
-  formatEntryDateTime,
-} from '../modules/acolhidos/utils/date';
+import { formatEntryDateTime } from '../modules/acolhidos/utils/date';
+import { StatsPageSkeleton } from '../components/StatsPageSkeleton';
 
 interface DashboardSummary {
   familias_ativas: number;
   acolhidos_ativos: number;
   entregas_hoje: number;
+  alertas?: Record<AlertCategory, number>;
+  setores: Array<
+    ApiSetor & {
+      familias_ativas_count: number;
+      acolhidos_ativos_count: number;
+    }
+  >;
 }
 
 interface DashboardResponse {
@@ -129,25 +130,22 @@ export function ManagementPage() {
       setError(null);
 
       try {
-        const [dashboard, acolhidosResult, rawSetores] = await Promise.all([
+        // O /dashboard já traz contagens por setor e por alerta; a lista só é
+        // usada para os acolhimentos recentes (6 itens, ordenados no servidor).
+        const [dashboard, recentes] = await Promise.all([
           api.get<DashboardResponse>('/dashboard'),
-          fetchAcolhidos(),
-          fetchSetores(),
+          fetchAcolhidos({ sort: 'entrada_desc', per_page: 6 }),
         ]);
 
         if (!active) return;
 
-        const builtSectors = rawSetores.map((setor) =>
-          toSector(
-            setor,
-            acolhidosResult.data.filter(
-              (acolhido) => acolhido.sectorId === String(setor.id),
-            ).length,
-          ),
+        const summaryData = dashboard.data.data;
+        const builtSectors = (summaryData.setores ?? []).map((setor) =>
+          toSector(setor, setor.acolhidos_ativos_count ?? 0),
         );
 
-        setSummary(dashboard.data.data);
-        setRows(acolhidosResult.data);
+        setSummary(summaryData);
+        setRows(recentes.data);
         setSectors(builtSectors);
       } catch {
         if (active)
@@ -169,19 +167,12 @@ export function ManagementPage() {
     [sectors],
   );
 
-  const alertCounts = useMemo(() => {
-    return (Object.keys(alertLabels) as AlertCategory[]).reduce<
-      Record<AlertCategory, number>
-    >(
-      (acc, category) => {
-        acc[category] = rows.filter((row) =>
-          row.alerts.includes(category),
-        ).length;
-        return acc;
-      },
-      { pcd: 0, gestante: 0, cronica: 0, idoso: 0 },
-    );
-  }, [rows]);
+  const alertCounts: Record<AlertCategory, number> = summary?.alertas ?? {
+    pcd: 0,
+    gestante: 0,
+    cronica: 0,
+    idoso: 0,
+  };
 
   const totalPriorityProfiles = Object.values(alertCounts).reduce(
     (acc, count) => acc + count,
@@ -200,17 +191,8 @@ export function ManagementPage() {
       ? Math.round((occupiedCapacity / totalCapacity) * 100)
       : 0;
 
-  const recentRows = useMemo(
-    () =>
-      [...rows]
-        .sort(
-          (a, b) =>
-            dateSortValue(b.entry, b.entryTime) -
-            dateSortValue(a.entry, a.entryTime),
-        )
-        .slice(0, 6),
-    [rows],
-  );
+  // Já vem ordenado e limitado do servidor (sort=entrada_desc, per_page=6).
+  const recentRows = rows;
 
   const busiestSectors = useMemo(
     () => [...sectors].sort((a, b) => b.occupied - a.occupied).slice(0, 5),
@@ -218,11 +200,7 @@ export function ManagementPage() {
   );
 
   if (loading) {
-    return (
-      <Box sx={{ display: 'grid', placeItems: 'center', height: 300 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <StatsPageSkeleton />;
   }
 
   return (
@@ -265,7 +243,7 @@ export function ManagementPage() {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatCard
             title="Acolhidos ativos"
-            value={summary?.acolhidos_ativos ?? rows.length}
+            value={summary?.acolhidos_ativos ?? 0}
             helper={`${recentRows.length} registros recentes exibidos`}
             icon={<GroupIcon />}
           />
@@ -456,7 +434,7 @@ export function ManagementPage() {
             </Typography>
           </Box>
           <Chip
-            label={`${rows.length} ativos`}
+            label={`${summary?.acolhidos_ativos ?? 0} ativos`}
             color="primary"
             sx={{ width: 'fit-content' }}
           />

@@ -22,10 +22,12 @@ import GroupIcon from '@mui/icons-material/Group';
 import GridViewIcon from '@mui/icons-material/GridView';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import PersonIcon from '@mui/icons-material/Person';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { PageFallback } from '../components/PageFallback';
 import { useAuth } from '../auth/useAuth';
 import { api } from '../services/api';
 import { ACOLHIDOS_COUNT_REFRESH_EVENT } from '../utils/acolhidosEvents';
@@ -76,6 +78,14 @@ const NAV = [
     submodules: [{ label: 'Saídas', path: '/saidas' }],
   },
 ];
+
+const RELATORIOS_NAV = {
+  id: 'relatorios',
+  label: 'Relatórios',
+  icon: AssessmentIcon,
+  path: '/relatorios',
+  submodules: [{ label: 'Relatórios', path: '/relatorios' }],
+};
 
 const ADMIN_NAV = {
   id: 'admin',
@@ -139,7 +149,14 @@ export function AppLayout() {
       window.removeEventListener(ACOLHIDOS_COUNT_REFRESH_EVENT, handleRefresh);
   }, []);
 
-  const navigationItems = user?.role === 'admin' ? [...NAV, ADMIN_NAV] : NAV;
+  const navigationItems = [
+    ...NAV,
+    // Relatórios: apenas perfis com acesso na API (admin/tecnico).
+    ...(user?.role === 'admin' || user?.role === 'tecnico'
+      ? [RELATORIOS_NAV]
+      : []),
+    ...(user?.role === 'admin' ? [ADMIN_NAV] : []),
+  ];
   const activeModule = navigationItems.find((item) =>
     isActivePath(location.pathname, item.path),
   );
@@ -399,7 +416,9 @@ export function AppLayout() {
 
         <Box sx={{ flex: 1, overflow: 'auto', p: { xs: 1.5, sm: 2, lg: 3.5 } }}>
           <Box sx={{ maxWidth: 1280, mx: 'auto', minWidth: 0 }}>
-            <Outlet />
+            <Suspense fallback={<PageFallback />}>
+              <Outlet />
+            </Suspense>
           </Box>
         </Box>
       </Box>

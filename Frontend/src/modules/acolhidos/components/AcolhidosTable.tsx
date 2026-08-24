@@ -38,6 +38,13 @@ interface Props {
   sectorMap: Record<string, Sector>;
   onRowClick: (row: Acolhido) => void;
   onAction: (action: AcolhidoAction, row: Acolhido) => void;
+  page: number;
+  pageSize: number;
+  totalRows: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+  /** Ação exibida abaixo da mensagem de lista vazia (ex.: limpar filtros). */
+  emptyAction?: ReactNode;
 }
 
 export function AcolhidosTable({
@@ -45,10 +52,16 @@ export function AcolhidosTable({
   sectorMap,
   onRowClick,
   onAction,
+  page,
+  pageSize,
+  totalRows,
+  onPageChange,
+  onPageSizeChange,
+  emptyAction,
 }: Props) {
+  // A paginação é server-side (rows já é a página atual); a ordenação
+  // reordena apenas as linhas visíveis.
   const [sort, setSort] = useState<Sort>({ by: 'entry', dir: 'desc' });
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
 
   const sorted = useMemo(() => {
     const out = [...rows];
@@ -72,7 +85,7 @@ export function AcolhidosTable({
     return out;
   }, [rows, sort, sectorMap]);
 
-  const pageRows = sorted.slice(page * pageSize, page * pageSize + pageSize);
+  const pageRows = sorted;
 
   const toggleSort = (by: SortKey) => {
     setSort((s) =>
@@ -174,7 +187,10 @@ export function AcolhidosTable({
                 colSpan={7}
                 sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}
               >
-                Nenhum acolhido encontrado.
+                <Box sx={{ mb: emptyAction ? 1.5 : 0 }}>
+                  Nenhum acolhido encontrado.
+                </Box>
+                {emptyAction}
               </TableCell>
             </TableRow>
           )}
@@ -183,13 +199,12 @@ export function AcolhidosTable({
       </TableContainer>
       <TablePagination
         component="div"
-        count={sorted.length}
+        count={totalRows}
         page={page}
-        onPageChange={(_, p) => setPage(p)}
+        onPageChange={(_, p) => onPageChange(p)}
         rowsPerPage={pageSize}
         onRowsPerPageChange={(e) => {
-          setPageSize(parseInt(e.target.value, 10));
-          setPage(0);
+          onPageSizeChange(parseInt(e.target.value, 10));
         }}
         rowsPerPageOptions={[10, 25, 50]}
         labelRowsPerPage="Por página"

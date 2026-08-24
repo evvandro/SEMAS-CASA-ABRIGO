@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Acolhido;
 use App\Models\Familia;
 use App\Models\Setor;
 use App\Models\User;
@@ -206,5 +207,72 @@ class AcolhidosApiTest extends TestCase
     public function test_unauthenticated_cannot_access_acolhidos(): void
     {
         $this->getJson('/api/acolhidos')->assertUnauthorized();
+    }
+
+    public function test_lista_pagina_apenas_quando_per_page_presente(): void
+    {
+        $this->actingAsUser();
+
+        $setor = Setor::create(['nome' => 'Paginacao', 'cor' => '#000000', 'capacidade' => 10, 'ativo' => true]);
+
+        foreach (['Ana', 'Bruno', 'Carla'] as $nome) {
+            Acolhido::create([
+                'codigo_pulseira' => Acolhido::gerarCodigoPulseira(),
+                'setor_id' => $setor->id,
+                'nome' => $nome,
+                'data_entrada' => now()->toDateString(),
+            ]);
+        }
+
+        $semPaginacao = $this->getJson('/api/acolhidos')->assertOk();
+        $this->assertCount(3, $semPaginacao->json('data'));
+        $this->assertNull($semPaginacao->json('meta'));
+
+        $this->getJson('/api/acolhidos?per_page=2')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.total', 3)
+            ->assertJsonPath('meta.per_page', 2)
+            ->assertJsonPath('meta.last_page', 2)
+            ->assertJsonPath('data.0.nome', 'Ana');
+
+        $this->getJson('/api/acolhidos?per_page=2&page=2')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('meta.page', 2)
+            ->assertJsonPath('data.0.nome', 'Carla');
+    }
+
+    public function test_lista_filtra_por_alertas(): void
+    {
+        $this->actingAsUser();
+
+        $setor = Setor::create(['nome' => 'Alertas', 'cor' => '#000000', 'capacidade' => 10, 'ativo' => true]);
+
+        Acolhido::create([
+            'codigo_pulseira' => Acolhido::gerarCodigoPulseira(),
+            'setor_id' => $setor->id,
+            'nome' => 'Com PCD',
+            'data_entrada' => now()->toDateString(),
+            'pcd' => true,
+        ]);
+        Acolhido::create([
+            'codigo_pulseira' => Acolhido::gerarCodigoPulseira(),
+            'setor_id' => $setor->id,
+            'nome' => 'Sem PCD',
+            'data_entrada' => now()->toDateString(),
+            'gestante' => true,
+        ]);
+
+        $comPcd = $this->getJson('/api/acolhidos?pcd=true')->assertOk();
+        $this->assertCount(1, $comPcd->json('data'));
+        $this->assertSame('Com PCD', $comPcd->json('data.0.nome'));
+
+        $gestantes = $this->getJson('/api/acolhidos?gestante=1')->assertOk();
+        $this->assertCount(1, $gestantes->json('data'));
+
+        // false/ausente não restringe a lista
+        $todos = $this->getJson('/api/acolhidos?pcd=false')->assertOk();
+        $this->assertCount(2, $todos->json('data'));
     }
 }

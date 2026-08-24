@@ -6,6 +6,12 @@ export const formatCpf = (value: string) =>
     .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
     .replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
 
+export const formatCep = (value: string) =>
+  value
+    .replace(/\D/g, '')
+    .slice(0, 8)
+    .replace(/^(\d{5})(\d)/, '$1-$2');
+
 export const formatDateInput = (value: string) =>
   value
     .replace(/\D/g, '')

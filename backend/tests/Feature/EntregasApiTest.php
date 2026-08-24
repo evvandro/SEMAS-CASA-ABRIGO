@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Acolhido;
+use App\Models\Entrega;
 use App\Models\Familia;
 use App\Models\Material;
 use App\Models\Setor;
@@ -318,5 +319,57 @@ class EntregasApiTest extends TestCase
         ])->assertJsonValidationErrors('familia_id');
 
         $this->assertDatabaseHas('materiais', ['id' => $material->id, 'estoque_atual' => 3]);
+    }
+
+    public function test_lista_pagina_apenas_quando_per_page_presente(): void
+    {
+        $this->actingAsUser();
+
+        $material = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 10, 'ativo' => true]);
+
+        foreach (['2026-06-01', '2026-06-02', '2026-06-03'] as $data) {
+            Entrega::create([
+                'material_id' => $material->id,
+                'quantidade' => 1,
+                'data_entrega' => $data,
+                'destino_tipo' => 'externo',
+                'externo_nome' => 'Destino Teste',
+            ]);
+        }
+
+        $semPaginacao = $this->getJson('/api/entregas')->assertOk();
+        $this->assertCount(3, $semPaginacao->json('data'));
+        $this->assertNull($semPaginacao->json('meta'));
+
+        $this->getJson('/api/entregas?per_page=2')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.total', 3)
+            ->assertJsonPath('meta.last_page', 2);
+
+        $this->getJson('/api/entregas?per_page=2&page=2')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('meta.page', 2);
+    }
+
+    public function test_lista_filtra_por_periodo(): void
+    {
+        $this->actingAsUser();
+
+        $material = Material::create(['nome' => 'Kit', 'unidade' => 'kit', 'categoria' => 'Teste', 'estoque_atual' => 10, 'ativo' => true]);
+
+        foreach (['2026-06-01', '2026-06-02', '2026-06-03'] as $data) {
+            Entrega::create([
+                'material_id' => $material->id,
+                'quantidade' => 1,
+                'data_entrega' => $data,
+                'destino_tipo' => 'externo',
+                'externo_nome' => 'Destino Teste',
+            ]);
+        }
+
+        $resposta = $this->getJson('/api/entregas?data_inicio=2026-06-02&data_fim=2026-06-03')->assertOk();
+        $this->assertCount(2, $resposta->json('data'));
     }
 }

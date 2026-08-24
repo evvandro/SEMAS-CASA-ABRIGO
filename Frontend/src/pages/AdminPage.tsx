@@ -17,7 +17,6 @@ import {
   Alert,
   CircularProgress,
   Typography,
-  Container,
   IconButton,
   InputAdornment,
 } from '@mui/material';
@@ -39,6 +38,7 @@ import { getApiErrorMessage } from '../utils/apiError';
 import { PageHeader } from '../components/PageHeader';
 import { ExportPDFButton } from '../components/ExportPDFButton';
 import type { ReportColumn } from '../components/ReportTemplate';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 
 const usuariosColumns: ReportColumn[] = [
   { header: 'Nome', key: 'name', width: '35%' },
@@ -98,6 +98,8 @@ export function AdminPage() {
     role: 'tecnico' as UserRole,
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -221,23 +223,26 @@ export function AdminPage() {
     }
   };
 
-  const handleDelete = async (userId: number) => {
-    if (!window.confirm('Tem certeza que deseja deletar este usuário?')) {
-      return;
-    }
+  const handleDelete = async () => {
+    if (deleteTargetId == null) return;
 
     try {
+      setDeleting(true);
       setError(null);
-      await deleteUser(userId);
+      await deleteUser(deleteTargetId);
+      setDeleteTargetId(null);
       await loadUsers();
     } catch (err) {
       const message = getApiErrorMessage(err, 'Erro ao desativar usuário.');
+      setDeleteTargetId(null);
       setError(message);
+    } finally {
+      setDeleting(false);
     }
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Box>
       <Box sx={{ mb: 4 }}>
         <Box sx={{ mb: 3 }}>
           <PageHeader
@@ -273,7 +278,8 @@ export function AdminPage() {
             <CircularProgress />
           </Box>
         ) : (
-          <TableContainer component={Paper}>
+          <Paper variant="outlined" sx={{ overflow: 'hidden' }}>
+            <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
@@ -296,11 +302,11 @@ export function AdminPage() {
                     </TableCell>
                     <TableCell>
                       {user.is_active ? (
-                        <Typography sx={{ color: 'green', fontWeight: 'bold' }}>
+                        <Typography sx={{ color: 'success.main', fontWeight: 'bold' }}>
                           Ativo
                         </Typography>
                       ) : (
-                        <Typography sx={{ color: 'red', fontWeight: 'bold' }}>
+                        <Typography sx={{ color: 'error.main', fontWeight: 'bold' }}>
                           Inativo
                         </Typography>
                       )}
@@ -315,7 +321,7 @@ export function AdminPage() {
                       </IconButton>
                       <IconButton
                         size="small"
-                        onClick={() => handleDelete(user.id)}
+                        onClick={() => setDeleteTargetId(user.id)}
                         color="error"
                       >
                         <DeleteIcon />
@@ -333,7 +339,8 @@ export function AdminPage() {
                 </Typography>
               </Box>
             )}
-          </TableContainer>
+            </TableContainer>
+          </Paper>
         )}
       </Box>
 
@@ -430,6 +437,16 @@ export function AdminPage() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+      <ConfirmDialog
+        open={deleteTargetId != null}
+        title="Remover acesso"
+        message="Tem certeza que deseja remover o acesso deste usuário? Ele não conseguirá mais entrar no sistema."
+        confirmLabel="Remover acesso"
+        destructive
+        loading={deleting}
+        onConfirm={() => void handleDelete()}
+        onClose={() => setDeleteTargetId(null)}
+      />
+    </Box>
   );
 }

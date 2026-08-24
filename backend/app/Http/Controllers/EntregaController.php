@@ -9,23 +9,41 @@ use App\Models\Entrega;
 use App\Models\Material;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class EntregaController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $entregas = Entrega::query()
+        $query = Entrega::query()
             ->with(['material', 'familia', 'acolhido', 'entreguePor'])
+            ->when($request->filled('data_inicio'), fn ($q) => $q->whereDate('data_entrega', '>=', $request->get('data_inicio')))
+            ->when($request->filled('data_fim'), fn ($q) => $q->whereDate('data_entrega', '<=', $request->get('data_fim')))
             ->orderByDesc('data_entrega')
-            ->orderByDesc('id')
-            ->get();
+            ->orderByDesc('id');
+
+        // Paginação opt-in: sem per_page o comportamento legado (lista completa) é mantido.
+        if ($request->filled('per_page')) {
+            $paginated = $query->paginate(min(max((int) $request->get('per_page'), 1), 100));
+
+            return response()->json([
+                'message' => 'Entregas listadas com sucesso.',
+                'data' => EntregaResource::collection($paginated->items()),
+                'meta' => [
+                    'total' => $paginated->total(),
+                    'page' => $paginated->currentPage(),
+                    'per_page' => $paginated->perPage(),
+                    'last_page' => $paginated->lastPage(),
+                ],
+            ]);
+        }
 
         return response()->json([
             'message' => 'Entregas listadas com sucesso.',
-            'data' => EntregaResource::collection($entregas),
+            'data' => EntregaResource::collection($query->get()),
         ]);
     }
 

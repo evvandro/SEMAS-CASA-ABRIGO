@@ -279,7 +279,9 @@ export function EstoquePage() {
       ] = await Promise.all([
         fetchMateriais(),
         fetchRecebimentos(),
-        fetchEntregas(),
+        // Histórico de entregas cresce sem limite: só as 100 mais recentes
+        // (a tela usa os 6 grupos recentes + contagem do dia).
+        fetchEntregas({ perPage: 100 }),
         fetchAcolhidos(),
         fetchFamilias(),
       ]);

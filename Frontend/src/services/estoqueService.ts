@@ -133,8 +133,18 @@ export async function fetchRecebimentos(): Promise<Recebimento[]> {
   return res.data.data;
 }
 
-export async function fetchEntregas(): Promise<Entrega[]> {
-  const res = await api.get<{ data: Entrega[] }>('/entregas');
+export async function fetchEntregas(params?: {
+  perPage?: number;
+  dataInicio?: string;
+  dataFim?: string;
+}): Promise<Entrega[]> {
+  const res = await api.get<{ data: Entrega[] }>('/entregas', {
+    params: {
+      per_page: params?.perPage || undefined,
+      data_inicio: params?.dataInicio || undefined,
+      data_fim: params?.dataFim || undefined,
+    },
+  });
   return res.data.data;
 }
 

@@ -6,9 +6,11 @@ import {
   IconButton,
   TextField,
   Button,
+  CircularProgress,
   Divider,
   FormControlLabel,
   Checkbox,
+  InputAdornment,
   Radio,
   RadioGroup,
   FormControl,
@@ -17,9 +19,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { TimeInput } from '../../../components/TimeInput';
+import { useCepLookup } from '../../../hooks/useCepLookup';
 import { saidaSchema } from '../schemas/saidaSchema';
 import type { SaidaPayload, Acolhido, Familia } from '../types';
-import { formatDateInput } from '../utils/formFormatters';
+import { formatCep, formatDateInput } from '../utils/formFormatters';
 
 const empty: SaidaPayload = {
   abrigoNome: '',
@@ -65,6 +68,8 @@ export function SaidaDrawer({
   const [form, setForm] = useState<SaidaPayload>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [cep, setCep] = useState('');
+  const cepLookup = useCepLookup();
   const firstRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -110,6 +115,37 @@ export function SaidaDrawer({
   const resetForm = () => {
     setForm(empty);
     setErrors({});
+    setCep('');
+    cepLookup.reset();
+  };
+
+  // Preenche endereço/município a partir do CEP; os campos continuam editáveis
+  // e a consulta nunca bloqueia o formulário (CEP é apenas um atalho).
+  const handleCepChange = async (raw: string) => {
+    const formatado = formatCep(raw);
+    setCep(formatado);
+
+    if (formatado.replace(/\D/g, '').length !== 8) return;
+
+    const endereco = await cepLookup.lookup(formatado);
+    if (!endereco) return;
+
+    const logradouroBairro = [endereco.logradouro, endereco.bairro]
+      .filter(Boolean)
+      .join(', ');
+
+    setForm((f) => ({
+      ...f,
+      destinoEndereco: logradouroBairro
+        ? `${logradouroBairro} - CEP ${formatado}`
+        : f.destinoEndereco,
+      destinoMunicipio: endereco.municipio
+        ? endereco.uf
+          ? `${endereco.municipio} - ${endereco.uf}`
+          : endereco.municipio
+        : f.destinoMunicipio,
+    }));
+    setErrors((e) => ({ ...e, destinoEndereco: '', destinoMunicipio: '' }));
   };
 
   const handleClose = () => {
@@ -462,7 +498,29 @@ export function SaidaDrawer({
                 helperText={errors.destinoInformado}
               />
             </Box>
-            <Box sx={{ gridColumn: 'span 12' }}>
+            <Box sx={{ gridColumn: { xs: 'span 12', sm: 'span 4' } }}>
+              <TextField
+                label="CEP"
+                fullWidth
+                value={cep}
+                onChange={(e) => void handleCepChange(e.target.value)}
+                error={!!cepLookup.error}
+                helperText={
+                  cepLookup.error ?? 'Preenche endereço e município'
+                }
+                slotProps={{
+                  htmlInput: { inputMode: 'numeric' },
+                  input: {
+                    endAdornment: cepLookup.loading ? (
+                      <InputAdornment position="end">
+                        <CircularProgress size={16} />
+                      </InputAdornment>
+                    ) : undefined,
+                  },
+                }}
+              />
+            </Box>
+            <Box sx={{ gridColumn: { xs: 'span 12', sm: 'span 8' } }}>
               <TextField
                 label="Endereço *"
                 fullWidth

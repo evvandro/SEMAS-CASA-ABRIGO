@@ -1,9 +1,9 @@
 import {
   Alert,
   Box,
+  Button,
   CircularProgress,
-  Snackbar,
-  Typography,
+  LinearProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../auth/useAuth';
@@ -27,6 +27,7 @@ import { useAcolhidosPageState } from '../hooks/useAcolhidosPageState';
 import type { Acolhido, AcolhidoAction, Familia, SaidaPayload } from '../types';
 import { useState } from 'react';
 import { getApiErrorMessage } from '../../../utils/apiError';
+import { PageHeader } from '../../../components/PageHeader';
 
 export function AcolhidosPage() {
   const state = useAcolhidosPageState();
@@ -83,7 +84,7 @@ export function AcolhidosPage() {
         setSaidaOpen(true);
       } catch {
         state.setToast({
-          message: 'Nao foi possivel carregar a familia para saida.',
+          message: 'Não foi possível carregar a família para saída.',
           severity: 'error',
         });
       }
@@ -129,7 +130,7 @@ export function AcolhidosPage() {
         setSaidaFamilia(null);
         state.setFichaRow(null);
         state.setToast({
-          message: 'Saida da familia registrada com sucesso.',
+          message: 'Saída da família registrada com sucesso.',
           severity: 'success',
         });
         return;
@@ -147,7 +148,7 @@ export function AcolhidosPage() {
         setSaidaRow(null);
         state.setFichaRow(null);
         state.setToast({
-          message: 'Saida registrada com sucesso.',
+          message: 'Saída registrada com sucesso.',
           severity: 'success',
         });
       }
@@ -190,7 +191,9 @@ export function AcolhidosPage() {
     });
   };
 
-  if (state.loading) {
+  // Spinner de página inteira apenas no primeiro carregamento; nos refetches
+  // (busca, paginação, filtros) a tabela permanece visível com a barra fina.
+  if (state.loading && state.rows.length === 0 && !state.totalRows) {
     return (
       <Box sx={{ display: 'grid', placeItems: 'center', height: 300 }}>
         <CircularProgress />
@@ -209,12 +212,10 @@ export function AcolhidosPage() {
   return (
     <Box>
       <Box sx={{ mb: 2.5 }}>
-        <Typography variant="h4" gutterBottom>
-          Gestão de Acolhidos
-        </Typography>
-        <Typography color="text.secondary">
-          Famílias e indivíduos acolhidos na Casa Abrigo Temporário.
-        </Typography>
+        <PageHeader
+          title="Gestão de Acolhidos"
+          description="Famílias e indivíduos acolhidos na Casa Abrigo Temporário."
+        />
       </Box>
 
       <AcolhidosToolbar
@@ -225,7 +226,7 @@ export function AcolhidosPage() {
         sectorId={state.sectorId}
         onSector={state.setSectorId}
         sectors={state.sectors}
-        count={state.filteredRows.length}
+        count={state.totalRows}
         onNew={() => {
           state.setEditRow(null);
           state.setCadastroOpen(true);
@@ -233,11 +234,56 @@ export function AcolhidosPage() {
         onFullRegistration={() => navigate('/acolhidos/cadastros')}
       />
 
+      <Box sx={{ height: 3, mb: 0.5 }}>
+        {state.loading && <LinearProgress sx={{ height: 3 }} />}
+      </Box>
+
       <AcolhidosTable
         rows={state.filteredRows}
         sectorMap={state.sectorMap}
         onRowClick={state.openFicha}
         onAction={handleAcolhidoAction}
+        page={state.page}
+        pageSize={state.pageSize}
+        totalRows={state.totalRows}
+        onPageChange={state.setPage}
+        onPageSizeChange={(novoTamanho) => {
+          state.setPageSize(novoTamanho);
+          state.setPage(0);
+        }}
+        emptyAction={
+          state.search ||
+          state.sectorId ||
+          Object.values(state.filters).some(Boolean) ? (
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                state.setSearch('');
+                state.setSectorId('');
+                state.setFilters({
+                  pcd: false,
+                  gestante: false,
+                  cronica: false,
+                  idoso: false,
+                });
+              }}
+            >
+              Limpar filtros
+            </Button>
+          ) : (
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => {
+                state.setEditRow(null);
+                state.setCadastroOpen(true);
+              }}
+            >
+              Novo acolhido
+            </Button>
+          )
+        }
       />
 
       <SectorHeatmap
@@ -286,21 +332,6 @@ export function AcolhidosPage() {
         initialFamily={saidaFamilia}
       />
 
-      <Snackbar
-        open={!!state.toast}
-        autoHideDuration={2800}
-        onClose={() => state.setToast(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          severity={state.toast?.severity ?? 'success'}
-          onClose={() => state.setToast(null)}
-          variant="filled"
-          sx={{ borderRadius: 1 }}
-        >
-          {state.toast?.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

@@ -338,14 +338,8 @@ export function CadastrosPage() {
       setLoadError(null);
 
       try {
-        const [data, acolhidosResult] = await Promise.all([
-          fetchSetores(),
-          fetchAcolhidos(),
-        ]);
-        if (active) {
-          setSectors(data);
-          setActiveAcolhidos(acolhidosResult.data);
-        }
+        const data = await fetchSetores();
+        if (active) setSectors(data);
       } catch {
         if (active) setLoadError('Não foi possível carregar os setores.');
       } finally {
@@ -359,6 +353,35 @@ export function CadastrosPage() {
       active = false;
     };
   }, []);
+
+  // Ocupação de leitos apenas do setor selecionado (em vez de carregar todos
+  // os acolhidos da casa no mount).
+  useEffect(() => {
+    if (!formData.setorId) {
+      setActiveAcolhidos([]);
+      return;
+    }
+
+    let active = true;
+
+    const loadOcupacaoDoSetor = async () => {
+      try {
+        const resultado = await fetchAcolhidos({
+          setor_id: Number(formData.setorId),
+        });
+        if (active) setActiveAcolhidos(resultado.data);
+      } catch {
+        // Sem a lista, os leitos aparecem como livres; o backend continua
+        // sendo a fonte de verdade na gravação.
+      }
+    };
+
+    void loadOcupacaoDoSetor();
+
+    return () => {
+      active = false;
+    };
+  }, [formData.setorId]);
 
   useEffect(() => {
     if (!editId) {

@@ -17,6 +17,14 @@ class DashboardController extends Controller
         $acolhidosAtivos = Acolhido::query()->whereNull('data_saida')->count();
         $entregasHoje = Entrega::query()->whereDate('data_entrega', now()->toDateString())->count();
 
+        $ativos = fn () => Acolhido::query()->whereNull('data_saida');
+        $alertas = [
+            'pcd' => $ativos()->where('pcd', true)->count(),
+            'gestante' => $ativos()->where('gestante', true)->count(),
+            'cronica' => $ativos()->where('cronica', true)->count(),
+            'idoso' => $ativos()->where('idoso', true)->count(),
+        ];
+
         $setores = Setor::query()
             ->where('ativo', true)
             ->withCount([
@@ -32,6 +40,7 @@ class DashboardController extends Controller
                 'familias_ativas' => $familiasAtivas,
                 'acolhidos_ativos' => $acolhidosAtivos,
                 'entregas_hoje' => $entregasHoje,
+                'alertas' => $alertas,
                 'setores' => $setores->map(function (Setor $setor) {
                     return [
                         ...((new SetorResource($setor))->toArray(request())),

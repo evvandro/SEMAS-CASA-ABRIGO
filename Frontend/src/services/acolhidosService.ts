@@ -179,6 +179,7 @@ export async function fetchAcolhidos(params?: {
   idoso?: boolean;
   page?: number;
   per_page?: number;
+  sort?: 'entrada_desc';
 }): Promise<{ data: Acolhido[]; meta?: { total: number } }> {
   const res = await api.get<{ data: ApiAcolhido[]; meta?: { total: number } }>(
     '/acolhidos',
@@ -193,6 +194,7 @@ export async function fetchAcolhidos(params?: {
         idoso: params?.idoso || undefined,
         page: params?.page || undefined,
         per_page: params?.per_page || undefined,
+        sort: params?.sort || undefined,
       },
     },
   );
