@@ -25,6 +25,7 @@ class DashboardApiTest extends TestCase
                     'familias_ativas',
                     'acolhidos_ativos',
                     'entregas_hoje',
+                    'alertas' => ['pcd', 'gestante', 'cronica', 'idoso'],
                     'setores',
                 ],
             ]);

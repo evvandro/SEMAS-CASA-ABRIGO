@@ -16,7 +16,7 @@ class AcolhidoController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $acolhidos = Acolhido::query()
+        $query = Acolhido::query()
             ->select([
                 'id', 'codigo_pulseira', 'nome', 'cpf', 'data_nascimento',
                 'telefone', 'genero', 'leito', 'observacoes', 'pertences_registrados',
@@ -33,6 +33,10 @@ class AcolhidoController extends Controller
                 'setor:id,nome,cor,capacidade,ativo',
             ])
             ->when($request->filled('setor_id'), fn ($q) => $q->where('setor_id', (int) $request->get('setor_id')))
+            ->when($request->boolean('pcd'), fn ($q) => $q->where('pcd', true))
+            ->when($request->boolean('gestante'), fn ($q) => $q->where('gestante', true))
+            ->when($request->boolean('cronica'), fn ($q) => $q->where('cronica', true))
+            ->when($request->boolean('idoso'), fn ($q) => $q->where('idoso', true))
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = (string) $request->get('search');
                 $q->where(function ($sub) use ($search) {
@@ -48,13 +52,30 @@ class AcolhidoController extends Controller
             ->when(
                 $request->get('status') === 'saida',
                 fn ($q) => $q->orderByDesc('data_saida')->orderByDesc('hora_saida')->orderBy('nome'),
-                fn ($q) => $q->orderBy('nome'),
-            )
-            ->get();
+                fn ($q) => $request->get('sort') === 'entrada_desc'
+                    ? $q->orderByDesc('data_entrada')->orderByDesc('hora_entrada')->orderBy('nome')
+                    : $q->orderBy('nome'),
+            );
+
+        // Paginação opt-in: sem per_page o comportamento legado (lista completa) é mantido.
+        if ($request->filled('per_page')) {
+            $paginated = $query->paginate(min(max((int) $request->get('per_page'), 1), 100));
+
+            return response()->json([
+                'message' => 'Acolhidos listados com sucesso.',
+                'data' => AcolhidoResource::collection($paginated->items()),
+                'meta' => [
+                    'total' => $paginated->total(),
+                    'page' => $paginated->currentPage(),
+                    'per_page' => $paginated->perPage(),
+                    'last_page' => $paginated->lastPage(),
+                ],
+            ]);
+        }
 
         return response()->json([
             'message' => 'Acolhidos listados com sucesso.',
-            'data' => AcolhidoResource::collection($acolhidos),
+            'data' => AcolhidoResource::collection($query->get()),
         ]);
     }
 

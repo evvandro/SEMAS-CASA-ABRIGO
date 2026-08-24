@@ -306,7 +306,7 @@ export function FichaDrawer({
                   </Stack>
                 ) : (
                   <Typography variant="body2" color="text.secondary">
-                    Nao foi possivel carregar o grupo familiar.
+                    Não foi possível carregar o grupo familiar.
                   </Typography>
                 )}
               </Section>

@@ -17,7 +17,7 @@ class FamiliaController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $familias = Familia::query()
+        $query = Familia::query()
             ->when($request->get('status') === 'saida', fn ($q) => $q->whereNotNull('data_saida'), fn ($q) => $q->whereNull('data_saida'))
             ->with('setor')
             ->withCount([
@@ -35,12 +35,27 @@ class FamiliaController extends Controller
                 $request->get('status') === 'saida',
                 fn ($q) => $q->orderByDesc('data_saida')->orderByDesc('hora_saida'),
                 fn ($q) => $q->orderBy('responsavel_nome')->orderByDesc('id'),
-            )
-            ->get();
+            );
+
+        // Paginação opt-in: sem per_page o comportamento legado (lista completa) é mantido.
+        if ($request->filled('per_page')) {
+            $paginated = $query->paginate(min(max((int) $request->get('per_page'), 1), 100));
+
+            return response()->json([
+                'message' => 'Famílias listadas com sucesso.',
+                'data' => FamiliaResource::collection($paginated->items()),
+                'meta' => [
+                    'total' => $paginated->total(),
+                    'page' => $paginated->currentPage(),
+                    'per_page' => $paginated->perPage(),
+                    'last_page' => $paginated->lastPage(),
+                ],
+            ]);
+        }
 
         return response()->json([
             'message' => 'Famílias listadas com sucesso.',
-            'data' => FamiliaResource::collection($familias),
+            'data' => FamiliaResource::collection($query->get()),
         ]);
     }
 

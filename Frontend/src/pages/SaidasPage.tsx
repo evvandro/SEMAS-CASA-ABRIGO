@@ -84,19 +84,21 @@ export function SaidasPage() {
   const loadData = async () => {
     setLoading(true);
     try {
+      // Ativos são limitados pela capacidade da casa; o histórico de saídas
+      // cresce sem limite, então carrega apenas os 50 mais recentes.
       const [pessoasResult, grupos, pessoasSaidasResult, familiasSaidas] =
         await Promise.all([
           fetchAcolhidos(),
           fetchFamilias(),
-          fetchAcolhidos({ status: 'saida' }),
-          fetchFamilias({ status: 'saida' }),
+          fetchAcolhidos({ status: 'saida', per_page: 50 }),
+          fetchFamilias({ status: 'saida', perPage: 50 }),
         ]);
       setAcolhidos(pessoasResult.data);
       setFamilias(grupos);
       setHistoricoAcolhidos(pessoasSaidasResult.data);
       setHistoricoFamilias(familiasSaidas);
     } catch {
-      setErrorMsg('Nao foi possivel carregar pessoas e familias ativas.');
+      setErrorMsg('Não foi possível carregar pessoas e famílias ativas.');
     } finally {
       setLoading(false);
     }
@@ -197,8 +199,8 @@ export function SaidasPage() {
     <Box>
       <Box sx={{ mb: 2.5 }}>
         <PageHeader
-          title="Saidas"
-          description="Registro operacional de saidas individuais e familiares."
+          title="Saídas"
+          description="Registro operacional de saídas individuais e familiares."
         />
       </Box>
       {errorMsg ? (
@@ -214,7 +216,7 @@ export function SaidasPage() {
           sx={{ px: 2, borderBottom: '1px solid', borderColor: 'divider' }}
         >
           <Tab label="Pessoas" value="pessoas" />
-          <Tab label="Familias" value="familias" />
+          <Tab label="Famílias" value="familias" />
         </Tabs>
 
         <Stack
@@ -227,7 +229,7 @@ export function SaidasPage() {
             <Autocomplete
               options={acolhidos}
               getOptionLabel={(option) =>
-                `${option.name} | ${option.cpf || 'CPF nao informado'}${option.familyCode ? ` | ${option.familyCode}` : ''}`
+                `${option.name} | ${option.cpf || 'CPF não informado'}${option.familyCode ? ` | ${option.familyCode}` : ''}`
               }
               value={selectedAcolhido}
               onChange={(_, newValue) => setSelectedAcolhido(newValue)}
@@ -241,14 +243,14 @@ export function SaidasPage() {
             <Autocomplete
               options={familias}
               getOptionLabel={(option) =>
-                `${option.codigo} | ${option.responsavelNome ?? 'Responsavel nao informado'} | ${option.acolhidosCount} membro(s)`
+                `${option.codigo} | ${option.responsavelNome ?? 'Responsável não informado'} | ${option.acolhidosCount} membro(s)`
               }
               value={selectedFamilia}
               onChange={(_, newValue) => setSelectedFamilia(newValue)}
               loading={loading}
               sx={{ minWidth: { md: 480 }, flex: 1 }}
               renderInput={(params) => (
-                <TextField {...params} label="Familia ativa" />
+                <TextField {...params} label="Família ativa" />
               )}
             />
           )}
@@ -258,7 +260,7 @@ export function SaidasPage() {
             startIcon={<LogoutIcon />}
             onClick={openDialog}
           >
-            Abrir ficha de saida
+            Abrir ficha de saída
           </Button>
         </Stack>
       </Paper>
@@ -283,7 +285,7 @@ export function SaidasPage() {
           }}
         >
           <Box>
-            <Typography variant="h6">Historico de saidas</Typography>
+            <Typography variant="h6">Histórico de saídas</Typography>
             <Typography variant="body2" color="text.secondary">
               Registros desligados permanecem aqui para consulta operacional.
             </Typography>
@@ -326,10 +328,10 @@ export function SaidasPage() {
               <TableRow>
                 <TableCell>Data</TableCell>
                 <TableCell>Pessoa</TableCell>
-                <TableCell>Familia</TableCell>
+                <TableCell>Família</TableCell>
                 <TableCell>Tipo</TableCell>
                 <TableCell>Destino</TableCell>
-                <TableCell>Responsavel</TableCell>
+                <TableCell>Responsável</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -378,11 +380,11 @@ export function SaidasPage() {
             <TableHead>
               <TableRow>
                 <TableCell>Data</TableCell>
-                <TableCell>Familia</TableCell>
+                <TableCell>Família</TableCell>
                 <TableCell>Membros</TableCell>
                 <TableCell>Tipo</TableCell>
                 <TableCell>Destino</TableCell>
-                <TableCell>Responsavel</TableCell>
+                <TableCell>Responsável</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -396,7 +398,7 @@ export function SaidasPage() {
                       {familia.codigo}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {familia.responsavelNome ?? 'Responsavel nao informado'}
+                      {familia.responsavelNome ?? 'Responsável não informado'}
                     </Typography>
                   </TableCell>
                   <TableCell>{familia.acolhidosCount}</TableCell>
@@ -435,11 +437,11 @@ export function SaidasPage() {
 
 function valueOrFallback(value?: string | number | null) {
   const normalized = value == null ? '' : String(value).trim();
-  return normalized || 'Nao informado';
+  return normalized || 'Não informado';
 }
 
 function formatDateTime(date?: string | null, time?: string | null) {
-  if (!date) return 'Nao informado';
+  if (!date) return 'Não informado';
 
   const formattedDate = new Date(`${date}T00:00:00`).toLocaleDateString(
     'pt-BR',
@@ -454,7 +456,7 @@ function EmptyHistoryRow({ colSpan }: { colSpan: number }) {
         colSpan={colSpan}
         sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}
       >
-        Nenhuma saida registrada neste grupo.
+        Nenhuma saída registrada neste grupo.
       </TableCell>
     </TableRow>
   );

@@ -9,6 +9,7 @@ use App\Http\Controllers\FamiliaController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\RecebimentoMaterialController;
+use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\SetorController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,13 @@ Route::middleware(['auth:sanctum', 'active'])->group(function (): void {
         Route::get('/entregas', [EntregaController::class, 'index']);
         Route::post('/entregas', [EntregaController::class, 'store']);
         Route::post('/entregas/lote', [EntregaController::class, 'storeLote']);
+
+        Route::prefix('relatorios')->group(function (): void {
+            Route::get('/acolhimentos', [RelatorioController::class, 'acolhimentos']);
+            Route::get('/ocupacao', [RelatorioController::class, 'ocupacao']);
+            Route::get('/estoque', [RelatorioController::class, 'estoque']);
+            Route::get('/perfil', [RelatorioController::class, 'perfil']);
+        });
     });
 
     Route::middleware('admin')->group(function (): void {

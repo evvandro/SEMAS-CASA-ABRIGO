@@ -67,12 +67,14 @@ export async function fetchFamilias(params?: {
   search?: string;
   setorId?: string;
   status?: 'ativos' | 'saida';
+  perPage?: number;
 }): Promise<Familia[]> {
   const res = await api.get<{ data: ApiFamilia[] }>('/familias', {
     params: {
       search: params?.search || undefined,
       setor_id: params?.setorId || undefined,
       status: params?.status === 'saida' ? 'saida' : undefined,
+      per_page: params?.perPage || undefined,
     },
   });
 

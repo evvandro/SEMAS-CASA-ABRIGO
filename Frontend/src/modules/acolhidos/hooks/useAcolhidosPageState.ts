@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   createAcolhido,
   fetchAcolhidoDetail,
@@ -15,6 +15,10 @@ import type {
   CadastroPayload,
   Sector,
 } from '../types';
+import {
+  showErrorToast,
+  showSuccessToast,
+} from '../../../utils/notificationService';
 
 type Toast = {
   message: string;
@@ -34,7 +38,9 @@ export function useAcolhidosPageState() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filters, setFilters] = useState<AcolhidosFilters>(emptyFilters);
+  const [reloadKey, setReloadKey] = useState(0);
   const [sectorId, setSectorId] = useState('');
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -43,7 +49,29 @@ export function useAcolhidosPageState() {
   const [labelRow, setLabelRow] = useState<Acolhido | null>(null);
   const [editRow, setEditRow] = useState<Acolhido | null>(null);
   const [cadastroOpen, setCadastroOpen] = useState(false);
-  const [toast, setToast] = useState<Toast | null>(null);
+
+  // Toasts unificados no serviço global (sonner) — antes esta tela tinha um
+  // Snackbar MUI próprio, com visual diferente do resto do app.
+  const setToast = (toast: Toast | null) => {
+    if (!toast) return;
+    if (toast.severity === 'error') {
+      showErrorToast('Erro', toast.message);
+    } else {
+      showSuccessToast(
+        toast.severity === 'info' ? 'Aviso' : 'Tudo certo',
+        toast.message,
+      );
+    }
+  };
+
+  // Debounce da busca: um request por pausa de digitação, não por tecla.
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [search]);
 
   useEffect(() => {
     let active = true;
@@ -54,7 +82,7 @@ export function useAcolhidosPageState() {
 
       try {
         const params = {
-          search: search.trim() || undefined,
+          search: debouncedSearch || undefined,
           setor_id: sectorId ? Number(sectorId) : undefined,
           pcd: filters.pcd || undefined,
           gestante: filters.gestante || undefined,
@@ -100,11 +128,13 @@ export function useAcolhidosPageState() {
     return () => {
       active = false;
     };
-  }, [search, filters, sectorId, page, pageSize]);
+  }, [debouncedSearch, filters, sectorId, page, pageSize, reloadKey]);
 
   useEffect(() => {
     setPage(0);
-  }, [search, filters, sectorId]);
+  }, [debouncedSearch, filters, sectorId]);
+
+  const refresh = useCallback(() => setReloadKey((key) => key + 1), []);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -142,12 +172,9 @@ export function useAcolhidosPageState() {
   const handleSave = async (payload: CadastroPayload) => {
     const newRow = await createAcolhido(payload);
 
-    setRows((prev) => [newRow, ...prev]);
-    setSectors((prev) =>
-      prev.map((s) =>
-        s.id === newRow.sectorId ? { ...s, occupied: s.occupied + 1 } : s,
-      ),
-    );
+    // Com paginação server-side, refazer a busca mantém página e total corretos
+    // (um prepend local estouraria o tamanho da página).
+    refresh();
     setCadastroOpen(false);
     setToast({
       message: `${newRow.name.split(' ')[0]} acolhido(a) com sucesso`,
@@ -181,6 +208,7 @@ export function useAcolhidosPageState() {
   const removeRow = (acolhidoId: number) => {
     const removedRow = rows.find((row) => row.apiId === acolhidoId);
     setRows((prev) => prev.filter((row) => row.apiId !== acolhidoId));
+    setTotalRows((prev) => Math.max(prev - 1, 0));
 
     if (removedRow && removedRow.sectorId) {
       setSectors((prev) =>
@@ -200,6 +228,7 @@ export function useAcolhidosPageState() {
   const removeRowsByFamily = (familiaId: number) => {
     const removedRows = rows.filter((row) => row.familyId === familiaId);
     setRows((prev) => prev.filter((row) => row.familyId !== familiaId));
+    setTotalRows((prev) => Math.max(prev - removedRows.length, 0));
 
     removedRows.forEach((row) => {
       if (row.sectorId) {
@@ -327,8 +356,8 @@ export function useAcolhidosPageState() {
     setEditRow,
     cadastroOpen,
     setCadastroOpen,
-    toast,
     setToast,
+    refresh,
     applyAcolhidoUpdate,
     removeRow,
     removeRowsByFamily,

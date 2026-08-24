@@ -87,7 +87,7 @@ export function AcolhidosToolbar({
       }}
     >
       <TextField
-        placeholder="Buscar por nome, CPF ou prontuário…"
+        placeholder="Buscar por nome, CPF ou prontuário… (Ctrl+K)"
         value={search}
         onChange={(e) => onSearch(e.target.value)}
         size="small"
